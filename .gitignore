@@ -25,3 +25,6 @@ _check_app.js
 .git_bozuk_SILINEBILIR/
 arsiv/
 build/
+
+# Yerel yardimci betik
+GITHUBA_GONDER.bat
