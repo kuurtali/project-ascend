@@ -20,3 +20,8 @@ desktop.ini
 *.tmp
 *.log
 _check_app.js
+
+# Sandbox artigi - silinebilir
+.git_bozuk_SILINEBILIR/
+arsiv/
+build/
