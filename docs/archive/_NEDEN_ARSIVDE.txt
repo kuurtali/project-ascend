@@ -1,0 +1,6 @@
+Bu klasordeki dosyalar PROJECT_ASCEND_SECOND_BRAIN.md'ye ENTEGRE EDILDI.
+Tarihsel deger tasiyorlar, ama artik referans DEGILLER.
+Celisen bir bilgi gorursen Second Brain gecerlidir. (Kural: M-7)
+
+00_AMAC_VE_PLAN.md   -> Second Brain Part 1 ve Part 6'ya tasindi
+01_YOL_HARITASI.md   -> Second Brain Part 2, 4 ve 6'ya tasindi

@@ -1,0 +1,22 @@
+# Üretilen ara dosyalar
+tools/ascend_data.js
+tools/ascend_prototype.html
+tools/__pycache__/
+*.pyc
+
+# Bağımlılıklar
+node_modules/
+package-lock.json
+package.json
+
+# Editör / işletim sistemi
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Geçici
+*.tmp
+*.log
+_check_app.js

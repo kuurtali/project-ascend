@@ -1,0 +1,99 @@
+PROJECT_ASCEND_AI_BRIEF.txt
+
+PROJECT NAME Project Ascend
+
+MISSION Build a complete game-like Calisthenics progression platform.
+
+IMPORTANT Do NOT create a normal workout app. Treat this as an RPG /
+Skill Tree game where the player develops real physical abilities.
+
+CORE IDEA The user starts from absolute beginner. Every movement is a
+skill node. Every node unlocks another node. No advanced movement should
+be available before its prerequisites.
+
+GOALS - Build strength - Build control - Build mobility - Build
+balance - Build athleticism - Reach elite calisthenics skills.
+
+FINAL BOSSES - Handstand Push-up - One Arm Push-up - One Arm Pull-up -
+Muscle-Up - Front Lever - Back Lever - Planche - Human Flag - Iron
+Cross - Hefesto - Maltese - Victorian - Manna
+
+GAME DESIGN
+
+Player Level XP Skill Tree Mastery Achievements Bosses Daily Missions
+Weekly Missions Monthly Challenges Season Progress Statistics Profile
+Titles Ranks Badges Quest Log Progress Map Character Card
+
+Movement Categories
+
+Push Pull Core Legs Balance Mobility Conditioning Elite Skills
+
+Every movement contains
+
+-   Name
+-   Difficulty
+-   Category
+-   Equipment
+-   Prerequisites
+-   Unlocks
+-   Mastery Requirement
+-   Muscles Worked
+-   Common Mistakes
+-   Tips
+-   Progress Tests
+-   XP Reward
+-   Icon
+-   Animation
+-   Video Placeholder
+
+Unlock Rules
+
+Movement unlocks only after: - Required repetitions - Required hold
+time - Required prerequisite skills - Required mobility - Required
+strength
+
+Mastery
+
+Bronze Silver Gold Master
+
+Progression Philosophy
+
+Never skip fundamentals.
+
+Always prioritize: Technique Control Range of motion Consistency
+Recovery
+
+Never unlock advanced skills early.
+
+UI Suggestions
+
+Interactive Skill Tree Zoomable map Animated node unlocks Boss stages
+Progress bars Skill inspection page Search Filters Movement encyclopedia
+Statistics dashboard
+
+Gamification
+
+XP Levels Achievements Daily rewards Weekly rewards Boss fights
+Collections Titles Streaks Challenges Percent completion Completion map
+
+Future Ideas
+
+AI Coach Movement recommendations Weak point detection Automatic
+progression Training generator Video analysis Community Leaderboards
+Custom trees Season events
+
+Developer Notes
+
+The supplied movement databases are the source of truth.
+
+Expand the trees whenever necessary.
+
+Keep the project modular.
+
+Design everything as reusable data.
+
+Avoid hardcoded logic.
+
+Think like building a game engine instead of a workout tracker.
+
+END

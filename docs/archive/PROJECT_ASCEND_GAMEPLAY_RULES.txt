@@ -1,0 +1,46 @@
+PROJECT_ASCEND_GAMEPLAY_RULES
+
+PROJECT PURPOSE Project Ascend is not a workout tracker. It is a
+game-inspired calisthenics progression platform whose mission is to
+guide a beginner from basic bodyweight movements to elite skills through
+structured progression, mastery and consistency.
+
+USER GOAL The user will train 4 days per week for at least the first 5
+months using: - Push-ups - Pull-ups - Dips - Jump Rope - Handstand
+practice and a pull-up/dip tower. After building a strong foundation,
+the system should naturally evolve into professional-level calisthenics
+training.
+
+LONG TERM TARGETS Handstand Handstand Push-up Muscle-Up Front Lever Back
+Lever Planche Human Flag One Arm Push-up One Arm Pull-up Excellent
+pull-up strength Excellent push-up strength Strong mobility and control
+
+RELATED PROJECT FILES 1. AI_BRIEF Explains the vision, philosophy and
+game direction so the AI understands what Project Ascend is trying to
+become.
+
+2.  MOVEMENT_DATABASE Contains the movement library used as the source
+    of truth for all progression trees.
+
+3.  SKILL_TREE / MASTER_STRUCTURE Defines how every movement connects,
+    unlocks and progresses from beginner to elite.
+
+GAMEPLAY RULES - Every movement is a node. - Every node belongs to a
+category. - Advanced skills are always locked behind prerequisites. -
+Mastery is more important than unlocking quickly. - Quality beats
+quantity. - Mobility is mandatory for advanced skills. - Never skip
+foundation. - Encourage consistency over intensity. - Reward exploration
+of all movement categories. - Progress should always feel meaningful.
+
+AI BEHAVIOR - Think like a coach and game designer. - Explain why a
+recommendation exists. - Suggest regressions when needed. - Avoid unsafe
+progressions. - Prefer long-term development. - Expand the database when
+missing movements are found. - Keep all systems modular and data-driven.
+
+CORE GAME SYSTEMS Skill Tree XP Levels Mastery Achievements Boss Skills
+Daily Missions Weekly Missions Statistics Player Profile Titles Ranks
+Collections Progress Map Character Sheet
+
+DESIGN PRINCIPLES The player should feel that they are exploring a
+world, unlocking abilities and becoming stronger step by step instead of
+simply completing workouts.

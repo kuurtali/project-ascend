@@ -1,0 +1,49 @@
+PROJECT ASCEND - VERI DOGRULAMA RAPORU
+============================================================
+Hareket sayisi      : 196
+Boss sayisi         : 22
+Kok (baslangic) node: 23
+Maks agac derinligi : 11
+Toplam kazanilabilir XP: 525,480
+
+KATEGORI DAGILIMI
+  Push              25
+  Vertical Push     12
+  Explosive          8
+  Dips              10
+  Pull              43
+  Core              25
+  Legs              20
+  Balance           16
+  Mobility          11
+  Conditioning      11
+  Elite             11
+  Recovery           4
+
+HATA   : 0
+
+UYARI  : 0
+
+BOSS ERISIM YOLLARI (kok -> boss derinligi)
+  Nordic Curl                      tier 6  derinlik 3
+  Dragon Flag                      tier 6  derinlik 4
+  Pistol Squat                     tier 5  derinlik 4
+  Manna                            tier 9  derinlik 6
+  Back Lever                       tier 7  derinlik 7
+  Freestanding Handstand           tier 5  derinlik 7
+  One Arm Push-up                  tier 7  derinlik 8
+  Bar Muscle-Up                    tier 7  derinlik 8
+  Human Flag                       tier 8  derinlik 8
+  Hefesto                          tier 9  derinlik 8
+  Handstand Push-up                tier 7  derinlik 9
+  Ring Muscle-Up                   tier 7  derinlik 9
+  One Arm Handstand                tier 9  derinlik 9
+  One Arm Handstand Push-up        tier 9  derinlik 10
+  One Arm Pull-up                  tier 9  derinlik 10
+  Front Lever                      tier 8  derinlik 10
+  Full Planche                     tier 9  derinlik 10
+  Iron Cross                       tier 9  derinlik 10
+  90 Degree Push-up                tier 9  derinlik 11
+  Planche Push-up                  tier 9  derinlik 11
+  Maltese                          tier 9  derinlik 11
+  Victorian Cross                  tier 9  derinlik 11

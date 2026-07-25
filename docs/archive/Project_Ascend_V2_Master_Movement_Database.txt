@@ -1,0 +1,204 @@
+PROJECT ASCEND V2 MASTER MOVEMENT DATABASE
+
+Push
+
+-   Wall Push-up
+-   Incline Push-up
+-   Knee Push-up
+-   Standard Push-up
+-   Wide Push-up
+-   Diamond Push-up
+-   Close Grip Push-up
+-   Knuckle Push-up
+-   Fingertip Push-up
+-   Finger Push-up
+-   Offset Push-up
+-   Uneven Push-up
+-   Decline Push-up
+-   Incline Diamond Push-up
+-   Deep Push-up
+-   Pseudo Planche Push-up
+-   Planche Lean
+-   Planche Push-up
+-   Tuck Planche Push-up
+-   Pike Push-up
+-   Elevated Pike Push-up
+-   Box Pike Push-up
+-   Wall Walk
+-   Mike Tyson Push-up
+-   Hindu Push-up
+-   Dive Bomber Push-up
+-   Sphinx Push-up
+-   Tiger Bend Push-up
+-   Russian Push-up
+-   V Push-up
+-   Dynamic Push-up
+-   Explosive Push-up
+-   Clap Push-up
+-   Double Clap Push-up
+-   Behind Back Clap Push-up
+-   Superman Push-up
+-   Aztec Push-up
+-   Archer Push-up
+-   Typewriter Push-up
+-   Assisted One Arm Push-up
+-   Negative One Arm Push-up
+-   One Arm Push-up
+-   Wall Handstand Push-up
+-   Negative Handstand Push-up
+-   Partial Handstand Push-up
+-   Handstand Push-up
+-   90 Degree Push-up
+
+Pull
+
+-   Passive Hang
+-   Active Hang
+-   False Grip Hang
+-   Scapular Pull-up
+-   Scapular Chin-up
+-   Australian Row
+-   Ring Row
+-   Inverted Row
+-   Chin-up
+-   Neutral Grip Pull-up
+-   Pull-up
+-   Wide Pull-up
+-   Close Pull-up
+-   Commando Pull-up
+-   Mixed Grip Pull-up
+-   Typewriter Pull-up
+-   Archer Pull-up
+-   Chest-to-Bar Pull-up
+-   Explosive Pull-up
+-   High Pull-up
+-   Ice Cream Maker
+-   Bar Muscle-Up
+-   Ring Muscle-Up
+-   Muscle-Up
+-   One Arm Pull-up Progression
+-   One Arm Pull-up
+-   German Hang
+-   Skin the Cat
+-   Tuck Front Lever
+-   Advanced Tuck Front Lever
+-   One Leg Front Lever
+-   Straddle Front Lever
+-   Front Lever
+-   Tuck Back Lever
+-   Advanced Tuck Back Lever
+-   Straddle Back Lever
+-   Back Lever
+-   Pelican Curl
+-   Front Lever Row
+
+Core
+
+-   Dead Bug
+-   Plank
+-   Side Plank
+-   Reverse Plank
+-   Hollow Hold
+-   Reverse Hollow Hold
+-   Hollow Rocks
+-   Boat Hold
+-   Reverse Crunch
+-   V-Up
+-   Hanging Knee Raise
+-   Hanging Leg Raise
+-   Straight Leg Raise
+-   Toes to Bar
+-   L-Sit
+-   Tuck L-Sit
+-   Advanced L-Sit
+-   V-Sit
+-   Manna
+-   Compression Hold
+-   Compression Lift
+-   Dragon Flag Negative
+-   Dragon Flag
+-   Windshield Wipers
+
+Balance
+
+-   Bear Crawl
+-   Frog Stand
+-   Crow
+-   Crane
+-   Elbow Lever
+-   Tripod Headstand
+-   Headstand
+-   Wall Handstand
+-   Freestanding Handstand
+-   Shoulder Tap
+-   Handstand Walk
+-   Press to Handstand
+-   One Arm Handstand
+-   Human Flag Progression
+-   Human Flag
+
+Dips
+
+-   Bench Dip
+-   Parallel Bar Dip
+-   Deep Dip
+-   Straight Bar Dip
+-   Korean Dip
+-   Archer Dip
+-   Ring Dip
+-   Impossible Dip
+
+Legs
+
+-   Bodyweight Squat
+-   Split Squat
+-   Walking Lunge
+-   Reverse Lunge
+-   Bulgarian Split Squat
+-   Cossack Squat
+-   Jump Squat
+-   Shrimp Squat
+-   Pistol Squat
+-   Dragon Squat
+-   Nordic Curl
+-   Single Leg Romanian Deadlift
+-   Calf Raise
+-   Single Leg Calf Raise
+
+Mobility
+
+-   Wrist Mobility
+-   Finger Mobility
+-   Shoulder Mobility
+-   Thoracic Mobility
+-   Hip Mobility
+-   Ankle Mobility
+-   Pike Stretch
+-   Pancake Stretch
+-   Bridge
+-   Bridge Push-up
+-   German Hang
+-   Skin the Cat
+
+Elite
+
+-   Planche
+-   Advanced Tuck Planche
+-   Straddle Planche
+-   Full Planche
+-   Front Lever
+-   Back Lever
+-   Muscle-Up
+-   Human Flag
+-   Handstand Push-up
+-   One Arm Push-up
+-   One Arm Pull-up
+-   Iron Cross
+-   Victorian
+-   Maltese
+-   Hefesto
+-   Manna
+
+SYSTEMS - Skill Tree - XP - Levels - Achievements - Bosses - Quests -
+Daily Missions - Weekly Missions - Mastery - Unlock Requirements -
+Progress Tracking

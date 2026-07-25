@@ -1,0 +1,79 @@
+
+PROJECT_ASCEND_FUTURE_IDEAS_AND_ARCHITECT_GUIDE
+
+Purpose:
+Long-term vision and future systems for Project Ascend.
+
+Future Systems:
+- Skill DNA
+- Skill Graph
+- Equipment Progression
+- Ghost Replay
+- AI Weak Point Detector
+- Movement History
+- Heatmap
+- Skill Titles
+- Boss Battles
+- Prestige System
+- Movement Combos
+- Skill Calculator
+- Road Generator
+- New Game+
+- World Tree
+- Genetics / Body Analysis
+- Skill Synergy
+- Inventory
+- Interactive Skill Map
+- AI Progress Prediction
+- Personal Records
+- Character Evolution
+- Skill Lore
+- AI Form Analysis
+- Biomechanics
+- Alternative Paths
+- Injury Prevention Tree
+- Fatigue System
+- Knowledge XP
+- Timeline
+- Hall of Fame
+- Constellation Mode
+- Evolution Tree
+- Play Styles
+- Skill Fusion
+- Endless Tree
+- Knowledge Graph
+- Skill GPS
+- Balance Score
+- Readiness Score
+- Skill Packs
+- Procedural Quest Generator
+- Difficulty Curve Simulator
+- Missing Node Detector
+- Skill Certificates
+- Global Completion
+- Dream Builder
+- AI Research Mode
+- Skill Genome
+- Encyclopedia
+- Project Brain
+
+Architecture Principles:
+- Data-driven.
+- Modular.
+- Expandable.
+- Reusable.
+- Beginner to Elite support.
+- Coaches supported.
+- Movement database is never complete.
+- Add missing movements, regressions and progressions.
+- Build for years, not months.
+- Prefer maintainability over shortcuts.
+
+AI Instructions:
+Read every document before making decisions.
+Question existing ideas if better ones exist.
+Think like a software architect, game designer, product designer, data architect and calisthenics coach.
+Continuously improve architecture, UX and progression.
+Design a foundation that survives years of development and can grow without breaking.
+Treat the project like a bridge designed to survive earthquakes, storms and time.
+Future ideas should integrate cleanly without forcing rewrites.
