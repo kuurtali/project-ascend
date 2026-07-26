@@ -90,8 +90,9 @@ const Q = s => document.querySelectorAll(s).length;
 console.log("\n=== 1. YUKLEME VE CIZIM ===");
 ok("uygulama hatasiz yuklendi", loadErr === null, loadErr && loadErr.message);
 if (loadErr) { console.log(loadErr.stack.split("\n").slice(0, 4).join("\n")); process.exit(1); }
-ok("veri yuklendi (196 hareket)", W.ASCEND_DATA.moves.length === 196);
-ok("196 node cizildi", Q("#svg .node") === 196, "cizilen=" + Q("#svg .node"));
+const N = W.ASCEND_DATA.moves.length;   // hareket sayisi VERIDEN gelir, sabit yazilmaz
+ok("veri yuklendi", N > 150, "hareket=" + N);
+ok("tum node'lar cizildi", Q("#svg .node") === N, "cizilen=" + Q("#svg .node") + " / " + N);
 ok("kenarlar cizildi (>200)", Q("#svg .edge") > 200, "kenar=" + Q("#svg .edge"));
 ok("12 kategori bandi cizildi", Q("#svg .bandlabel") === 12);
 ok("baslangic seviyesi 1", String(get("lvlNum").textContent) === "1");
@@ -176,7 +177,7 @@ ok("planche aramasi sonuc verdi", Q("#svg .node:not(.dim)") >= 5, "gorunur=" + Q
 get("q").value = "";
 get("fEq").checked = true; W.render();
 const eqV = Q("#svg .node:not(.dim)");
-ok("ekipman filtresi halka/parallettes hareketlerini gizledi", eqV > 0 && eqV < 196, "gorunur=" + eqV);
+ok("ekipman filtresi halka/parallettes hareketlerini gizledi", eqV > 0 && eqV < N, "gorunur=" + eqV);
 get("fEq").checked = false;
 get("fOnlyOpen").checked = true; W.render();
 ok("sadece-acik filtresi calisti", Q("#svg .node:not(.dim)") === W.ASCEND_DATA.moves.filter(m => W.isOpen(m.id)).length);
@@ -204,7 +205,7 @@ while (changed && guard++ < 60) {
   });
 }
 const allOpen = W.ASCEND_DATA.moves.filter(m => W.isOpen(m.id)).length;
-ok("sadece bronz yaparak 196 node'un tamami acilabiliyor", allOpen === 196,
+ok("sadece bronz yaparak TUM node'lar acilabiliyor", allOpen === N,
    "acilan=" + allOpen + " / iterasyon=" + guard);
 ok("kilitlenme (deadlock) yok", guard < 60);
 W.render();
@@ -218,7 +219,7 @@ ok("XP sifirlandi", W.S.xp === 0);
 ok("tum kayitlar silindi", Object.keys(W.S.best).length === 0);
 ok("sifirlamadan sonra yine 23 kok node acik",
    W.ASCEND_DATA.moves.filter(m => W.isOpen(m.id)).length === 23);
-ok("agac yeniden cizildi", Q("#svg .node") === 196);
+ok("agac yeniden cizildi", Q("#svg .node") === N);
 
 console.log("\n" + "=".repeat(56));
 console.log(`  GECEN: ${pass}    BASARISIZ: ${fail}`);

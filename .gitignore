@@ -1,6 +1,8 @@
 # Üretilen ara dosyalar
 tools/ascend_data.js
 tools/ascend_prototype.html
+tools/movements.json
+tools/validation_report.txt
 tools/__pycache__/
 *.pyc
 
@@ -41,3 +43,6 @@ GITHUBA_GONDER.bat
 PROFIL_YEREL.md
 PROFIL_*.md
 *_YEREL.md
+
+# Antrenman kaydi - kisisel performans verisi
+ANTRENMAN_KAYDI_YEREL.md

@@ -179,6 +179,7 @@ M += [
  ("incline-pushup","Incline Push-up","push",0,"reps",["floor","box"],["wall-pushup"],(8,12,15,20),["göğüs","omuz","triceps"],"pushup",0),
  ("knee-pushup","Knee Push-up","push",0,"reps",["floor"],["wall-pushup"],(8,12,15,20),["göğüs","triceps","core"],"pushup",0),
  ("pushup","Standard Push-up","push",1,"reps",["floor"],["incline-pushup","knee-pushup"],(5,10,15,25),["göğüs","omuz","triceps","core"],"pushup",0),
+ ("scapular-pushup","Scapular Push-up","push",1,"reps",["floor"],["pushup","plank"],(8,12,20,30),["serratus anterior","kürek stabilizatörleri"],"planche",0),
  ("wide-pushup","Wide Push-up","push",1,"reps",["floor"],["pushup"],(5,10,15,20),["göğüs","omuz"],"pushup",0),
  ("close-grip-pushup","Close Grip Push-up","push",2,"reps",["floor"],["pushup"],(5,8,12,18),["triceps","göğüs"],"pushup",0),
  ("diamond-pushup","Diamond Push-up","push",2,"reps",["floor"],["close-grip-pushup"],(5,8,12,18),["triceps","göğüs iç"],"pushup",0),
@@ -188,7 +189,7 @@ M += [
  ("hindu-pushup","Hindu Push-up","push",2,"reps",["floor"],["pushup"],(5,8,12,15),["omuz","göğüs","thoracic"],"pushup",0),
  ("dive-bomber","Dive Bomber Push-up","push",3,"reps",["floor"],["hindu-pushup"],(5,8,12,15),["omuz","göğüs","core"],"pushup",0),
  ("sphinx-pushup","Sphinx Push-up","push",3,"reps",["floor"],["diamond-pushup"],(3,6,10,15),["triceps"],"pushup",0),
- ("fingertip-pushup","Fingertip Push-up","push",3,"reps",["floor"],["knuckle-pushup","finger-mobility"],(3,6,10,15),["parmak","önkol","göğüs"],"grip",0),
+ ("fingertip-pushup","Fingertip Push-up","push",3,"reps",["floor"],["pushup","finger-mobility"],(3,6,10,15),["parmak","önkol","göğüs"],"grip",0),
  ("finger-pushup","Finger Push-up","push",5,"reps",["floor"],["fingertip-pushup"],(1,3,5,8),["parmak","önkol"],"grip",0),
  ("offset-pushup","Offset Push-up","push",2,"reps_side",["floor"],["pushup"],(5,8,12,15),["göğüs","triceps","core"],"pushup",0),
  ("uneven-pushup","Uneven Push-up","push",3,"reps_side",["floor","box"],["offset-pushup"],(5,8,12,15),["göğüs","triceps"],"pushup",0),
@@ -197,8 +198,8 @@ M += [
  ("assisted-oap","Assisted One Arm Push-up","push",5,"reps_side",["floor","band"],["archer-pushup"],(3,5,8,10),["göğüs","triceps","core"],"oa_push",0),
  ("negative-oap","Negative One Arm Push-up","push",6,"reps_side",["floor"],["assisted-oap"],(2,3,5,8),["göğüs","triceps","core"],"oa_push",0),
  ("one-arm-pushup","One Arm Push-up","push",7,"reps_side",["floor"],["negative-oap","typewriter-pushup"],(1,3,5,8),["göğüs","triceps","oblik","core"],"oa_push",1),
- ("pseudo-planche-pushup","Pseudo Planche Push-up","push",4,"reps",["floor"],["diamond-pushup","decline-pushup","wrist-mobility"],(3,6,10,15),["ön omuz","göğüs","core"],"planche",0),
- ("mike-tyson-pushup","Mike Tyson Push-up","push",4,"reps",["floor"],["pushup","hollow-hold"],(3,6,10,15),["göğüs","core","kalça fleksör"],"explosive_push",0),
+ ("pseudo-planche-pushup","Pseudo Planche Push-up","push",4,"reps",["floor"],["scapular-pushup","decline-pushup","wrist-mobility"],(3,6,10,15),["ön omuz","göğüs","core"],"planche",0),
+ ("mike-tyson-pushup","Mike Tyson Push-up","push",3,"reps",["floor"],["pushup","hollow-hold","shoulder-mobility"],(3,6,10,15),["göğüs","core","kalça fleksör","omuz"],"pushup",0),
  ("russian-pushup","Russian Push-up","push",5,"reps",["floor"],["diamond-pushup","sphinx-pushup"],(3,5,8,12),["triceps","göğüs"],"pushup",0),
 ]
 
@@ -428,6 +429,7 @@ M += [
 # Bilinçli olarak yaprak (leaf) node'lar: varyasyon / kondisyon / aksesuar amaçlı.
 # Hiçbir şeyin kilidini açmamaları bir veri eksikliği DEĞİLDİR.
 ACCESSORY = {
+ "knuckle-pushup",
  "deep-pushup","dive-bomber","v-pushup","mike-tyson-pushup","russian-pushup",
  "finger-pushup","neutral-pullup","mixed-grip-pullup","commando-pullup","close-pullup",
  "weighted-pullup","weighted-dip","l-sit-pullup","plyo-dip","archer-dip",

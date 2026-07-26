@@ -1,13 +1,13 @@
 PROJECT ASCEND - VERI DOGRULAMA RAPORU
 ============================================================
-Hareket sayisi      : 196
+Hareket sayisi      : 197
 Boss sayisi         : 22
 Kok (baslangic) node: 23
 Maks agac derinligi : 11
-Toplam kazanilabilir XP: 525,480
+Toplam kazanilabilir XP: 525,335
 
 KATEGORI DAGILIMI
-  Push              25
+  Push              26
   Vertical Push     12
   Explosive          8
   Dips              10
@@ -37,13 +37,13 @@ BOSS ERISIM YOLLARI (kok -> boss derinligi)
   Hefesto                          tier 9  derinlik 8
   Handstand Push-up                tier 7  derinlik 9
   Ring Muscle-Up                   tier 7  derinlik 9
+  Full Planche                     tier 9  derinlik 9
   One Arm Handstand                tier 9  derinlik 9
+  90 Degree Push-up                tier 9  derinlik 10
   One Arm Handstand Push-up        tier 9  derinlik 10
   One Arm Pull-up                  tier 9  derinlik 10
   Front Lever                      tier 8  derinlik 10
-  Full Planche                     tier 9  derinlik 10
+  Planche Push-up                  tier 9  derinlik 10
   Iron Cross                       tier 9  derinlik 10
-  90 Degree Push-up                tier 9  derinlik 11
-  Planche Push-up                  tier 9  derinlik 11
-  Maltese                          tier 9  derinlik 11
+  Maltese                          tier 9  derinlik 10
   Victorian Cross                  tier 9  derinlik 11

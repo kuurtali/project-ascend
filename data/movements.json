@@ -480,14 +480,14 @@
   }
  ],
  "stats": {
-  "movementCount": 196,
+  "movementCount": 197,
   "bossCount": 22,
   "rootCount": 23,
   "maxDepth": 11,
   "maxTier": 9,
-  "totalObtainableXp": 525480,
+  "totalObtainableXp": 525335,
   "byCategory": {
-   "push": 25,
+   "push": 26,
    "vertical_push": 12,
    "explosive": 8,
    "dips": 10,
@@ -738,12 +738,14 @@
     "knee-pushup"
    ],
    "unlocks": [
+    "scapular-pushup",
     "wide-pushup",
     "close-grip-pushup",
     "knuckle-pushup",
     "decline-pushup",
     "deep-pushup",
     "hindu-pushup",
+    "fingertip-pushup",
     "offset-pushup",
     "mike-tyson-pushup",
     "pike-pushup",
@@ -801,6 +803,77 @@
    },
    "lore": null,
    "depth": 2
+  },
+  {
+   "id": "scapular-pushup",
+   "name": "Scapular Push-up",
+   "category": "push",
+   "tier": 1,
+   "isBoss": false,
+   "isAccessory": false,
+   "measure": {
+    "type": "reps",
+    "unit": "tekrar",
+    "sets": 3
+   },
+   "equipment": [
+    "floor"
+   ],
+   "prerequisites": [
+    "pushup",
+    "plank"
+   ],
+   "unlocks": [
+    "pseudo-planche-pushup"
+   ],
+   "mastery": {
+    "bronze": {
+     "target": 8,
+     "sets": 3,
+     "xp": 45
+    },
+    "silver": {
+     "target": 12,
+     "sets": 3,
+     "xp": 70
+    },
+    "gold": {
+     "target": 20,
+     "sets": 3,
+     "xp": 115
+    },
+    "master": {
+     "target": 30,
+     "sets": 3,
+     "xp": 190
+    }
+   },
+   "xp": {
+    "base": 45,
+    "total": 420
+   },
+   "muscles": [
+    "serratus anterior",
+    "kürek stabilizatörleri"
+   ],
+   "family": "planche",
+   "tips": [
+    "Kürekler öne-aşağı protraksiyon + depresyon.",
+    "Kalça kilitli, gövde hollow, ağırlık öne.",
+    "Bilek hazırlığı olmadan lean süresini artırma."
+   ],
+   "commonMistakes": [
+    "Kalçayı yükseltmek",
+    "Kürek protraksiyonu yapmamak",
+    "Bilek ısınmasını atlamak"
+   ],
+   "media": {
+    "icon": null,
+    "video": null,
+    "animation": null
+   },
+   "lore": null,
+   "depth": 3
   },
   {
    "id": "wide-pushup",
@@ -964,7 +1037,6 @@
    ],
    "unlocks": [
     "sphinx-pushup",
-    "pseudo-planche-pushup",
     "russian-pushup"
    ],
    "mastery": {
@@ -1023,7 +1095,7 @@
    "category": "push",
    "tier": 2,
    "isBoss": false,
-   "isAccessory": false,
+   "isAccessory": true,
    "measure": {
     "type": "reps",
     "unit": "tekrar",
@@ -1035,9 +1107,7 @@
    "prerequisites": [
     "pushup"
    ],
-   "unlocks": [
-    "fingertip-pushup"
-   ],
+   "unlocks": [],
    "mastery": {
     "bronze": {
      "target": 5,
@@ -1458,7 +1528,7 @@
     "floor"
    ],
    "prerequisites": [
-    "knuckle-pushup",
+    "pushup",
     "finger-mobility"
    ],
    "unlocks": [
@@ -1511,7 +1581,7 @@
     "animation": null
    },
    "lore": null,
-   "depth": 4
+   "depth": 3
   },
   {
    "id": "finger-pushup",
@@ -1578,7 +1648,7 @@
     "animation": null
    },
    "lore": null,
-   "depth": 5
+   "depth": 4
   },
   {
    "id": "offset-pushup",
@@ -2097,7 +2167,7 @@
     "floor"
    ],
    "prerequisites": [
-    "diamond-pushup",
+    "scapular-pushup",
     "decline-pushup",
     "wrist-mobility"
    ],
@@ -2153,13 +2223,13 @@
     "animation": null
    },
    "lore": null,
-   "depth": 5
+   "depth": 4
   },
   {
    "id": "mike-tyson-pushup",
    "name": "Mike Tyson Push-up",
    "category": "push",
-   "tier": 4,
+   "tier": 3,
    "isBoss": false,
    "isAccessory": true,
    "measure": {
@@ -2172,50 +2242,53 @@
    ],
    "prerequisites": [
     "pushup",
-    "hollow-hold"
+    "hollow-hold",
+    "shoulder-mobility"
    ],
    "unlocks": [],
    "mastery": {
     "bronze": {
      "target": 3,
      "sets": 3,
-     "xp": 165
+     "xp": 105
     },
     "silver": {
      "target": 6,
      "sets": 3,
-     "xp": 265
+     "xp": 170
     },
     "gold": {
      "target": 10,
      "sets": 3,
-     "xp": 430
+     "xp": 275
     },
     "master": {
      "target": 15,
      "sets": 3,
-     "xp": 695
+     "xp": 440
     }
    },
    "xp": {
-    "base": 165,
-    "total": 1555
+    "base": 105,
+    "total": 990
    },
    "muscles": [
     "göğüs",
     "core",
-    "kalça fleksör"
+    "kalça fleksör",
+    "omuz"
    ],
-   "family": "explosive_push",
+   "family": "pushup",
    "tips": [
-    "İnişte yumuşak karşıla, dirsekleri kilitli tutma.",
-    "Yukarı itişte tüm gövde aynı anda kalksın.",
-    "Set başına düşük tekrar, yüksek kalite."
+    "Gövde tek parça: kalça düşmesin, popo yükselmesin.",
+    "Dirsekler 45 derece, kanatlanmasın.",
+    "Göğüs yere yaklaşsın, tam kilitle bitir."
    ],
    "commonMistakes": [
-    "Sert iniş (dirsek/bilek riski)",
-    "Yorgunken devam etmek",
-    "Kalçayı kullanarak hile yapmak"
+    "Kalça sarkması",
+    "Boyun öne düşmesi",
+    "Yarım hareket açıklığı",
+    "Dirseklerin 90 derece açılması"
    ],
    "media": {
     "icon": null,
@@ -3073,7 +3146,7 @@
     "animation": null
    },
    "lore": null,
-   "depth": 11
+   "depth": 10
   },
   {
    "id": "one-arm-hspu",
@@ -7532,7 +7605,7 @@
     "animation": null
    },
    "lore": null,
-   "depth": 6
+   "depth": 5
   },
   {
    "id": "tuck-planche",
@@ -7606,7 +7679,7 @@
     "animation": null
    },
    "lore": null,
-   "depth": 7
+   "depth": 6
   },
   {
    "id": "adv-tuck-planche",
@@ -7677,7 +7750,7 @@
     "animation": null
    },
    "lore": null,
-   "depth": 8
+   "depth": 7
   },
   {
    "id": "straddle-planche",
@@ -7748,7 +7821,7 @@
     "animation": null
    },
    "lore": null,
-   "depth": 9
+   "depth": 8
   },
   {
    "id": "full-planche",
@@ -7822,7 +7895,7 @@
     "animation": null
    },
    "lore": null,
-   "depth": 10
+   "depth": 9
   },
   {
    "id": "tuck-planche-pushup",
@@ -7891,7 +7964,7 @@
     "animation": null
    },
    "lore": null,
-   "depth": 8
+   "depth": 7
   },
   {
    "id": "planche-pushup",
@@ -7961,7 +8034,7 @@
     "animation": null
    },
    "lore": null,
-   "depth": 11
+   "depth": 10
   },
   {
    "id": "dead-bug",
@@ -8048,6 +8121,7 @@
    ],
    "prerequisites": [],
    "unlocks": [
+    "scapular-pushup",
     "arch-hold",
     "side-plank",
     "reverse-plank",
@@ -12413,6 +12487,7 @@
    ],
    "prerequisites": [],
    "unlocks": [
+    "mike-tyson-pushup",
     "pike-pushup",
     "parallel-bar-dip",
     "korean-dip",
@@ -13980,7 +14055,7 @@
     "animation": null
    },
    "lore": null,
-   "depth": 11
+   "depth": 10
   },
   {
    "id": "victorian",
