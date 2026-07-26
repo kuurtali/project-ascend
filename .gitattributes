@@ -1,0 +1,28 @@
+# Satir sonlarini platformdan bagimsiz sabitler.
+# Bu dosya olmadan ayni depo Windows'ta CRLF, Linux'ta LF gorunur ve
+# her dosya "degismis" gibi listelenir.
+
+# Varsayilan: depoda LF, calisma alaninda LF
+* text=auto eol=lf
+
+# Windows'a ozel dosyalar CRLF olmak zorunda
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf
+
+# Ikili dosyalar - dokunulmaz
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.pdf  binary
+*.zip  binary
+*.woff binary
+*.woff2 binary
+*.mp4  binary
+
+# GitHub dil istatistigi: uretilen veri ve arsiv projeyi temsil etmez
+data/movements.json linguist-generated=true
+docs/archive/**     linguist-documentation=true

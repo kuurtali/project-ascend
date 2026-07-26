@@ -21,8 +21,9 @@ desktop.ini
 *.log
 _check_app.js
 
-# Sandbox artigi - silinebilir
-.git_bozuk_SILINEBILIR/
+# Sandbox artigi - silinebilir yedek .git klasorleri
+.git_*/
+.git_*
 arsiv/
 build/
 
