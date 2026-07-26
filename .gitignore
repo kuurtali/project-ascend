@@ -7,9 +7,6 @@ tools/__pycache__/
 *.pyc
 
 # Bağımlılıklar
-node_modules/
-package-lock.json
-package.json
 
 # Editör / işletim sistemi
 .vscode/
@@ -46,3 +43,11 @@ PROFIL_*.md
 
 # Antrenman kaydi - kisisel performans verisi
 ANTRENMAN_KAYDI_YEREL.md
+
+# Yedek klasoru - kullanici silebilir
+_SILINEBILIR_yedekler/
+
+# Uygulama build ciktisi ve bagimliliklar
+node_modules/
+dist/
+package-lock.json

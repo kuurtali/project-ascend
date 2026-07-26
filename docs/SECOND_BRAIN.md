@@ -154,6 +154,16 @@ Kurucunun kendi ifadesiyle, daha kısası:
 > *(MASTER_PROMPT: "Build an operating system for learning calisthenics
 > that can grow for years.")*
 
+Ve tek cümlelik konumlandırma:
+
+> **"Duolingo dil öğrenmeyi nasıl oyunlaştırdıysa, biz de kalistenik
+> öğrenmeyi oyunlaştırıyoruz. Kullanıcı kas değil, skill geliştiriyor."**
+
+Bu cümle çerçeveyi doğru kuruyor: ürün bir egzersiz listesi değil, bir
+**progression engine.** Duolingo benzetmesinin işlevsel tarafı da var —
+Duolingo sana kelime listesi vermez, sıradaki dersi verir. Ascend de
+hareket listesi vermez, **sıradaki 4 slotu** verir (`18.12`).
+
 Bu benzetme iyi çünkü işletim sisteminin ne yaptığını doğru anlatıyor:
 kendisi bir uygulama değildir, **üzerinde her şeyin çalıştığı zemindir.**
 Ascend de antrenman yaptırmaz; antrenmanın üzerinde durduğu yapıyı verir.
@@ -2501,52 +2511,214 @@ yazılımı değiliz.*
 
 ---
 
-## 18.12 · Aktif Kadro (Focus Slots) **[TASARIM]** ⭐ v2.0'da eklendi
+## 18.12 · SKILL SLOT — rol tabanlı kadro **[TASARIM]** ⭐⭐ v2.1'de yeniden tasarlandı
 
-### Neden — eksik olan çekirdek mekanik
+> **v2.0'daki tasarım yanlıştı.** "8 serbest slot" diye modellemiştim:
+> kullanıcı 8 hareket seçer, hepsi eşit statüde. Kurucu daha iyi bir model
+> getirdi ve o model doğru: **slotların rolü var, hareketler roller
+> arasında dolaşıyor.**
 
-Gerçek: haftada 4 gün, seans 45-60 dakika. Eşzamanlı **8-12 hareket**
-sürdürebilirsin, fazlası değil.
+### Model
 
-Ama ağaç sana **182 tanesini "açık"** diye gösteriyor. Yani asıl problem
-*erişim* değil, **seçim.**
-
-v1.0'da "açık node" ile "üzerinde çalıştığım node" arasında hiçbir ayrım
-yoktu. Halbuki bu ayrım sistemin merkezinde olmalı.
-
-### Mekanik **[TASARIM]**
+Her ağaçta **4 slot** var ve slotlar **rol**, hareket değil:
 
 ```
-Aktif kadro: 8 slot (seviyeyle 6 → 12 arası açılır)
-
-Bir node'u kadroya alırsın   → "üzerinde çalışıyorum"
-Sadece kadrodakiler          → günlük görevlere ve seansa girer
-Mastery kademesi atlayınca   → slot boşaltılabilir
-Slot değiştirmek serbest     → ama "bu hafta kaç kez değiştirdin" görünür
+1. MAIN SKILL       — ana iş. Ağaçta ilerleyen hareket
+2. SECONDARY SKILL  — hacim. Genelde eski Main
+3. TECHNIQUE SKILL  — beceri/motor öğrenme. Az tekrar, taze yapılır
+4. FINISHER         — kapasite. Yüksek tekrar, seansı kapatır
 ```
 
-### Neden bu doğru mekanik
+Zaman içinde hareketler **yukarı kayar**, slot yapısı sabit kalır:
 
-- **Seçim felcini bitirir.** 182 seçenek yerine 8 taahhüt.
-- **Gerçekliği modeller.** Her şeyi aynı anda çalışamazsın; sistem de
-  öyle davranmamalı.
-- **Oyunun asıl karar anı bu olur.** RPG çerçevesi zaten bu cevabı
-  veriyor: kadro/parti slotu. *Kaynak: Game First ilkesi.*
-- **Denge puanını anlamlı kılar.** Kadro dağılımı = gerçek odak dağılımı.
+```
+                MAIN            SECONDARY      TECHNIQUE     FINISHER
+Ay 1    Normal Push-up      Incline         Scapular      Normal (yüksek tekrar)
+Ay 2    Diamond             Normal          Pike          Normal
+Ay 3    Pseudo Planche      Diamond         Pike          Normal
+Ay 4    Pike Push-up        Pseudo Planche  Wall Walk     Diamond
+Ay 5    Elevated Pike       Pike            Wall Handstand Normal
+Ay 6    Wall HSPU           Elevated Pike   Handstand     Pike
+```
+
+**Normal şınav hiçbir zaman gitmiyor. Rolü değişiyor.** Bu psikolojik
+olarak kritik: kazandığın şeyi kaybetmiyorsun, terfi ettiriyorsun.
+
+### Neden bu model doğru — 4 slot 4 farklı NİTELİK
+
+Slotların asıl anlamı "4 egzersiz" değil, **4 antrenman niteliği**:
+
+| Slot | Nitelik | Hedef | Tekrar aralığı |
+|---|---|---|---|
+| Main | **Yoğunluk / beceri ilerlemesi** | Ağaçta bir üst basamak | 3-8 |
+| Secondary | **Hacim / hipertrofi** | Kas ve dayanıklılık | 8-15 |
+| Technique | **Motor öğrenme** | Sinir sistemi, koordinasyon | 3-6, taze |
+| Finisher | **Kapasite** | Metabolik, yüksek tekrar | 15+ |
+
+Bu, "Volume RPG vs Skill Tree" tartışmasının **çözümü**. İkisini seçmek
+zorunda değilsin:
+
+- **Volume RPG hatası:** sadece tekrar artırmak. 6 ay sonra 45 şınav
+  çekersin ama ilk pike şınavda zorlanırsın.
+- **Saf skill tree hatası:** sürekli yeni harekete atlamak. Hacim
+  kaybedersin, temel erir.
+- **Doğrusu:** hacim `Secondary` ve `Finisher` slotlarında yaşar, beceri
+  `Main`'de ilerler. Hareket rol değiştirdikçe hem hacmi hem beceriyi
+  korursun.
 
 ### Kurallar **[TASARIM]**
 
-1. Kadro slot sayısı seviyeyle artar (6 → 12). Erken oyunda az slot =
-   odaklanma zorunluluğu.
-2. Kadroda **en az 1 mobilite** node'u bulunmalı. *Kaynak: M-2*
-3. Slot değiştirme serbest ama kayıt tutulur — sık değiştirme "dağınıklık"
-   göstergesi olarak Ascension Score'da görünür.
-4. Bir node master olunca slot **otomatik boşalmaz**; kullanıcı karar verir.
+**S-1 · Terfi mastery ile olur, takvimle olmaz.**
+Kurucunun taslağı "ay 1, ay 2" diyordu. Takvim keyfi. Doğrusu: **Main,
+ALTIN kademeye ulaşınca terfi eder.** Eski Main → Secondary'ye iner,
+ağaçtaki bir üst node Main olur.
+*Gerekçe: sistemde zaten mastery var (`18.3`); ikinci bir zaman ölçüsü
+uydurmak gereksiz. Ve bazı insan 3 haftada, bazısı 3 ayda geçer.*
+
+**S-2 · Slot şablonu ağaca göre değişir.** 4 slot her ağaç için doğru değil:
+
+| Ağaç | Slot yapısı |
+|---|---|
+| Push · Pull · Legs | Main · Secondary · Technique · Finisher (4) |
+| Core | Main · Secondary (2) — technique/finisher anlamsız |
+| Balance | Technique · Technique (2) — hepsi beceri işi, hacim yok |
+| Mobility | tek sürekli slot — rotasyon yok, her gün aynı |
+| Conditioning | Main · Finisher (2) — ip kendi progression'ında |
+| Recovery | slot yok — takvim işi |
+
+**S-3 · Slot ≠ seans. Slotlar günlere dağıtılır.**
+Push 4 + Pull 4 + Legs 4 + Core 2 = 14 slot. 14 hareketi her seans
+yapamazsın. Slotlar **hafta içine** dağıtılır:
+
+```
+Gün 1  Push (4 slot) + Core (1)
+Gün 2  Pull (4 slot) + Legs (2)
+Gün 3  Balance (2) + Mobility + hafif Push Finisher
+Gün 4  Pull (2) + Legs (2) + Core (1) + Conditioning
+```
+
+**S-4 · Seans içi sıra rol hiyerarşisi DEĞİL.**
+Rol sırası `Main → Secondary → Technique → Finisher` ama seans sırası
+farklı:
+
+```
+SEANS SIRASI:  Technique → Main → Secondary → Finisher
+```
+Technique taze sinir sistemiyle yapılır, yorulunca öğrenme olmaz.
+*Kaynak: `18.11` Seans Nesnesi — beceri bloğu yorgunluktan önce gelir.*
+
+**S-5 · Finisher tanımı:** eski, hakim olunan bir hareketin yüksek tekrarlı
+seti. **Maksimum denemesi değil.** Amaç kapasite ve kan akışı, rekor değil.
+
+**S-6 · Aktif hareket sayısı üst sınırı ~14-16.** Slot şablonları bunu
+zaten sağlıyor. Kullanıcı elle slot ekleyemez.
+
+### Bu neyi çözüyor
+
+- **Seçim felci:** 197 node yerine 14 slot
+- **"Ne kadar yapacağım" sorusu:** slot rolü tekrar aralığını belirliyor
+- **Temel kaybı korkusu:** hareket silinmiyor, rolü değişiyor
+- **Terfi anı:** Main'in yükselmesi görünür bir olay — oyunun en iyi
+  ödül anı. `18.4` Boss mekaniğinden daha güçlü, çünkü her ay oluyor
 
 ### Açık Sorular
-- **[RESEARCH]** 8 doğru sayı mı? Deneyle bulunacak.
-- **[RESEARCH]** Slot dolu ama kullanıcı 3 haftadır o node'a dokunmadıysa
-  ne olur? Uyarı mı, otomatik boşaltma mı?
+- **[RESEARCH]** Terfi eşiği ALTIN mı, GÜMÜŞ mü? Altın yavaş olabilir.
+- **[RESEARCH]** Aynı hareket iki ağaçta slot tutabilir mi? (Pike şınav
+  hem Push hem Balance'ta) Şu anki görüş: hayır, tek yerde sayılır.
+- **[RESEARCH]** Kullanıcı terfiyi reddedebilir mi ("henüz hazır
+  değilim")? Muhtemelen evet — ama kaydı tutulmalı.
+
+---
+
+## 18.19 · PROGRESSION PLANNER **[TASARIM]** ⭐⭐ v2.1'de eklendi
+
+> Projenin en büyük eksiği buydu ve kurucu buldu:
+>
+> **"Ağaç nereye gideceğini söylüyor. Planner yarın tam olarak ne
+> yapacağını söylüyor."**
+
+### Neden — ağaç tek başına yetmiyor
+
+`18.11`'de "günlük kullanım döngüsü tanımsız" demiştim ama çözümü
+eksik kurmuştum. Eksik olan katman şu:
+
+```
+SKILL TREE      → nereye gidebilirim          (harita)
+SKILL GPS       → oraya giden yol nedir       (rota)   ✓ çalışıyor
+SKILL SLOT      → şu an hangi 14 hareket      (kadro)  ✓ tasarlandı
+PROGRESSION PLANNER → önümüzdeki 6 hafta ne   (plan)   ← EKSİKTİ
+SEANS NESNESİ   → bugün 45 dakikada ne        (gün)
+```
+
+### Girdi → Çıktı
+
+```
+GİRDİ
+  hedef skill            (örn. Handstand Push-up)
+  mevcut mastery durumu  (hangi node hangi kademede)
+  ekipman                (elindekiler)
+  kısıtlar               (el/bilek/omuz, clearedByProfessional)
+  haftalık gün sayısı    (4)
+  seans süresi           (45 dk)
+
+ÇIKTI
+  6 haftalık slot ataması
+  her ağaç için: Main / Secondary / Technique / Finisher
+  günlere dağılım
+  her slot için tekrar aralığı ve RIR
+  terfi koşulu: "Main altına ulaşınca X'e geç"
+```
+
+### Kritik: bu deterministik, LLM gerektirmiyor
+
+Graf zaten var. Mastery durumu zaten var. Slot şablonları kural.
+Yani planner **hesaplanabilir bir fonksiyon**, üretken bir model değil.
+
+```
+1. Hedeften geriye ata zincirini çıkar        (ancestors — mevcut kod)
+2. Zincirde ilk "bronz değil" node'u bul      → Main adayı
+3. Main'in ön koşulları eksikse onlar Main    → sıra otomatik düzelir
+4. Bir alt node (bronz+, altın değil)         → Secondary
+5. Aynı ağaçta beceri niteliği olan node      → Technique
+6. En düşük tier'da master olunmuş node       → Finisher
+7. Kısıt filtresi uygula (handLoad, wristLoad, ekipman)
+8. Slot şablonuna göre günlere dağıt
+```
+
+Bu `13_AIArchitecture` D-022 ile uyumlu: Faz 3 LLM'siz. LLM sadece
+**açıklama** üretiminde kullanılır (Faz 4+), kararda değil.
+
+### Bu, ürünün en güçlü özelliği olabilir
+
+Uygulama şunu **demeyecek**:
+> ❌ "Bugün şınav yap."
+
+Şunu diyecek:
+> ✅ "Push ağacında ana skill artık Pseudo Planche Push-up. Normal şınav
+> Finisher statüsüne geçti. Bu hafta 3 gün, Main 3×6 (RIR 2)."
+
+Ağaç mantığını gerçek antrenmana çeviren şey bu cümle.
+
+### Kurallar **[TASARIM]**
+
+1. **Planner öneri verir, zorlamaz.** Kullanıcı slotu değiştirebilir ama
+   kayıt tutulur.
+2. **6 hafta ufku.** Daha uzun plan gerçekle çatışır, daha kısa plan
+   ilerleme hissi vermez.
+3. **Her hafta yeniden hesaplanır.** Kayıtlar geldikçe plan güncellenir —
+   `18.13` uyarlama kuralı planner'ı besler.
+4. **Kısıtlar plandan önce uygulanır.** Yasak hareket plana hiç girmez.
+
+### Açık Sorular
+- **[RESEARCH]** Kullanıcı birden fazla hedef koyarsa (HSPU + Muscle-up +
+  İp) planner çatışan slotları nasıl böler?
+- **[RESEARCH]** 6 hafta doğru ufuk mu?
+- **[RESEARCH]** Technique slotu için "beceri niteliği" nasıl otomatik
+  belirlenir? `sessionBlock: skill` etiketi yeterli mi?
+
+---
+
+## 18.20 · Diğer sistemler
 
 ---
 
@@ -3740,6 +3912,115 @@ gereksinim olarak kabul edildi**
 atlanmıştı. Arayüz metni koda gömülmez; mastery kademeleri renkten
 bağımsız da ayırt edilebilmeli. i18n sarmalayıcısı **erken** yapılmalı —
 196 node sonradan dönüştürmek pahalı.
+
+**D-050 · 2026-07-26 · FAZ SIRASI DEĞİŞTİ — uygulama kendi kendine
+yetmeli, koça bağlı kalmamalı**
+
+**Yeni kısıt:** Kurucunun AI erişimi 1 ay garantili; 6 ay boyunca devam
+edip etmeyeceği belirsiz. Ayrıca antrenmanı **telefondan** girecek ve AI
+şu an yalnızca masaüstünde.
+
+**Bu, faz planını geçersiz kılıyor.** Eski plan şunu varsayıyordu: koç
+(AI) sürekli devrede olur, slotları seçer, hedefi ayarlar, uyarlamayı
+yapar. Progression Planner Faz 3'e konmuştu — yani uygulamanın en kritik
+parçası en sona.
+
+**Yanlıştı.** Koç kaybolabiliyorsa, koçun yaptığı iş **uygulamanın
+içinde** olmalı. Yoksa erişim bittiği gün sistem durur.
+
+**Yeni öncelik sırası:**
+
+| Eski | Yeni |
+|---|---|
+| v1: kayıt ekranı | v1: kayıt **+ uyarlama kuralı + Progression Planner** |
+| Planner Faz 3 | **Planner v1'de** |
+| Mobil Faz 4 | **Mobil öncelikli (v1)** — kullanım telefonda |
+| Bulut Faz 4 | Faz 4'te kalıyor (yerel yeterli) |
+
+**Gerekçe:** Uyarlama kuralı (`18.13`) ve Planner (`18.19`) zaten
+**deterministik** — LLM gerektirmiyorlar. Yani koçun yaptığı işin %90'ı
+kodlanabilir. Kodlanmazsa proje bir aylık erişime bağımlı kalır; bu,
+"on yıllarca yaşayacak sistem" vizyonuyla (`01_Vision`) çelişir.
+
+**Bilgi sürekliliği önlemleri (zaten alınmış):**
+- `SECODE_BRAIN.md` 31 bölüm, 50 karar kaydı — herhangi bir AI okuyup
+  devam edebilir
+- 3 skill kaydedildi (`ascend`, `ascend-veri`, `ascend-agac-inceleme`) —
+  kullanıcı hesabında kalıcı
+- Depo public, üretim zinciri belgelendi
+- `PROFIL_YEREL.md` ve antrenman kaydı yerelde duruyor
+
+Yani **kurumsal hafıza koça bağlı değil.** Eksik olan tek şey, koçun
+*karar verme* işinin koda geçmesi. Bu D-050'nin işi.
+
+**D-051 · 2026-07-26 · Mobil öncelikli, web app olarak telefona kurulur**
+Kullanım senaryosu netleşti: antrenman sırasında, seti bitirdikçe telefondan
+giriş. Tek elle mid-set kullanım değil — set arası toplu giriş.
+
+Sonuç: Bugün ekranı **telefon genişliğine** tasarlanır. Mağaza gerekmez;
+web app olarak telefonun ana ekranına eklenir (PWA). `D-034` (App Store
+ertelendi) geçerliliğini koruyor ama artık mobil *kullanım* birinci sınıf.
+
+**D-046 · 2026-07-26 · Skill Slot rol tabanlı yeniden tasarlandı**
+v2.0'daki "8 serbest slot" modeli yanlıştı — hepsi eşit statüdeydi.
+Doğrusu: slotların **rolü** var (Main / Secondary / Technique / Finisher),
+hareketler roller arasında dolaşıyor. Normal şınav hiç gitmiyor, terfi
+ediyor.
+
+Kurucunun modeline iki katkı yapıldı:
+1. **Terfi mastery ile olur, takvimle olmaz.** Taslak "ay 1, ay 2" diyordu;
+   takvim keyfi. Main altın kademeye ulaşınca terfi eder.
+2. **4 slot = 4 farklı nitelik**, 4 egzersiz değil. Main yoğunluk,
+   Secondary hacim, Technique motor öğrenme, Finisher kapasite. Bu,
+   "Volume RPG mi skill tree mi" tartışmasının çözümü: hacim Secondary ve
+   Finisher'da yaşar, beceri Main'de ilerler.
+
+Eleştiri olarak eklenenler: 4 slot her ağaç için doğru değil (Balance'ta
+hacim yok, Mobility'de rotasyon yok) → ağaç başına slot şablonu.
+Ve slot ≠ seans → 14 slot günlere dağıtılır. Detay: `18.12`
+
+**D-047 · 2026-07-26 · Progression Planner eklendi — projenin en büyük eksiğiydi**
+*"Ağaç nereye gideceğini söylüyor. Planner yarın tam olarak ne yapacağını
+söylüyor."* Bu katman hiç yoktu.
+
+**Kritik bulgu: deterministik, LLM gerektirmiyor.** Graf var, mastery
+durumu var, slot şablonu kural. Hedeften geriye ata zinciri çıkar, ilk
+bronz olmayan node Main olur, bir altı Secondary olur, kısıt filtresi
+uygulanır, günlere dağıtılır. Hesaplanabilir bir fonksiyon.
+`D-022` (Faz 3 LLM'siz) ile uyumlu. Detay: `18.19`
+
+**D-048 · 2026-07-26 · Duolingo çerçevesi vizyona eklendi**
+*"Duolingo dil öğrenmeyi nasıl oyunlaştırdıysa, biz de kalistenik
+öğrenmeyi oyunlaştırıyoruz. Kullanıcı kas değil, skill geliştiriyor."*
+İşlevsel tarafı var: Duolingo kelime listesi vermez, sıradaki dersi verir.
+Ascend hareket listesi vermez, sıradaki 4 slotu verir.
+
+**D-049 · 2026-07-26 · Eşikler RIR 2'de tanımlanır + haftada bir test günü**
+
+**Çözülen çelişki:** Kurucu oyunlaştırmanın işleyiş biçimini şöyle anlattı:
+*"altın/gümüş/bronzu gördükçe derim ki 2 tane daha yapayım, yarın altına
+çıkayım."* Yani motivasyon **sonraki kademeye yakınlığı görmekten** geliyor,
+kademeye ulaştıktan sonraki kutlamadan değil.
+
+Ama bu doğrudan `M-3` ve `FP-2` ile çatışıyor: ekran "altına 2 tekrar kaldı"
+derse kullanıcı her gün maksimuma çıkar. Aradan sonra sakatlığın bir
+numaralı sebebi bu.
+
+**Karar — iki parçalı:**
+
+1. **Mastery eşikleri RIR 2'de tanımlıdır.** "Altın 15 tekrar" demek
+   "başarısızlığa 2 kala 15" demek, "canını dişine takıp 15" demek değil.
+   Böylece kademe kovalamak maksimuma çıkmayı gerektirmiyor.
+2. **Haftada bir gün "test günü"** — o gün bir harekette RIR 0'a
+   (başarısızlığa) çıkılabilir. Diğer günler hacim günü.
+
+**Sonuç:** yakınlık göstergesi her gün görünür (motivasyon korunur), ama
+"bugün zorla" izni haftada bir (sağlık korunur). Oyunlaştırma sağlığa
+zarar vermeden çalışıyor.
+
+**[TASARIM] Bunun UI karşılığı:** Bugün ekranındaki her slotun yanında
+sonraki kademeye kalan mesafe görünür — *"gümüş 10'da, sende 8"*. Ağaç
+haftalık yönelim aracı; **günlük motoru bu yakınlık göstergesi.**
 
 **D-041 · 2026-07-26 · Depo PUBLIC (revize edildi)**
 

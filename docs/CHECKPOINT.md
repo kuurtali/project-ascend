@@ -28,7 +28,62 @@ OKUMA SIRASI:
   6. PROJECT_ASCEND_*.txt (kok dizin)    <- orijinal vizyon notlari, ARSIV
 
 --------------------------------------------------------------------------------
-SON GUNCELLEME : 2026-07-25  (Second Brain v2.0)
+--------------------------------------------------------------------------------
+!!! EN SON DURUM — 2026-07-26: UYGULAMA KODU BASLADI !!!
+--------------------------------------------------------------------------------
+KOD DURUMU:
+  src/engine/        MOTOR KATMANI — bitti, 35/35 test geciyor
+    types.ts         tipler, slot rolleri, kisit modeli
+    mastery.ts       kilit, kademe, 14gun/2seans dogrulama, yakinlik, denge
+    adaptation.ts    UYARLAMA KURALI — "12 dedim 10 yaptin" mantigi
+    planner.ts       PROGRESSION PLANNER + slot sablonlari + terfi
+    engine.test.ts   35 test
+  src/program.ts     haftalik program sablonu (7 gun, agir/hafif, MENU)
+  src/storage.ts     localStorage kalicilik, seans kaydi, XP, disa/ice aktarma
+  src/ui/Today.tsx   BUGUN EKRANI (mobil oncelikli)
+  src/main.tsx  index.html  vite.config.ts
+
+DOGRULAMA (hepsi gecti):
+  tsc --noEmit  -> temiz
+  vitest run    -> 35/35
+  vite build    -> 379 KB (gzip 82 KB), 775 ms
+
+  !!! MOUNT TUZAGI: node_modules/.bin BU DISKTE OLUSMUYOR (symlink izni yok)
+  ve npm mount uzerindeki package.json'a bagimliliklari YAZAMIYOR.
+  Bagimliliklar package.json'a ELLE yazildi.
+  Build/test icin proje /tmp'ye kopyalanip orada calistirilir:
+    rm -rf /tmp/build && mkdir -p /tmp/build
+    cd ASCEND && tar --exclude=node_modules --exclude='.git*' \
+      --exclude=_SILINEBILIR_yedekler --exclude=dist -cf - . \
+      | (cd /tmp/build && tar xf -)
+    cd /tmp/build && npm i
+    ./node_modules/.bin/tsc --noEmit
+    ./node_modules/.bin/vitest run
+    ./node_modules/.bin/vite build
+
+MIMARI KARAR (D-050): uygulama koca bagli kalmamali.
+  Kullanicinin AI erisimi 1 ay garantili. Bu yuzden uyarlama kurali ve
+  planner Faz 3'ten V1'e cekildi. Ikisi de deterministik, LLM gerektirmiyor.
+  Koc kaybolsa bile uygulama slot secmeye ve hedef ayarlamaya devam eder.
+
+SIRADAKI KOD ISI:
+  1. Agac ekrani — prototype/index.html'deki SVG'yi React'e tasi
+     (kullanici agaci begendi, "Obsidian notu gibi" dedi)
+  2. GitHub Actions ile Pages'e otomatik yayin
+     (kullanici Pages'i bir kez tarayicidan acar)
+  3. Ilerleme ekrani + TERFI ekrani (Main slot yukselince)
+  4. Veriye sessionBlock + handLoad/wristLoad alanlari
+
+ANTRENMAN DURUMU:
+  Kullanici AGUSTOS basinda basliyor, alet o zamana geliyor.
+  Baslangic: sinav max ~30 (master ustu), barfiks 2, hollow iyi.
+  Sigarayi Agustos basinda birakiyor.
+  Program: her gun (5/7) ip + sinav 2 tip + dips + cekis + core
+           siklik her gun, YOGUNLUK doner (agir 2 / hafif 3 gun)
+  Detay: ANTRENMAN_KAYDI_YEREL.md (depoda YOK, yerel)
+
+--------------------------------------------------------------------------------
+SON GUNCELLEME : 2026-07-26  (kod basladi)
 DURUM          : Faz 0 BITTI  (veri temeli, 196 hareket, 0 hata 0 uyari)
                  Faz 0.5 DEVAM (PLAN - v2.0 yazildi, 1 haftalik takvim var)
                  Faz 1 prototipi calisiyor, 61/61 test geciyor
