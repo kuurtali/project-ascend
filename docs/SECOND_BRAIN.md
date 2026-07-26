@@ -514,6 +514,8 @@ Bu iyi haber, çünkü:
 
 ```
 Yaş / Boy / Kilo  : 23 · 180 cm · 82 kg
+Geçmiş            : ağırlık antrenmanı + WUSHU + ip atlama (ip ana antrenman)
+                    yüzme — geçen ay bırakıldı
 Antrenman geçmişi : VAR — ama ara verilmiş, şu an formda değil
 Başlangıç noktası : ağacın en solu değil; "yeniden giriş" noktası
 Ekipman           : power tower (barfiks + dip), zemin, duvar, ip, sehpa
@@ -552,7 +554,15 @@ dip, pistol — hepsi bu profille tamamen ulaşılabilir.
 
 ```
 Sağ serçe parmak / 5. metakarp — boksör kırığı, PLATİN (cerrahi sabitleme)
+DURUM: fizyoterapist tarafından değerlendirildi -> sorun yok denildi
+       clearedByProfessional = true
 ```
+
+> **Not:** Onay alınmış olması kısıtın kaldırıldığı anlamına gelmez, sadece
+> el yükü taşıyan zincirlerin **açılabildiği** anlamına gelir. Knuckle
+> push-up ve parmak ucu şınavları hâlâ listede kalmıyor — bunlar yükü
+> doğrudan metakarp başlarına bindirdiği için onaydan bağımsız olarak
+> gereksiz risk. Parallettes tercihi de geçerliliğini koruyor.
 
 Bu, sistemde **modellenmesi gereken** bir kısıt. Çünkü kalistenikte el,
 yük taşıyan ana yapıdır ve handstand uzun vadeli hedeflerden biri.
@@ -3722,6 +3732,36 @@ gereksinim olarak kabul edildi**
 atlanmıştı. Arayüz metni koda gömülmez; mastery kademeleri renkten
 bağımsız da ayırt edilebilmeli. i18n sarmalayıcısı **erken** yapılmalı —
 196 node sonradan dönüştürmek pahalı.
+
+**D-041 · 2026-07-25 · Depo PRIVATE olarak açılır**
+Kurucunun talebi: fikrin kopyalanmaması. Depo private başlar.
+
+**Ama portfolyo hedefiyle gerilim var** (`06_Charter`, Amaç 2): görünmeyen
+repo vitrin işlevi görmez. Çözüm: **Faz 1 bittiğinde public'e çevrilir**
+(hedef Şubat 2027). O noktada gösterilecek çalışan bir şey olur ve
+"kopyalanma" riski de anlamını yitirir — çünkü değer fikirde değil,
+**yürütülmüş veride ve bitmiş üründe.**
+
+Dürüst not: oyunlaştırılmış kalistenik uygulaması fikri yeni değil,
+benzerleri var. Bu projeyi ayıran şey 196 düğümlük doğrulanmış graf,
+sayısallaştırılmış mekanikler ve bitirilmiş olması. Bunlar kopyalanamaz;
+kopyalanabilen tek şey fikrin cümlesi ve o zaten kimseye yetmez.
+
+**D-042 · 2026-07-25 · El kısıtı için fizyoterapist onayı alındı**
+`clearedByProfessional = true`. El yükü taşıyan zincirler (handstand,
+planche) açılabilir. Knuckle/parmak ucu şınavları yine listede değil —
+onaydan bağımsız gereksiz risk. Parallettes tercihi geçerli.
+
+**D-043 · 2026-07-25 · Profil güncellendi: yüzme + wushu**
+Kurucu geçen aya kadar yüzüyordu ve geçmişinde wushu var. İkisi de
+`18.16 Comeback Modeli`'ni etkiliyor:
+- Yüzme (1 ay önce) → aerobik taban ve omuz kondisyonu düşündüğümüzden iyi
+- Wushu → vücut kontrolü, denge, esneklik, patlayıcılık. **Denge
+  kategorisinde ve mobilite kapılarında beklenenin üstünde başlar.**
+- Kaybedilen şey **güç**, korunan şey **koordinasyon**. Güç hızlı geri
+  gelir, koordinasyon yavaş kaybolur → geri dönüş beklentisi yukarı revize
+  edildi, ama ilk 8 haftadaki hacim freni aynı kalıyor (tendon uyumu
+  koordinasyondan yavaş).
 
 **D-040 · 2026-07-25 · Ranks, Titles'tan ayrı sistem**
 Kaynak dosyalarda ayrı listelenmişti. Titles = karakter (nasıl
