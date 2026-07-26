@@ -22,8 +22,11 @@ desktop.ini
 _check_app.js
 
 # Sandbox artigi - silinebilir yedek .git klasorleri
-.git_*/
+# (mount uzerinde dosya silinemedigi icin eski .git klasorleri yeniden
+#  adlandirilarak birakildi; hicbiri depoya girmez)
 .git_*
+.gitTMP_*
+.gitBAK_*
 arsiv/
 build/
 
