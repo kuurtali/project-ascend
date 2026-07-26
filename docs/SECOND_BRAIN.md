@@ -3741,19 +3741,53 @@ atlanmıştı. Arayüz metni koda gömülmez; mastery kademeleri renkten
 bağımsız da ayırt edilebilmeli. i18n sarmalayıcısı **erken** yapılmalı —
 196 node sonradan dönüştürmek pahalı.
 
-**D-041 · 2026-07-25 · Depo PRIVATE olarak açılır**
-Kurucunun talebi: fikrin kopyalanmaması. Depo private başlar.
+**D-041 · 2026-07-26 · Depo PUBLIC (revize edildi)**
 
-**Ama portfolyo hedefiyle gerilim var** (`06_Charter`, Amaç 2): görünmeyen
-repo vitrin işlevi görmez. Çözüm: **Faz 1 bittiğinde public'e çevrilir**
-(hedef Şubat 2027). O noktada gösterilecek çalışan bir şey olur ve
-"kopyalanma" riski de anlamını yitirir — çünkü değer fikirde değil,
-**yürütülmüş veride ve bitmiş üründe.**
+*İlk karar:* private, fikrin kopyalanmaması için.
+*Revizyon:* public. Gerekçe: **aktiflik görünür olmalı.** Görünmeyen bir
+depo ne katkı grafiğinde anlamlı yer tutar ne de okunabilir.
 
-Dürüst not: oyunlaştırılmış kalistenik uygulaması fikri yeni değil,
-benzerleri var. Bu projeyi ayıran şey 196 düğümlük doğrulanmış graf,
-sayısallaştırılmış mekanikler ve bitirilmiş olması. Bunlar kopyalanamaz;
-kopyalanabilen tek şey fikrin cümlesi ve o zaten kimseye yetmez.
+Fikrin kopyalanması riski gerçekçi değil: oyunlaştırılmış kalistenik
+uygulaması fikri yeni değil, benzerleri var. Bu projeyi ayıran şey 196
+düğümlük doğrulanmış graf, sayısallaştırılmış mekanikler, karar günlüğü ve
+bitirilmiş olması. Bunlar kopyalanamaz; kopyalanabilen tek şey fikrin bir
+cümlesi ve o kimseye yetmez.
+
+**Public'e geçmenin ön koşulu vardı ve karşılandı:** kişisel veri depodan
+çıkarıldı (bkz. D-044) ve commit geçmişindeki e-posta gizlendi (D-045).
+Bu sıra önemli — tersi yapılırsa sağlık verisi kalıcı olarak açığa çıkar.
+
+**D-044 · 2026-07-26 · Kişisel veri depodan ayrıldı**
+Public'e geçmeden önce yapılan temizlik. `v2.0` kendi kuralını (`D-014`:
+içerik ve kullanıcı verisi asla karışmaz) ihlal ediyordu — tasarım
+dokümanında yaş, kilo, cerrahi implant bilgisi ve mezuniyet tarihi vardı.
+
+| Depodan çıkan | Yerine gelen |
+|---|---|
+| Yaş / boy / kilo değerleri | "Yaş, boy, vücut ağırlığı **kategori olarak** modellenir" + her birinin sistem etkisi |
+| El kısıtının kişisel detayı | Genel **Kullanıcı Kısıtları** sistemi: kısıt şeması, `handLoad` etiketleme, güvenli alternatif önerisi |
+| Mezuniyet tarihi ve CV gerekçesi | "Açık geliştirme bir **disiplin aracıdır**" |
+
+Kişisel profil depo dışındaki yerel bir dosyada tutulur ve `.gitignore`'da.
+
+**Kritik nokta:** Bu temizlik sistemi zayıflatmadı, **genelleştirdi.**
+Tek kullanıcının el kısıtı, geçmiş sakatlığı olan herkes için çalışan bir
+özelliğe dönüştü. Tasarım gerekçelerinin tamamı depoda kaldı — "ara vermiş
+kullanıcı için comeback modeli gerekli" yazar, *kimin* ara verdiği yazmaz.
+
+**D-045 · 2026-07-26 · Commit geçmişindeki e-posta gizlendi**
+7 commit'in yazar/committer alanı kişisel Gmail adresinden GitHub'ın
+`ID+kullanıcı@users.noreply.github.com` formatına çevrildi ve zorla
+gönderildi.
+
+**Neden ID'li format:** Eski `kullanıcı@users.noreply` formatı 2017
+sonrası açılan hesaplarda profile bağlanmaz — commit'ler katkı grafiğine
+sayılmaz. Aktiflik görünürlüğü bu projenin amaçlarından biri olduğu için
+ID'li form zorunlu.
+
+*Bedeli:* geçmiş yeniden yazıldı, zorla gönderim gerekti. Depoda başka
+katkıcı olmadığı için güvenliydi. **İleride katkıcı olursa bu bir daha
+yapılmaz.**
 
 **D-042 · 2026-07-25 · Kullanıcı Kısıtları sistemi eklendi**
 Geçmiş sakatlığı olan kullanıcı için "hangi hareket riskli" gerçek bir

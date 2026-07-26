@@ -46,13 +46,34 @@ SIRADAKI       : 1 HAFTALIK PLANLAMA TAKVIMI
 --------------------------------------------------------------------------------
 GITHUB
 --------------------------------------------------------------------------------
-Depo    : https://github.com/kuurtali/project-ascend   (PRIVATE)
-Dal     : main  (origin/main takip ediliyor)
-Durum   : yayinlandi, 5 commit
+Depo    : https://github.com/kuurtali/project-ascend
+Dal     : main
+Durum   : yayinlandi, 8 commit
 
-DEPO PRIVATE - kurucunun talebi (fikrin kopyalanmamasi).
-Faz 1 bittiginde public'e cevrilecek (bkz. SECOND_BRAIN D-041), cunku
-gorunmeyen repo portfolyo islevi gormez.
+GORUNURLUK: PUBLIC olacak (D-041 revize edildi - aktiflik gorunur olmali).
+  >>> SON ADIM KULLANICIDA: GitHub'da Settings > General > en alt
+      "Danger Zone" > "Change visibility" > Change to public
+  Bu bir hesap ayari degisikligi oldugu icin Claude yapamaz.
+
+PUBLIC ONCESI YAPILAN TEMIZLIK (onemli - sirasi kritikti):
+  1. Kisisel veri depodan cikarildi (D-044)
+     Olculer, saglik kisiti detayi, mezuniyet + CV gerekcesi
+     -> PROFIL_YEREL.md dosyasina tasindi (.gitignore'da, ASLA gonderilmez)
+     -> Depoda tasarim gerekcelerinin TAMAMI kaldi
+     -> Saglik kisiti GENEL bir sisteme donustu: kisit semasi + handLoad
+        etiketleme + guvenli alternatif onerisi
+  2. Commit gecmisindeki e-posta gizlendi (D-045)
+     Kisisel adres -> GitHub noreply adresi (ID'li format)
+     ID'li format ZORUNLU: eski format 2017 sonrasi hesaplarda katki
+     grafigine sayilmaz.
+     Gecmis yeniden yazildi, --force ile gonderildi. Baska katkici
+     olmadigi icin guvenliydi; katkici olursa BIR DAHA YAPILMAZ.
+
+  NOT: Bu dosya da depoda. Kisisel deger/adres YAZMAYIN - sadece
+  "olculer", "kisisel adres" gibi genel ifadeler kullanin.
+  (Bu hata bir kez yapildi ve yakalandi.)
+
+  Sira tersine cevrilirse saglik verisi kalici olarak aciga cikar.
 
 DEGISIKLIK GONDERME (iki yol):
   1) GitHub Desktop ac -> "Push origin" butonuna bas
