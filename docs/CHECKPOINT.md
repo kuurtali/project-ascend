@@ -44,6 +44,33 @@ SIRADAKI       : 1 HAFTALIK PLANLAMA TAKVIMI
                  (detay: SECOND_BRAIN bolum 26)
 
 --------------------------------------------------------------------------------
+GITHUB
+--------------------------------------------------------------------------------
+Depo    : https://github.com/kuurtali/project-ascend   (PRIVATE)
+Dal     : main  (origin/main takip ediliyor)
+Durum   : yayinlandi, 5 commit
+
+DEPO PRIVATE - kurucunun talebi (fikrin kopyalanmamasi).
+Faz 1 bittiginde public'e cevrilecek (bkz. SECOND_BRAIN D-041), cunku
+gorunmeyen repo portfolyo islevi gormez.
+
+DEGISIKLIK GONDERME (iki yol):
+  1) GitHub Desktop ac -> "Push origin" butonuna bas
+  2) GITHUBA_GONDER.bat dosyasina cift tikla  (yerel, depoya dahil degil)
+
+ONEMLI - satir sonu tuzagi:
+  Sandbox (Linux) LF yazar, Windows git CRLF ister. Bu yuzden .gitattributes
+  eklendi (* text=auto eol=lf) ve depo ayarina core.autocrlf=false yazildi.
+  Bunlar olmadan her dosya "degismis" gorunuyor ve 26 dosyalik hayalet
+  commit olusuyordu.
+
+ONEMLI - yedek .git klasorleri:
+  Mount uzerinde dosya SILINEMIYOR (Operation not permitted). Bu yuzden
+  git kilit dosyasi takildiginda depo /tmp'de yeniden kurulup .git geri
+  kopyalandi, eskisi .git_* / .gitTMP_* / .gitBAK_* olarak birakildi.
+  Hepsi .gitignore'da. Windows'tan elle silinebilirler, zararsizlar.
+
+--------------------------------------------------------------------------------
 v2.0'DA NE DEGISTI (ozet)
 --------------------------------------------------------------------------------
 DENETIM: 9 kaynak dosyadan 67 kavram tarandi, 14'u EKSIKTI.
