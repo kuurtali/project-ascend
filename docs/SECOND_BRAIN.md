@@ -470,23 +470,21 @@ destekliyor:
 Kurucunun kendi antrenmanını yöneteceği sistem. Birincil ve vazgeçilmez.
 Kullanılmayan bir sistem portfolyo olarak da değersizdir.
 
-### Amaç 2 — Portfolyo / vitrin
-Kurucu **Şubat'ta aktüerya mezunu olacak.** Projenin anlatacağı hikaye:
+### Amaç 2 — Açık geliştirme
+Proje herkese açık geliştirilir. Kararlar, gerekçeler ve çıkmaz sokaklar
+dahil her şey görünür.
 
-> *"Spora ilgi duydum, bu ilgiyi yansıtan bir uygulamayı kendim için
-> yaptım, ve paylaşıyorum."*
-
-Bu, "kıdemli yazılım mühendisiyim" iddiası **değil.** İddia şu: ilgi
-duyulan bir alanda, kendi ihtiyacı için, ciddiyetle tasarlanmış ve
-**bitirilmiş** bir iş.
+Bu bir vitrin kaygısı değil, bir **disiplin aracı.** Görünür yazılan şey
+daha dikkatli yazılır; belgelenmemiş bir karar, alınmamış karardır
+(`25_Documentation`).
 
 ### Bunun tasarıma yansıması **[KESİN]**
 
 | Karar | Neden |
 |---|---|
 | **Bitmişlik > teknik gösteriş** | Yarım kalmış karmaşık proje, biten sade projeden kötüdür |
-| **Belgeleme birinci sınıf çıktı** | Aktüerya mezunu için ayırt edici olan şey mühendislik değil, **düşünme disiplini.** Bu dosya, kodun kendisi kadar değerli |
-| **Veri/modelleme katmanı öne çıkar** | 196 node'luk graf, XP eğrileri, denge puanı, ilerleme modellemesi — bunlar aktüerya diplomasıyla **doğrudan uyumlu.** CV sinyali burada, arayüz kodunda değil |
+| **Belgeleme birinci sınıf çıktı** | Bu dosya kodun kendisi kadar değerli. Ayırt edici olan mühendislik hacmi değil, **düşünme disiplini** |
+| **Veri/modelleme katmanı öne çıkar** | 196 düğümlük graf, XP eğrileri, denge puanı, ilerleme modellemesi — projenin asıl işi burada, arayüz kodunda değil |
 | **Repo okunabilir olmalı** | README, temiz commit geçmişi, testler, lisans. Bunlar "ürünün parçası" |
 | **Basit ve tanıdık stack** | Egzotik teknoloji seçimi kimseyi etkilemez, bakımı zorlaştırır |
 
@@ -510,30 +508,36 @@ Bu iyi haber, çünkü:
 - Ve bu, sistemin cevabı olmayan bir soru: `18.16 Yerleştirme` ve
   `18.15 Comeback Modeli` bu yüzden eklendi
 
-## Kurucu profili (birincil kullanıcı) **[KESİN]**
+## Birincil kullanıcı profili **[KESİN]**
+
+> **Kişisel veri bu dosyada tutulmaz.** Kurucunun ölçüleri, sağlık
+> kısıtları ve kimlik bilgileri depo dışındaki yerel bir profil dosyasında
+> durur. Burada yalnızca **tasarımı etkileyen kategoriler** yazar.
+>
+> *Gerekçe: `D-014` — içerik ve kullanıcı verisi asla karışmaz. Bir
+> sistemin tasarım dokümanı, o sistemi kullanan kişinin sağlık kaydını
+> içermemeli.*
 
 ```
-Yaş / Boy / Kilo  : 23 · 180 cm · 82 kg
-Geçmiş            : ağırlık antrenmanı + WUSHU + ip atlama (ip ana antrenman)
-                    yüzme — geçen ay bırakıldı
 Antrenman geçmişi : VAR — ama ara verilmiş, şu an formda değil
 Başlangıç noktası : ağacın en solu değil; "yeniden giriş" noktası
 Ekipman           : power tower (barfiks + dip), zemin, duvar, ip, sehpa
-                    -> ağacın %93'ü (182/196 node, 17/22 boss) erişilebilir
+                    -> ağacın %93'ü (182/196 düğüm, 17/22 boss) erişilebilir
                     -> erişilemeyen 5 boss halka/parallettes gerektiriyor
 Uzun vadeli hedef : Handstand, HSPU, Muscle-Up, Front Lever, Back Lever,
                     Planche, Human Flag, One Arm Push-up, One Arm Pull-up
-Eğitim            : aktüerya (Şubat mezuniyeti)
 Teknik durum      : kod yazmıyor — yönlendiriyor, kodu AI yazıyor
 ```
 
-**Fiziksel profilin tasarıma yansıması [TASARIM]:**
+**Fiziksel değişkenlerin tasarıma yansıması [TASARIM]:**
 
-| Değişken | Değer | Sistem için anlamı |
-|---|---|---|
-| **23 yaş** | Avantaj | Toparlanma hızlı, tendon uyumu iyi. Sıklık üst sınırı yüksek tutulabilir |
-| **180 cm** | Nötr–zorlayıcı | Uzun kol/bacak = uzun kaldıraç. Statik tutuşlar (front lever, planche) fizik gereği daha zor. Bu bir engel değil, **takvim** meselesi |
-| **82 kg** | Nötr–zorlayıcı | Kalistenikte her tekrar 82 kg kaldırmak demek. Çekme hareketlerinde en çok hissedilir |
+Sistem üç değişkeni **kategori olarak** modeller, mutlak sayı olarak değil:
+
+| Değişken | Sistem için anlamı |
+|---|---|
+| **Yaş** | Genç kullanıcıda toparlanma hızlı, tendon uyumu iyi → sıklık üst sınırı yüksek tutulabilir |
+| **Boy** | Uzun kol/bacak = uzun kaldıraç. Statik tutuşlar (front lever, planche) fizik gereği daha zor. Engel değil, **takvim** meselesi |
+| **Vücut ağırlığı** | Kalistenikte her tekrar vücut ağırlığını kaldırmak demek. Çekme hareketlerinde en çok hissedilir |
 
 **Kural [KESİN]:** Sistem **kilo hedefi koymaz, kilo takibi yapmaz.**
 Ölçtüğümüz şey performans. Antrenman ilerledikçe kuvvet/ağırlık oranı
@@ -543,31 +547,28 @@ zaten iyileşir; hangi yoldan iyileştiği sistemin işi değil.
 (`07_NonGoals`). Ayrıca kilo hedefi koymak `M-5`'in ruhuna aykırı —
 rakamla kendini yargılatma mekanizması kurmuyoruz.
 
-**Not:** 82 kg / 180 cm sağlıklı bir yapı. Statik elit becerilerin
-(planche, front lever) uzun sürmesi kilodan çok **kaldıraç fiziğinden**
-kaynaklanır ve bu herkes için geçerlidir. Muscle-up, handstand, HSPU,
-dip, pistol — hepsi bu profille tamamen ulaşılabilir.
+**Not:** Statik elit becerilerin (planche, front lever) uzun sürmesi
+kilodan çok **kaldıraç fiziğinden** kaynaklanır ve bu herkes için
+geçerlidir. Muscle-up, handstand, HSPU, dip, pistol normal bir yapıyla
+tamamen ulaşılabilir.
 
 ## ⭐ Kullanıcı Kısıtları (Contraindications) **[TASARIM]** — v2.1'de eklendi
 
-### Kurucunun kısıtı
+### Neden bu sistem gerekli
 
-```
-Sağ serçe parmak / 5. metakarp — boksör kırığı, PLATİN (cerrahi sabitleme)
-DURUM: fizyoterapist tarafından değerlendirildi -> sorun yok denildi
-       clearedByProfessional = true
-```
+Kalistenikte **el, yük taşıyan ana yapıdır** ve handstand uzun vadeli
+hedeflerden biri. El, bilek, omuz, dirsek, diz veya belde geçmiş
+sakatlığı olan bir kullanıcı için "hangi hareket riskli" sorusu gerçek
+bir sorudur ve sistemin cevabı olması gerekir.
 
-> **Not:** Onay alınmış olması kısıtın kaldırıldığı anlamına gelmez, sadece
-> el yükü taşıyan zincirlerin **açılabildiği** anlamına gelir. Knuckle
-> push-up ve parmak ucu şınavları hâlâ listede kalmıyor — bunlar yükü
-> doğrudan metakarp başlarına bindirdiği için onaydan bağımsız olarak
-> gereksiz risk. Parallettes tercihi de geçerliliğini koruyor.
+Bu, tek bir kullanıcının ihtiyacından çıktı ama **genel bir sistem
+özelliği** oldu — `06_Charter`'daki "benim gibi insanlar" ilkesinin somut
+örneği.
 
-Bu, sistemde **modellenmesi gereken** bir kısıt. Çünkü kalistenikte el,
-yük taşıyan ana yapıdır ve handstand uzun vadeli hedeflerden biri.
+> Kurucunun kendi kısıtları depo dışındaki yerel profil dosyasında
+> tutulur. Sağlık verisi tasarım dokümanına yazılmaz.
 
-### Etkilenen zincirler
+### Örnek: el/bilek kısıtı olan kullanıcı
 
 | Risk | Hareketler | Neden |
 |---|---|---|
@@ -575,12 +576,12 @@ yük taşıyan ana yapıdır ve handstand uzun vadeli hedeflerden biri.
 | 🟠 **Orta** | Handstand zinciri (wall walk → freestanding → one arm) | Tüm vücut ağırlığı avuç içinden geçer, ulnar tarafa yüklenme yüksek |
 | 🟠 **Orta** | Planche zinciri (lean, tuck, straddle) | Bilek ekstansiyonu + el yükü maksimum |
 | 🟡 **Düşük** | Fingertip Hang, Towel Hang | Kavrama yükü, ama kapalı el |
-| 🟢 **Düşük risk alternatif** | Parallettes / dip bar üzerinde aynı hareketler | Nötr kavrama, yük avuç içine değil el boyunca dağılır |
+| 🟢 **Güvenli alternatif** | Parallettes / dip barı üzerinde aynı hareketler | Nötr kavrama, yük avuç içine değil el boyunca dağılır |
 
-**Önemli tasarım sonucu:** Parallettes bu kullanıcı için "isteğe bağlı
-ekipman" değil, **erişilebilirlik ekipmanı.** Handstand ve L-sit
-çalışmasını el için çok daha güvenli hale getiriyor. `23_Business` ve
-ekipman önerilerinde bu ayrım yapılmalı.
+**Önemli tasarım sonucu:** Böyle bir kullanıcı için parallettes "isteğe
+bağlı ekipman" değil, **erişilebilirlik ekipmanı.** Handstand ve L-sit
+çalışmasını el için çok daha güvenli hale getiriyor. Ekipman
+önerilerinde bu ayrım yapılmalı.
 
 ### Sistem gereksinimi **[TASARIM]**
 
@@ -588,13 +589,20 @@ Kullanıcı profilinde bir **kısıt listesi** olmalı:
 
 ```
 constraints: [
-  { area: "right-hand-5th-metacarpal",
-    type: "hardware",              // platin/vida
+  { area: "wrist" | "hand" | "shoulder" | "elbow" | "knee" | "lowBack",
+    side: "left" | "right" | "both",
+    type: "hardware" | "history" | "chronic",
     flaggedMovements: [...],       // kırmızı işaretli hareketler
-    preferredAlternatives: [...],  // parallettes varyantları
-    clearedByProfessional: false } // DOKTOR ONAYI ALINDI MI
+    preferredAlternatives: [...],  // güvenli varyantlar
+    clearedByProfessional: false } // SAĞLIK PROFESYONELİ ONAYI VAR MI
 ]
 ```
+
+**Not:** `clearedByProfessional: true` kısıtın kaldırıldığı anlamına
+gelmez, sadece ilgili zincirlerin **açılabildiği** anlamına gelir. Yüksek
+riskli hareketler onaydan bağımsız olarak listede kalmaya devam eder —
+çünkü aynı kazanımı daha güvenli bir yoldan elde etmek mümkünse, riskli
+yol gereksizdir.
 
 ### Kurallar **[KESİN]**
 
@@ -3673,12 +3681,12 @@ Kurucunun ifadesi: *"benim gibi insanlar da kullanmış olur."* Bu, ikinci
 kullanıcıyı Faz 4'ten Faz 2-3'e çekiyor ve **kurucuyla aynı** kişi
 yapıyor. Tek kişi için yapılan şey ikisine de yarıyor. *Kaynak: FP-8*
 
-**D-033 · 2026-07-25 · Projenin iki amacı var: kişisel araç + portfolyo**
-Kurucu Şubat'ta aktüerya mezunu olacak. Projenin anlatacağı hikaye:
-*"spora ilgi duydum, kendim için yaptım, paylaşıyorum."*
-Sonucu: **bitmişlik teknik gösterişten değerli.** Ayrıca CV sinyali
-arayüz kodunda değil, **veri/modelleme katmanında** — 196 node'luk graf,
-XP eğrileri, denge puanı aktüerya diplomasıyla doğrudan uyumlu.
+**D-033 · 2026-07-25 · Projenin iki amacı var: kişisel araç + açık geliştirme**
+Birincil amaç kurucunun kendi antrenmanını yönetmesi. İkincil amaç projeyi
+açıkta geliştirmek — kararlar, gerekçeler ve çıkmaz sokaklar dahil.
+Sonucu: **bitmişlik teknik gösterişten değerli.** Projenin ağırlık merkezi
+arayüz kodunda değil, **veri/modelleme katmanında**: 196 düğümlük graf,
+XP eğrileri, denge puanı, ilerleme modellemesi.
 
 **D-034 · 2026-07-25 · App Store ertelendi, tek platform: web**
 Kurucu App Store'u "şimdilik sadece fikir" olarak tanımladı. React
@@ -3747,21 +3755,31 @@ benzerleri var. Bu projeyi ayıran şey 196 düğümlük doğrulanmış graf,
 sayısallaştırılmış mekanikler ve bitirilmiş olması. Bunlar kopyalanamaz;
 kopyalanabilen tek şey fikrin cümlesi ve o zaten kimseye yetmez.
 
-**D-042 · 2026-07-25 · El kısıtı için fizyoterapist onayı alındı**
-`clearedByProfessional = true`. El yükü taşıyan zincirler (handstand,
-planche) açılabilir. Knuckle/parmak ucu şınavları yine listede değil —
-onaydan bağımsız gereksiz risk. Parallettes tercihi geçerli.
+**D-042 · 2026-07-25 · Kullanıcı Kısıtları sistemi eklendi**
+Geçmiş sakatlığı olan kullanıcı için "hangi hareket riskli" gerçek bir
+soru ve sistemin cevabı olmalı. Kısıt listesi + `handLoad` etiketleme +
+güvenli alternatif önerisi tasarlandı (`18.16` öncesi bölüm).
 
-**D-043 · 2026-07-25 · Profil güncellendi: yüzme + wushu**
-Kurucu geçen aya kadar yüzüyordu ve geçmişinde wushu var. İkisi de
-`18.16 Comeback Modeli`'ni etkiliyor:
-- Yüzme (1 ay önce) → aerobik taban ve omuz kondisyonu düşündüğümüzden iyi
-- Wushu → vücut kontrolü, denge, esneklik, patlayıcılık. **Denge
-  kategorisinde ve mobilite kapılarında beklenenin üstünde başlar.**
-- Kaybedilen şey **güç**, korunan şey **koordinasyon**. Güç hızlı geri
-  gelir, koordinasyon yavaş kaybolur → geri dönüş beklentisi yukarı revize
-  edildi, ama ilk 8 haftadaki hacim freni aynı kalıyor (tendon uyumu
-  koordinasyondan yavaş).
+**Kural:** Sistem hareketi yasaklamaz, işaretler. Sağlık profesyoneli
+onayı ilgili zincirleri *açar* ama yüksek riskli hareketleri listeye geri
+getirmez — aynı kazanım daha güvenli bir yoldan elde edilebiliyorsa riskli
+yol gereksizdir.
+
+Bu, tek bir kullanıcının ihtiyacından çıkıp genel sistem özelliğine
+dönüşen ilk örnek. *Kaynak: `06_Charter` — "benim gibi insanlar".*
+
+**D-043 · 2026-07-25 · Comeback Modeli beklentisi yukarı revize edildi**
+Ara vermiş kullanıcının geçmişinde koordinasyon-yoğun bir spor geçmişi
+varsa (dövüş sanatı, jimnastik, yüzme gibi), geri dönüş beklenenden hızlı
+olur.
+
+Genel kural: **kaybedilen şey güç, korunan şey koordinasyon.** Güç hızlı
+geri gelir, koordinasyon yavaş kaybolur. Yerleştirme (`18.17`) bu geçmişi
+sormalı ve denge/mobilite kategorilerinde başlangıç noktasını yukarı
+almalı.
+
+**Ama ilk 8 haftadaki hacim freni değişmez** — tendon uyumu
+koordinasyondan yavaştır. *Kaynak: FP-2.*
 
 **D-040 · 2026-07-25 · Ranks, Titles'tan ayrı sistem**
 Kaynak dosyalarda ayrı listelenmişti. Titles = karakter (nasıl

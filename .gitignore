@@ -32,3 +32,12 @@ build/
 
 # Yerel yardimci betik
 GITHUBA_GONDER.bat
+
+# KISISEL VERI - ASLA DEPOYA GIRMEZ
+# Kullanici profili, saglik verisi, olculer, kimlik.
+# Depoda tasarim gerekcesi durur ("ara vermis kullanici icin comeback
+# modeli gerekli"); KIMIN ara verdigi bu dosyada durur.
+# Bkz. SECOND_BRAIN D-014: icerik ve kullanici verisi asla karismaz.
+PROFIL_YEREL.md
+PROFIL_*.md
+*_YEREL.md
