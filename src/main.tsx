@@ -2,34 +2,43 @@ import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Today } from './ui/Today';
 import { Tree } from './ui/Tree';
+import { Progress } from './ui/Progress';
+import { Settings } from './ui/Settings';
 import { load } from './storage';
 import type { PlayerState } from './engine/types';
 
-type Tab = 'today' | 'tree';
+type Tab = 'today' | 'tree' | 'progress' | 'settings';
+
+const TABS: { id: Tab; label: string }[] = [
+  { id: 'today', label: 'Bugün' },
+  { id: 'tree', label: 'Ağaç' },
+  { id: 'progress', label: 'İlerleme' },
+  { id: 'settings', label: 'Ayarlar' },
+];
 
 function App() {
   const [state, setState] = useState<PlayerState>(() => load());
   const [tab, setTab] = useState<Tab>('today');
 
   return (
-    <div style={{ minHeight: '100dvh', paddingBottom: 64 }}>
-      {tab === 'today'
-        ? <Today state={state} onState={setState} />
-        : <Tree state={state} />}
+    <div style={{ minHeight: '100dvh', paddingBottom: 62 }}>
+      {tab === 'today' && <Today state={state} onState={setState} />}
+      {tab === 'tree' && <Tree state={state} />}
+      {tab === 'progress' && <Progress state={state} />}
+      {tab === 'settings' && <Settings state={state} onState={setState} />}
 
       <nav style={{
-        position: 'fixed', left: 0, right: 0, bottom: 0, height: 58,
+        position: 'fixed', left: 0, right: 0, bottom: 0, height: 56,
         display: 'flex', borderTop: '1px solid var(--line)',
         background: '#0b0d12ee', backdropFilter: 'blur(8px)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
       }}>
-        {(['today', 'tree'] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)} style={{
+        {TABS.map((t) => (
+          <button key={t.id} onClick={() => setTab(t.id)} style={{
             flex: 1, background: 'transparent', border: 'none',
-            color: tab === t ? '#f5c542' : '#8b93a5',
-            fontSize: 13, fontWeight: tab === t ? 600 : 400, cursor: 'pointer',
-          }}>
-            {t === 'today' ? 'Bugün' : 'Ağaç'}
-          </button>
+            color: tab === t.id ? '#f5c542' : '#8b93a5',
+            fontSize: 12.5, fontWeight: tab === t.id ? 600 : 400, cursor: 'pointer',
+          }}>{t.label}</button>
         ))}
       </nav>
     </div>
@@ -37,3 +46,12 @@ function App() {
 }
 
 createRoot(document.getElementById('root')!).render(<App />);
+
+// Çevrimdışı çalışma — parkta / salonda internet olmayabilir
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(
+      new URL('sw.js', document.baseURI).href,
+    ).catch(() => { /* sessizce geç */ });
+  });
+}

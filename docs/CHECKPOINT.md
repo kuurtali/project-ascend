@@ -81,11 +81,31 @@ GITHUB ACTIONS (.github/workflows/deploy.yml):
   !!! KULLANICI BIR KEZ YAPMALI: Settings > Pages > Source: GitHub Actions
   Ondan sonra GITHUBA_GONDER.bat her calistiginda site kendini yeniler.
 
+ILERLEME + TERFI EKRANI BITTI (src/ui/Progress.tsx):
+  TERFI: Main slot ALTIN kademeye ulasinca en uste cikan kart.
+  "X altin kademede -> ana hareket Y oluyor, X yardimciya iniyor."
+  Oyunun en iyi odul ani; boss yilda bir, terfi ayda bir.
+  Ayrica: seviye/XP, 4 sayac, SONRAKI KADEMEYE EN YAKIN 5 hareket
+  (gunluk motivasyon motoru), hedeflere mesafe cubuklari, kademe dagilimi.
+
+AYARLAR BITTI (src/ui/Settings.tsx):
+  YEDEK en ustte ve uyarili — yerel-oncelikli oldugu icin cihaz kaybi
+  = veri kaybi. Disa/ice aktarma. Ekipman ac/kapa (barfiks eklenince
+  Pull agacinin 17 dugumu acilir). Kisit listesi gorunur.
+
+PWA BITTI (public/):
+  manifest.webmanifest, icon.svg, sw.js (uygulama kabugu onbellegi).
+  Telefon ana ekranina eklenebiliyor, internetsiz aciliyor.
+  Parkta/salonda internet olmayabilir.
+
+GEZINME: Bugun · Agac · Ilerleme · Ayarlar (alt cubuk)
+
 SIRADAKI KOD ISI:
-  1. Ilerleme ekrani + TERFI ekrani (Main slot yukselince)
-  2. Veriye sessionBlock + handLoad/wristLoad alanlari
-  3. Telefon ana ekranina ekleme (manifest.json, PWA)
-  4. Yedekleme hatirlatmasi (yerel-oncelikli, cihaz kaybi = veri kaybi)
+  1. Veriye sessionBlock + handLoad/wristLoad alanlari
+  2. Seri (streak) takibi — HAFTALIK, gunluk degil (M-3)
+  3. Gunluk gorev ureticisi (18.7) — kurallı, rastgele degil
+  4. Planner'i Bugun ekranina bagla (su an program.ts sabit sablon;
+     planner slotlari uretebiliyor ama UI hala sablonu kullaniyor)
 
 ANTRENMAN DURUMU:
   Kullanici AGUSTOS basinda basliyor, alet o zamana geliyor.
