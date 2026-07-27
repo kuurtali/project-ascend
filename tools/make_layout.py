@@ -82,3 +82,17 @@ print(f"ascend_data.js yazildi: {len(js)/1024:.0f} KB, {len(compact)} node, "
       f"canvas {CANVAS_W}x{round(CANVAS_H)}")
 for cat in CAT_ORDER:
     print(f"  {cat:<15} bant y={bands[cat]['y']:.0f} h={bands[cat]['h']:.0f} satir={bands[cat]['rows']}")
+
+# ── Uygulama icin: sadece yerlesim + kategori bandi (JSON)
+import os
+app = {
+    "canvas": out["canvas"],
+    "bands": out["bands"],
+    "catOrder": out["catOrder"],
+    "pos": {m["id"]: [m["x"], m["y"]] for m in compact},
+}
+dst = os.path.join("..", "src", "data", "layout.json")
+os.makedirs(os.path.dirname(dst), exist_ok=True)
+with open(dst, "w", encoding="utf-8") as f:
+    json.dump(app, f, ensure_ascii=False, separators=(",", ":"))
+print(f"src/data/layout.json yazildi: {len(app['pos'])} konum")

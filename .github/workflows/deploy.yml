@@ -1,0 +1,84 @@
+name: Test ve yayın
+
+# Her push'ta: veri doğrulanır, testler koşar, uygulama derlenir.
+# main dalında ayrıca GitHub Pages'e yayınlanır.
+#
+# Kullanıcı bir kez şunu yapar: Settings > Pages > Source: GitHub Actions
+# Ondan sonra "GITHUBA_GONDER.bat" her çalıştığında site kendini yeniler.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  dogrula:
+    name: Veri doğrulama ve testler
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+
+      - name: Hareket veritabanını yeniden üret ve doğrula
+        run: |
+          cd tools
+          python3 build_db.py
+          python3 make_layout.py
+
+      - name: Üretilen veri commit edilenle aynı mı
+        run: |
+          if ! diff -q tools/movements.json data/movements.json > /dev/null; then
+            echo "HATA: data/movements.json güncel değil."
+            echo "tools/build_db.py çalıştırıp sonucu data/ altına kopyala."
+            exit 1
+          fi
+          echo "Veri güncel."
+
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm }
+
+      - run: npm ci || npm install
+      - name: Tip kontrolü
+        run: npx tsc --noEmit
+      - name: Motor testleri
+        run: npx vitest run
+
+  derle:
+    name: Derle
+    needs: dogrula
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm }
+      - run: npm ci || npm install
+      - name: Vite build
+        run: npx vite build
+        env:
+          GITHUB_PAGES: 'true'
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: dist }
+
+  yayinla:
+    name: GitHub Pages'e yayınla
+    if: github.ref == 'refs/heads/main'
+    needs: derle
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

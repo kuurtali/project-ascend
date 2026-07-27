@@ -66,13 +66,26 @@ MIMARI KARAR (D-050): uygulama koca bagli kalmamali.
   planner Faz 3'ten V1'e cekildi. Ikisi de deterministik, LLM gerektirmiyor.
   Koc kaybolsa bile uygulama slot secmeye ve hedef ayarlamaya devam eder.
 
+AGAC EKRANI BITTI (src/ui/Tree.tsx):
+  197 dugumun tamami, ANA GORUNUM (kullanici oyle istedi).
+  Dokunmatik: tek parmak surukle = gez, iki parmak = yakinlas.
+  Node'a dokun -> alt panel: on kosullar, ne acar, ipuclari, hatalar,
+  yakinlik gostergesi, "bu hedefe giden yolu goster" (GPS).
+  Filtreler: tumu / acik / sirada / boss + arama.
+  Yerlesim src/data/layout.json'dan gelir (make_layout.py uretir).
+  Alt gezinme: Bugun <-> Agac.
+
+GITHUB ACTIONS (.github/workflows/deploy.yml):
+  push -> veri yeniden uretilir ve commit edilenle KARSILASTIRILIR
+       -> tsc --noEmit -> vitest -> vite build -> Pages'e yayin
+  !!! KULLANICI BIR KEZ YAPMALI: Settings > Pages > Source: GitHub Actions
+  Ondan sonra GITHUBA_GONDER.bat her calistiginda site kendini yeniler.
+
 SIRADAKI KOD ISI:
-  1. Agac ekrani — prototype/index.html'deki SVG'yi React'e tasi
-     (kullanici agaci begendi, "Obsidian notu gibi" dedi)
-  2. GitHub Actions ile Pages'e otomatik yayin
-     (kullanici Pages'i bir kez tarayicidan acar)
-  3. Ilerleme ekrani + TERFI ekrani (Main slot yukselince)
-  4. Veriye sessionBlock + handLoad/wristLoad alanlari
+  1. Ilerleme ekrani + TERFI ekrani (Main slot yukselince)
+  2. Veriye sessionBlock + handLoad/wristLoad alanlari
+  3. Telefon ana ekranina ekleme (manifest.json, PWA)
+  4. Yedekleme hatirlatmasi (yerel-oncelikli, cihaz kaybi = veri kaybi)
 
 ANTRENMAN DURUMU:
   Kullanici AGUSTOS basinda basliyor, alet o zamana geliyor.
