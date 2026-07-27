@@ -50,4 +50,3 @@ _SILINEBILIR_yedekler/
 # Uygulama build ciktisi ve bagimliliklar
 node_modules/
 dist/
-package-lock.json

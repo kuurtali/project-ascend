@@ -26,9 +26,9 @@ jobs:
     name: Veri doğrulama ve testler
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with: { python-version: '3.11' }
 
       - name: Hareket veritabanını yeniden üret ve doğrula
@@ -46,10 +46,10 @@ jobs:
           fi
           echo "Veri güncel."
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with: { node-version: '22', cache: npm }
 
-      - run: npm ci || npm install
+      - run: npm ci
       - name: Tip kontrolü
         run: npx tsc --noEmit
       - name: Motor testleri
@@ -60,10 +60,10 @@ jobs:
     needs: dogrula
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with: { node-version: '22', cache: npm }
-      - run: npm ci || npm install
+      - run: npm ci
       - name: Vite build
         run: npx vite build
         env:
