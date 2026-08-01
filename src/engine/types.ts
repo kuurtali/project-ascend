@@ -106,6 +106,8 @@ export interface PlayerState {
   weeklyTarget: number;
   /** Haftada bir gün RIR 0'a çıkılabilir (D-049) */
   testDayOfWeek: number; // 0=Pazar
+  /** Başlangıç ölçümü yapıldı mı — ilk açılışta kalibrasyon ekranı */
+  calibrated?: boolean;
 }
 
 // ─────────────────────────────────────────────── ÇIKTILAR

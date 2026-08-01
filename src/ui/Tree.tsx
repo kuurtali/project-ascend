@@ -15,6 +15,7 @@ import type { MovementDatabase, PlayerState } from '../engine/types';
 import { MASTERY_TIERS } from '../engine/types';
 import { equipmentOk, indexMovements, isExcluded, isOpen, proximity } from '../engine/mastery';
 import { bossStates } from '../engine/game';
+import { Figure } from './figure/Figure';
 
 const DB = dbJson as unknown as MovementDatabase;
 const IDX = indexMovements(DB);
@@ -284,12 +285,26 @@ export function Tree({ state }: { state: PlayerState }) {
           borderTop: '1px solid var(--line)', background: 'var(--panel)',
           padding: '12px 14px 18px', maxHeight: '48dvh', overflowY: 'auto',
         }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-            <h3 style={{ margin: 0, fontSize: 17, fontWeight: 500 }}>
-              {selMv.isBoss ? '★ ' : ''}{selMv.name}
-            </h3>
-            <button onClick={() => setSel(null)}
-              style={{ marginLeft: 'auto', ...chip }}>kapat</button>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+            <div style={{
+              flexShrink: 0, width: 92, height: 92, borderRadius: 10,
+              background: '#0d1016', border: '1px solid var(--line)',
+              display: 'grid', placeItems: 'center',
+            }}>
+              <Figure movementId={selMv.id} family={selMv.family} size={84}
+                      color={state.mastery[selMv.id]?.tier
+                        ? TIER_COLOR[state.mastery[selMv.id]!.tier!]
+                        : selMv.isBoss ? '#e24b4a' : '#c2c8d4'} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h3 style={{ margin: 0, fontSize: 17, fontWeight: 500 }}>
+                {selMv.isBoss ? '★ ' : ''}{selMv.name}
+              </h3>
+              <div style={{ fontSize: 11.5, color: 'var(--dim2)', marginTop: 2 }}>
+                {DB.categories[selMv.category]?.label} · Tier {selMv.tier}
+              </div>
+            </div>
+            <button onClick={() => setSel(null)} style={chip}>kapat</button>
           </div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', margin: '8px 0' }}>
             <span style={{ ...pill, borderColor: DB.categories[selMv.category]?.color }}>

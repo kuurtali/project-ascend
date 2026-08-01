@@ -11,6 +11,7 @@
 
 import { useEffect, useState } from 'react';
 import type { MasteryTier } from '../engine/types';
+import { Figure } from './figure/Figure';
 
 const TIER_COLOR: Record<MasteryTier, string> = {
   bronze: '#cd7f32', silver: '#c4c9d4', gold: '#f5c542', master: '#a855f7',
@@ -27,6 +28,8 @@ const TIER_BUZZ: Record<MasteryTier, number[]> = {
 };
 
 export interface CelebrationItem {
+  movementId: string;
+  movementFamily: string;
   movementName: string;
   tier: MasteryTier;
   xp: number;
@@ -77,16 +80,15 @@ export function Celebrate({ items, levelUp, onDone }: {
           border: `2px solid ${color}`, animation: 'pulse 1.6s ease-out infinite',
         }} />
         <div style={{
-          position: 'absolute', inset: 12, borderRadius: '50%',
+          position: 'absolute', inset: 8, borderRadius: '50%',
           background: `radial-gradient(circle at 35% 30%, ${color}44, transparent 62%)`,
           border: `3px solid ${color}`,
           display: 'grid', placeItems: 'center',
           animation: 'ring .55s cubic-bezier(.2,1.4,.4,1) both',
           boxShadow: `0 0 44px ${color}55, inset 0 0 26px ${color}22`,
         }}>
-          <div style={{ fontSize: 44, color, fontWeight: 300, lineHeight: 1 }}>
-            {'★'.repeat(cur.tier === 'master' ? 4 : cur.tier === 'gold' ? 3 : cur.tier === 'silver' ? 2 : 1)}
-          </div>
+          <Figure movementId={cur.movementId} family={cur.movementFamily}
+                  size={104} color={color} />
         </div>
         {[0, 1, 2, 3, 4, 5].map((k) => (
           <span key={k} style={{
@@ -100,7 +102,11 @@ export function Celebrate({ items, levelUp, onDone }: {
       <div style={{
         fontSize: 12, letterSpacing: '.22em', color,
         animation: 'rise .5s .15s both',
-      }}>{TIER_LABEL[cur.tier]}</div>
+      }}>
+        {'★'.repeat(cur.tier === 'master' ? 4 : cur.tier === 'gold' ? 3
+                    : cur.tier === 'silver' ? 2 : 1)}
+        {' '}{TIER_LABEL[cur.tier]}
+      </div>
 
       <div style={{
         fontSize: 25, fontWeight: 500, margin: '6px 0 4px',

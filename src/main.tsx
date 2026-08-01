@@ -4,7 +4,8 @@ import { Today } from './ui/Today';
 import { Tree } from './ui/Tree';
 import { Progress } from './ui/Progress';
 import { Settings } from './ui/Settings';
-import { load } from './storage';
+import { Calibrate } from './ui/Calibrate';
+import { load, save } from './storage';
 import type { PlayerState } from './engine/types';
 
 type Tab = 'today' | 'tree' | 'progress' | 'settings';
@@ -19,6 +20,13 @@ const TABS: { id: Tab; label: string }[] = [
 function App() {
   const [state, setState] = useState<PlayerState>(() => load());
   const [tab, setTab] = useState<Tab>('today');
+
+  // İlk açılış: boş bir kayıt dosyası oyun değil. Önce ölç. (D-053)
+  if (!state.calibrated && state.logs.length === 0) {
+    return (
+      <Calibrate state={state} onDone={(s) => { save(s); setState(s); }} />
+    );
+  }
 
   return (
     <div style={{ minHeight: '100dvh', paddingBottom: 62 }}>

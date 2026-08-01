@@ -16,6 +16,8 @@ import { balanceScore, indexMovements, isOpen, levelOf, proximity } from '../eng
 import { pathTo, shouldPromote } from '../engine/planner';
 import { ascensionOf, bossStates, rankOf, streakOf, titlesOf } from '../engine/game';
 import { WEEK } from '../program';
+import { Avatar } from './Avatar';
+import { Figure } from './figure/Figure';
 
 const DB = dbJson as unknown as MovementDatabase;
 const IDX = indexMovements(DB);
@@ -76,10 +78,21 @@ export function Progress({ state }: { state: PlayerState }) {
   const nextTitles = titles.filter((t) => !t.earned)
     .sort((a, b) => b.progress - a.progress).slice(0, 3);
 
+  // Ana hareket: haftalık şablondaki main slot
+  const mainId = useMemo(() => {
+    for (const d of WEEK) {
+      const m = d.exercises.find((e) => e.role === 'main');
+      if (m) return m.movementId;
+    }
+    return 'pushup';
+  }, []);
+
   return (
     <div style={{ maxWidth: 440, margin: '0 auto', padding: '12px 14px 40px' }}>
 
-      {/* RÜTBE — en üstte, kimliğin */}
+      <Avatar state={state} currentId={mainId} />
+
+      {/* RÜTBE */}
       <div style={{
         ...card, background: 'linear-gradient(135deg,#151426,#11141b)',
         borderColor: '#3a3563',
@@ -180,7 +193,9 @@ export function Progress({ state }: { state: PlayerState }) {
         </div>
         {nextBosses.map((b) => (
           <div key={b.movement.id} style={{ marginTop: 10 }}>
-            <div style={{ display: 'flex', fontSize: 13.5, alignItems: 'baseline' }}>
+            <div style={{ display: 'flex', fontSize: 13.5, alignItems: 'center', gap: 7 }}>
+              <Figure movementId={b.movement.id} family={b.movement.family}
+                      size={30} color="#e24b4a" animate={false} />
               <span style={{ flex: 1 }}>★ {b.movement.name}</span>
               <span style={{ fontSize: 11, color: 'var(--dim2)', marginRight: 6 }}>
                 {b.prereqDone}/{b.prereqTotal} ön koşul

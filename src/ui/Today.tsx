@@ -18,6 +18,7 @@ import { dayFor, MENU, resolveExercise, type ProgramExercise } from '../program'
 import { hasBar, recordSession, save } from '../storage';
 import { rankOf, streakOf } from '../engine/game';
 import { Celebrate, type CelebrationItem } from './Celebrate';
+import { Figure } from './figure/Figure';
 
 const DB = dbJson as unknown as MovementDatabase;
 const IDX = indexMovements(DB);
@@ -110,6 +111,8 @@ export function Today({ state, onState }: Props) {
     if (res.tierUps.length > 0) {
       setCelebration({
         items: res.tierUps.map((t) => ({
+          movementId: t.movementId,
+          movementFamily: IDX.get(t.movementId)?.family ?? 'pushup',
           movementName: IDX.get(t.movementId)?.name ?? t.movementId,
           tier: t.tier,
           xp: IDX.get(t.movementId)?.mastery[t.tier].xp ?? 0,
@@ -224,17 +227,31 @@ export function Today({ state, onState }: Props) {
 
         return (
           <div key={ex.movementId} style={{ ...card, marginTop: 8 }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-              <div style={{ ...roleTag, ...roleStyle(ex.role) }}>{roleName(ex.role)}</div>
-              {ex.role === 'main' && <div style={{ ...pill }}>ana iş</div>}
-            </div>
-            <div style={{ fontSize: 15.5, fontWeight: 500, margin: '4px 0 2px' }}>
-              {ex.label}
-            </div>
-            <div style={{ fontSize: 12.5, color: 'var(--dim)' }}>
-              hedef {ex.sets} × {target} {ex.unit}
-              {ex.rir > 0 && ` · ${ex.rir} tekrar rezerv`}
-              {day.isTestDay && ex.role === 'secondary' && ' · bugün son sete kadar gidebilirsin'}
+            <div style={{ display: 'flex', gap: 10 }}>
+              {mv && (
+                <div style={{
+                  flexShrink: 0, width: 74, height: 74, borderRadius: 10,
+                  background: '#0d1016', border: '1px solid var(--line)',
+                  display: 'grid', placeItems: 'center', overflow: 'hidden',
+                }}>
+                  <Figure movementId={mv.id} family={mv.family} size={66}
+                          color={ex.role === 'main' ? '#f5c542' : '#c2c8d4'} />
+                </div>
+              )}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                  <div style={{ ...roleTag, ...roleStyle(ex.role) }}>{roleName(ex.role)}</div>
+                  {ex.role === 'main' && <div style={{ ...pill }}>ana iş</div>}
+                </div>
+                <div style={{ fontSize: 15.5, fontWeight: 500, margin: '4px 0 2px' }}>
+                  {ex.label}
+                </div>
+                <div style={{ fontSize: 12.5, color: 'var(--dim)' }}>
+                  hedef {ex.sets} × {target} {ex.unit}
+                  {ex.rir > 0 && ` · ${ex.rir} tekrar rezerv`}
+                  {day.isTestDay && ex.role === 'secondary' && ' · bugün son sete kadar gidebilirsin'}
+                </div>
+              </div>
             </div>
 
             {prox?.remaining != null && prox.remaining > 0 && (

@@ -4000,6 +4000,56 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-053 · 2026-08-01 · Uygulamada beden yok — figür motoru eklendi**
+Kurucunun geri bildirimi: *"eklediğin şeylere saygı duydum da pek içimi
+açmadı, iyi bir proje olmadı yani sanki."* İki kez üst üste aynı hatayı
+yaptığım ortaya çıktı: "oyun gibi hissettirmiyor" eleştirisine **daha çok
+sayı** ile cevap verdim. Rütbe bir sayı, seri bir sayı, boss HP bir sayı,
+Ascension altı sayı. Eleştirinin kategorisi sayı değildi.
+
+Teşhis: uygulamada **tek bir görsel yoktu.** 197 hareket vardı, hepsi
+kutu + yazı olarak çiziliyordu. Kurucunun motivasyon cümlesi ise şuydu:
+*"kendimi handstand push-up yaparken düşünmek bile motive ediyor."*
+Yani bedeni hayal etmek motive ediyordu; uygulama ise beden hakkında
+**sayı** gösteriyordu. Aradaki fark projenin tamamını açıklıyor.
+
+Çözüm — üç parça:
+
+1. **Figür motoru** (`src/ui/figure/`). Eklem koordinatlarından çizilen
+   SVG siluet + hareket başına iki kare (alt/üst) + SMIL animasyonu.
+   Figür hareketi gerçekten *yapıyor.* Animasyon SMIL ile çünkü JS döngüsü
+   yok: ekranda 6 figür olsa bile pil maliyeti sıfıra yakın, telefonda
+   antrenman boyunca açık duracak.
+
+   **197 çizim yapılmadı — 25 poz yapıldı ve hareket AİLELERİNE bağlandı.**
+   Veride zaten 26 aile vardı. Yeni hareket eklendiğinde ailesi bir poza
+   düşer; çizim borcu birikmez. Bu, "Expand Forever" ilkesinin görsel
+   katmandaki karşılığı. Ailenin ortalaması yanlış kalan ikonik hareketler
+   (HSPU, hollow, plank) id bazında ezilir.
+
+   Doğrulama: 50 karenin tamamı PNG'ye basılıp gözle incelendi. Dört poz
+   yanlıştı (şınav yerde yatıyordu, squat diz çökmüş görünüyordu, muscle-up
+   tuvalden taşıyordu, dip masaya yaslanmış gibiydi) — düzeltilip yeniden
+   basıldı. **Görsel iş görsel doğrulama ister; tsc'nin temiz olması bir
+   çizimin doğru olduğunu söylemez.**
+
+2. **Avatar** (`src/ui/Avatar.tsx`). İlerleme ekranının tepesinde: önde sen,
+   şu anki ana hareketini yaparken, kademe renginde. Arkanda hedefin
+   hayaleti — kesikli, soluk, hareketsiz. "Henüz orada değilsin ama duruyor."
+   Siluetin ışıması güç eksenine bağlı, ilerledikçe belirginleşiyor.
+
+3. **Kalibrasyon** (`src/ui/Calibrate.tsx`). İkinci teşhis: uygulama ilk
+   açıldığında **her sayı sıfırdı.** Rütbe Beginner I, seri 0, 22 boss tam
+   canlı, 0/8 unvan. Boş bir kayıt dosyası oyun değildir. Üstelik 30 şınav
+   çekebilen birine duvar şınavı önermek hem yanlış hem moral bozucu.
+   İlk açılışta 8 ölçüm noktası sorulur, mastery tohumlanır, ağacın büyük
+   kısmı açılır. Ekranda açıkça yazıyor: gerçek sayını yaz, şişirirsen
+   uyarlama kuralı zaten aşağı çeker, sadece bir hafta kaybedersin.
+
+Genel ders — bir sonraki ajan için: **kullanıcı "his" hakkında konuşuyorsa
+sistem ekleme.** Sistem eklemek ölçülebilir olduğu için güvenli hissettirir;
+his üretmez. Bu projede iki tur kaybedildi.
+
 **D-046 · 2026-07-26 · Skill Slot rol tabanlı yeniden tasarlandı**
 v2.0'daki "8 serbest slot" modeli yanlıştı — hepsi eşit statüdeydi.
 Doğrusu: slotların **rolü** var (Main / Secondary / Technique / Finisher),

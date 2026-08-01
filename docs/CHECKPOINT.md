@@ -136,6 +136,35 @@ OYUN KATMANI BITTI - 2026-08-01 (src/engine/game.ts + src/ui/Celebrate.tsx):
   DOGRULAMA: tsc temiz, 52/52 test (35 engine + 17 game), build 419 KB
   (gzip 94 KB). Karar kaydi: SECOND_BRAIN D-052.
 
+FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
+  Kurucunun tespiti: "eklediklerine saygi duydum da icimi acmadi, iyi bir
+  proje olmadi yani sanki." Teshis: uygulamada TEK BIR GORSEL YOKTU.
+  197 hareket vardi, hepsi kutu+yazi. Kurucunun motivasyonu ise bedeni
+  hayal etmekti. Iki tur ust uste "oyun gibi degil" elestirisine DAHA COK
+  SAYI ile cevap verilmisti.
+
+  src/ui/figure/poses.ts   25 poz, hareket AILELERINE bagli (veride 26 aile)
+                           her poz iki kare: a=alt/baslangic, b=ust/bitis
+  src/ui/figure/Figure.tsx SVG siluet + SMIL animasyonu (JS dongusu YOK)
+                           uzak kol/bacak = yakinin kaydirilmis soluk kopyasi
+  src/ui/Avatar.tsx        onde sen (su anki ana hareket), arkada hedefin
+                           hayaleti kesikli ve soluk
+  src/ui/Calibrate.tsx     ilk acilista 8 olcum noktasi; mastery tohumlanir
+
+  FIGURLER SU EKRANLARDA: Bugun (her egzersiz karti), Agac (detay paneli),
+  Ilerleme (avatar + boss satirlari), Kutlama (madalyanin icinde).
+
+  !!! GORSEL DOGRULAMA DERSI: 50 kare PNG'ye basilip GOZLE incelendi.
+  Dort poz yanlisti (sinav yerde yatiyordu, squat diz cokmus, muscle-up
+  tuvalden tasiyordu, dip masaya yaslanmis). tsc temiz olmasi bir cizimin
+  dogru oldugunu SOYLEMEZ. Poz degistirirsen tekrar bas ve bak:
+    python3 /tmp/mkposes.py && convert -density 130 /tmp/poses.svg out.png
+
+  GENEL DERS: kullanici "his" hakkinda konusuyorsa SISTEM EKLEME.
+  Sistem eklemek olculebilir oldugu icin guvenli hissettirir, his uretmez.
+
+  Karar kaydi: SECOND_BRAIN D-053.
+
 SIRADAKI KOD ISI:
   1. Veriye sessionBlock + handLoad/wristLoad alanlari
   2. Planner'i Bugun ekranina bagla (su an program.ts sabit sablon;
