@@ -165,6 +165,27 @@ FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
 
   Karar kaydi: SECOND_BRAIN D-053.
 
+!!! FIGUR ISKELETI ACI TABANLI - 2026-08-01 (D-055)
+  Kurucu: "adamlar uyusturucu icmis gibiler." Sebep: poz = eklem KONUMU
+  idi, ara degerde on kol uzayip kisaliyordu. Kemik boyu sabit olmali.
+
+  ARTIK: poz = kok nokta + ACILAR (ileri kinematik). Kemik boyu yapi
+  geregi sabit, aci interpolasyonu uzvu dogal yayda tasiyor.
+  Temas noktalari (yerdeki el, bardaki el, ayak) ters kinematikle cakili.
+  Her uzuv iki kez cizilir: arka plan renginde kontur + dolgu.
+
+  !!! POZLAR URETILIR, ELLE YAZILMAZ:
+      tools/rig/poses.py    <- pozlari burada duzenle
+      tools/rig/emit.py     <- src/ui/figure/poses.ts uretir
+      tools/rig/render.py   <- sheet / strip onizleme
+
+      cd tools/rig
+      python3 emit.py > ../../src/ui/figure/poses.ts
+      python3 render.py strip PUSHUP,PULLUP,DIP && convert -density 120 strip.svg s.png
+
+  DERS: gorsel isi GOZLE dogrula. tsc temizdi, 52 test geciyordu ve
+  figurler sarhos gorunuyordu. Poz degistiysen serit bas ve bak.
+
 !!! SERVICE WORKER TUZAGI - 2026-08-01 (D-054)
   sw.js v1 CACHE-FIRST idi. index.html bir kez onbellege girince sonsuza
   kadar oradan servis edildi. IKI SURUM boyunca kullanici hicbir

@@ -4000,6 +4000,39 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-055 · 2026-08-01 · Figürler "sarhoş" görünüyordu — iskelet açıya geçti**
+Kurucu: *"o kadar kötü ki adamlar uyuşturucu içmiş gibiler."* Teşhis nettir
+ve tasarım hatasıdır: poz, eklem **KONUMLARI** olarak tanımlanmıştı. İki
+kare arasında ara değer alınırken ön kol uzuyor, sonra kısalıyordu. Gerçek
+bir bedende kemik boyu sabittir; göz bu ihlali anında yakalar ve lastik /
+sarhoş olarak okur. Dosyada *"uzuv uzunlukları ±%20 oynayabilir, 80
+pikselde görünmez"* diye yazmıştım. Yanlıştı — görünmüyor değil,
+**anlaşılmıyor**; beden yanlış hissettiriyor.
+
+Doğrusu ileri kinematik (FK): poz = kök nokta + AÇILAR.
+- Kemik boyu **yapı gereği** sabit; uzaması imkânsız.
+- Açı interpolasyonu uzvu **doğal yay** üzerinde taşır. Önceki sürümde
+  elle eklenen "ara kare"lerin çoğu bu yüzden gereksizleşti — dirsek artık
+  kendiliğinden dışarı savrularak çıkıyor, gövdenin içinden geçmiyor.
+- Baş boyuna sabitlendi (önce bağımsız süzülüyordu), yarıçapı 7.5→6.4.
+
+İki ek düzeltme, ikisi de gözle bakınca çıktı:
+1. **Temas noktaları çakılmalı.** Yerdeki el, bardaki el ve yerdeki ayak
+   ters kinematikle sabitleniyor. Çömelmede ayak havada kalıyordu.
+2. **Kontur.** Her uzuv iki kez çiziliyor: önce arka plan renginde geniş
+   kontur, sonra dolgu. Kontursuz çizimde kol gövdenin önünden geçtiğinde
+   tamamen kayboluyordu — barfikste kol ve gövde tek kalın çizgiye
+   dönüşüyordu.
+
+Süreç kararı: pozlar artık `tools/rig/poses.py` içinde yazılıyor ve
+`emit.py` TypeScript dosyasını **üretiyor**. Sebep: aynı iskelet matematiği
+hem önizleme aracında hem uygulamada gerekiyor; iki yerde elle tutulursa
+kaçınılmaz olarak ayrışır. Önizleme neyi gösteriyorsa uygulama onu çiziyor.
+
+Ders: **görsel işi gözle doğrula, kod doğrulamasıyla değil.** tsc temiz,
+52 test geçiyordu ve figürler sarhoş görünüyordu. Poz değişince
+`render.py strip` ile şerit bas ve bak.
+
 **D-054 · 2026-08-01 · Service worker iki sürümü görünmez etti**
 Kurucu: *"linkte değişen ne var ki."* Haklıydı — hiçbir şey değişmemişti,
 çünkü **görebilmesi mümkün değildi.**
