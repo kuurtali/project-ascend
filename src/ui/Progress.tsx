@@ -1,19 +1,20 @@
 /**
- * İLERLEME EKRANI + TERFİ ANI
+ * İLERLEME EKRANI — rütbe, seri, terfi, boss, unvanlar, ascension
+ *
+ * Oyun katmanının görünür yüzü. Motor tarafı src/engine/game.ts.
  *
  * Terfi: Main slot ALTIN kademeye ulaşınca eski Main aşağı iner, ağaçtaki
- * bir üst düğüm Main olur. Takvimle değil mastery ile. (D-046, S-1)
- *
- * Bu, oyunun en iyi ödül anı — boss'tan daha güçlü, çünkü boss yılda bir
- * yenilir, terfi ayda bir olur. (SECOND_BRAIN 18.12)
+ * bir üst düğüm Main olur. Takvimle değil mastery ile. (D-046 S-1)
+ * Boss yılda bir yenilir, terfi ayda bir olur — asıl ödül anı bu.
  */
 
 import { useMemo } from 'react';
 import dbJson from '../data/movements.json';
-import type { MovementDatabase, PlayerState, SlotRole } from '../engine/types';
+import type { MovementDatabase, PlayerState } from '../engine/types';
 import { MASTERY_TIERS } from '../engine/types';
 import { balanceScore, indexMovements, isOpen, levelOf, proximity } from '../engine/mastery';
 import { pathTo, shouldPromote } from '../engine/planner';
+import { ascensionOf, bossStates, rankOf, streakOf, titlesOf } from '../engine/game';
 import { WEEK } from '../program';
 
 const DB = dbJson as unknown as MovementDatabase;
@@ -26,8 +27,7 @@ const TIER_LABEL: Record<string, string> = {
   bronze: 'Bronz', silver: 'Gümüş', gold: 'Altın', master: 'Master',
 };
 
-/** Kullanıcının uzun vadeli hedefleri — terfi zinciri bunlara bakar. */
-const GOALS: { id: string; label: string }[] = [
+const GOALS = [
   { id: 'hspu', label: 'Handstand Push-up' },
   { id: 'bar-muscle-up', label: 'Muscle-up' },
   { id: 'front-lever', label: 'Front Lever' },
@@ -37,135 +37,129 @@ const GOALS: { id: string; label: string }[] = [
 export function Progress({ state }: { state: PlayerState }) {
   const level = levelOf(DB, state.xp);
   const balance = balanceScore(DB, state);
+  const rank = rankOf(DB, state);
+  const streak = streakOf(state);
+  const bosses = useMemo(() => bossStates(DB, state), [state]);
+  const titles = useMemo(() => titlesOf(DB, state), [state]);
+  const asc = useMemo(() => ascensionOf(DB, state), [state]);
 
-  /** Programdaki Main slotlar — terfiye hazır olan var mı */
   const promotions = useMemo(() => {
     const mains = new Set<string>();
     for (const day of WEEK) {
-      for (const ex of day.exercises) {
-        if (ex.role === 'main') mains.add(ex.movementId);
-      }
+      for (const ex of day.exercises) if (ex.role === 'main') mains.add(ex.movementId);
     }
-    return [...mains]
-      .filter((id) => shouldPromote(state, id))
-      .map((id) => {
-        const mv = IDX.get(id)!;
-        // Bir üst düğüm: bu hareketin açtıklarından çalışılabilir en düşük tier
-        const next = mv.unlocks
-          .map((u) => IDX.get(u))
-          .filter((m): m is NonNullable<typeof m> => !!m)
-          .filter((m) => isOpen(state, m))
-          .sort((a, b) => a.tier - b.tier)[0];
-        return { from: mv, to: next ?? null };
-      });
+    return [...mains].filter((id) => shouldPromote(state, id)).map((id) => {
+      const mv = IDX.get(id)!;
+      const next = mv.unlocks.map((u) => IDX.get(u))
+        .filter((m): m is NonNullable<typeof m> => !!m)
+        .filter((m) => isOpen(state, m))
+        .sort((a, b) => a.tier - b.tier)[0];
+      return { from: mv, to: next ?? null };
+    });
   }, [state]);
 
-  const stats = useMemo(() => {
-    const all = DB.movements;
-    const withTier = all.filter((m) => state.mastery[m.id]?.tier);
-    const open = all.filter((m) => isOpen(state, m));
-    const bosses = all.filter((m) => m.isBoss);
-    const bossDone = bosses.filter((m) => state.mastery[m.id]?.tier);
-    const sessions = new Set(state.logs.map((l) => l.date)).size;
-    return {
-      total: all.length, withTier: withTier.length, open: open.length,
-      boss: bosses.length, bossDone: bossDone.length, sessions,
-    };
-  }, [state]);
-
-  /** Hedeflere kalan mesafe */
-  const goals = useMemo(() =>
-    GOALS.map((g) => {
-      const path = pathTo(DB, IDX, g.id);
-      const done = path.filter((m) => state.mastery[m.id]?.tier).length;
-      return { ...g, done, total: path.length };
-    }), [state]);
-
-  /** Sonraki kademeye en yakın 5 hareket — motivasyon listesi */
-  const closest = useMemo(() => {
-    return DB.movements
+  const closest = useMemo(() =>
+    DB.movements
       .filter((m) => state.mastery[m.id]?.tier != null || isOpen(state, m))
       .map((m) => proximity(state, m))
       .filter((p) => p.remaining != null && p.remaining > 0 && p.best > 0)
       .sort((a, b) => (a.remaining ?? 0) - (b.remaining ?? 0))
-      .slice(0, 5);
-  }, [state]);
+      .slice(0, 5), [state]);
+
+  const goals = useMemo(() => GOALS.map((g) => {
+    const path = pathTo(DB, IDX, g.id);
+    return { ...g, done: path.filter((m) => state.mastery[m.id]?.tier).length, total: path.length };
+  }), [state]);
+
+  const nextBosses = bosses.filter((b) => !b.defeated).slice(0, 4);
+  const earned = titles.filter((t) => t.earned);
+  const nextTitles = titles.filter((t) => !t.earned)
+    .sort((a, b) => b.progress - a.progress).slice(0, 3);
 
   return (
     <div style={{ maxWidth: 440, margin: '0 auto', padding: '12px 14px 40px' }}>
 
-      {/* terfi — en üstte, çünkü en büyük olay */}
+      {/* RÜTBE — en üstte, kimliğin */}
+      <div style={{
+        ...card, background: 'linear-gradient(135deg,#151426,#11141b)',
+        borderColor: '#3a3563',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{
+            width: 52, height: 52, borderRadius: 14, display: 'grid',
+            placeItems: 'center', fontWeight: 700, fontSize: 20, color: '#0b0d12',
+            background: 'linear-gradient(135deg,#f5c542,#a855f7)',
+            boxShadow: '0 0 24px #a855f733',
+          }}>{level}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 18, fontWeight: 500 }}>{rank.label}</div>
+            <div style={{ fontSize: 11.5, color: 'var(--dim)' }}>
+              Seviye {level} · {state.xp.toLocaleString('tr')} XP
+            </div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{
+              fontSize: 22, fontWeight: 600,
+              color: streak.weeks > 0 ? '#f5c542' : 'var(--dim2)',
+            }}>{streak.weeks}</div>
+            <div style={{ fontSize: 9.5, color: 'var(--dim2)' }}>HAFTA SERİ</div>
+          </div>
+        </div>
+
+        {/* bu haftaki seans noktaları */}
+        <div style={{ display: 'flex', gap: 5, marginTop: 12, alignItems: 'center' }}>
+          {Array.from({ length: streak.target }).map((_, k) => (
+            <div key={k} style={{
+              flex: 1, height: 6, borderRadius: 99,
+              background: k < streak.thisWeek ? '#639922' : '#20252f',
+            }} />
+          ))}
+          <span style={{ fontSize: 11, color: 'var(--dim)', marginLeft: 4 }}>
+            {streak.thisWeek}/{streak.target}
+          </span>
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--dim2)', marginTop: 5 }}>
+          Seri haftalık sayılır — dinlenme günü seriyi kırmaz.
+        </div>
+      </div>
+
+      {/* TERFİ */}
       {promotions.map((p) => (
         <div key={p.from.id} style={{
-          ...card, borderColor: '#7F77DD', background: '#1a1533', marginBottom: 12,
+          ...card, marginTop: 10, borderColor: '#7F77DD', background: '#1a1533',
         }}>
-          <div style={{ ...label, color: '#a89ff5' }}>TERFİ HAZIR</div>
-          <div style={{ fontSize: 16, fontWeight: 500, margin: '6px 0 2px' }}>
+          <div style={{ ...label, color: '#a89ff5' }}>⬆ TERFİ HAZIR</div>
+          <div style={{ fontSize: 16, fontWeight: 500, margin: '6px 0 6px' }}>
             {p.from.name} altın kademede
           </div>
           {p.to ? (
             <>
-              <div style={{ fontSize: 13, color: 'var(--dim)', lineHeight: 1.5 }}>
+              <div style={{ fontSize: 12.5, color: 'var(--dim)', lineHeight: 1.55 }}>
                 Ana hareket <b style={{ color: '#e6e8ee' }}>{p.to.name}</b> oluyor.
-                {' '}{p.from.name} yardımcı statüsüne iniyor — silinmiyor, rolü değişiyor.
+                {' '}{p.from.name} yardımcıya iniyor — silinmiyor, rolü değişiyor.
               </div>
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: 8, marginTop: 10,
-                fontSize: 12.5,
-              }}>
+              <div style={{ display: 'flex', gap: 8, marginTop: 10, alignItems: 'center' }}>
                 <span style={{ ...roleBox, color: '#8b93a5' }}>{p.from.name}</span>
-                <span style={{ color: '#a89ff5' }}>→ secondary</span>
-              </div>
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: 8, marginTop: 4, fontSize: 12.5,
-              }}>
+                <span style={{ color: '#5b6376' }}>↓</span>
                 <span style={{ ...roleBox, color: '#a89ff5', borderColor: '#7F77DD' }}>
                   {p.to.name}
                 </span>
-                <span style={{ color: '#a89ff5' }}>→ main</span>
               </div>
             </>
           ) : (
-            <div style={{ fontSize: 13, color: 'var(--dim)' }}>
-              Sıradaki düğüm henüz kilitli — ön koşulları tamamlayınca terfi açılır.
+            <div style={{ fontSize: 12.5, color: 'var(--dim)' }}>
+              Sıradaki düğüm kilitli — ön koşulları tamamlayınca terfi açılır.
             </div>
           )}
         </div>
       ))}
 
-      {/* seviye ve özet */}
-      <div style={card}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 46, height: 46, borderRadius: 12, display: 'grid',
-            placeItems: 'center', fontWeight: 600, fontSize: 18, color: '#0b0d12',
-            background: 'linear-gradient(135deg,#f5c542,#a855f7)',
-          }}>{level}</div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 15, fontWeight: 500 }}>Seviye {level}</div>
-            <div style={{ fontSize: 12, color: 'var(--dim)' }}>
-              {state.xp.toLocaleString('tr')} XP · {stats.sessions} seans
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-          <Stat n={stats.withTier} d={stats.total} t="hareket" />
-          <Stat n={stats.open} d={stats.total} t="açık" />
-          <Stat n={stats.bossDone} d={stats.boss} t="boss" />
-          <Stat n={balance ?? 0} d={100} t="denge" />
-        </div>
-      </div>
-
-      {/* yakınlık — günlük motor */}
+      {/* YAKINLIK */}
       {closest.length > 0 && (
         <div style={{ ...card, marginTop: 10 }}>
           <div style={label}>SONRAKİ KADEMEYE EN YAKIN</div>
           {closest.map((p) => (
-            <div key={p.movementId} style={{
-              display: 'flex', alignItems: 'center', gap: 8,
-              padding: '7px 0', borderBottom: '1px solid var(--line)', fontSize: 13.5,
-            }}>
+            <div key={p.movementId} style={rowStyle}>
               <span style={{ flex: 1 }}>{IDX.get(p.movementId)?.name}</span>
               <span style={{ fontSize: 12, color: 'var(--dim)' }}>
                 {p.best}/{p.nextTarget}
@@ -173,15 +167,102 @@ export function Progress({ state }: { state: PlayerState }) {
               <span style={{
                 fontSize: 12, fontWeight: 600,
                 color: TIER_COLOR[p.nextTier ?? 'bronze'],
-              }}>
-                {p.remaining} kaldı
-              </span>
+              }}>{p.remaining} kaldı</span>
             </div>
           ))}
         </div>
       )}
 
-      {/* hedefler */}
+      {/* BOSS HP */}
+      <div style={{ ...card, marginTop: 10 }}>
+        <div style={label}>
+          BOSS · {bosses.filter((b) => b.defeated).length}/{bosses.length} yenildi
+        </div>
+        {nextBosses.map((b) => (
+          <div key={b.movement.id} style={{ marginTop: 10 }}>
+            <div style={{ display: 'flex', fontSize: 13.5, alignItems: 'baseline' }}>
+              <span style={{ flex: 1 }}>★ {b.movement.name}</span>
+              <span style={{ fontSize: 11, color: 'var(--dim2)', marginRight: 6 }}>
+                {b.prereqDone}/{b.prereqTotal} ön koşul
+              </span>
+              <span style={{ fontSize: 12, color: b.hp > 60 ? '#e24b4a' : '#f5c542' }}>
+                {b.hp} HP
+              </span>
+            </div>
+            <div style={{
+              height: 7, background: '#20252f', borderRadius: 99, marginTop: 4,
+              overflow: 'hidden',
+            }}>
+              <div style={{
+                height: '100%', width: `${b.hp}%`,
+                background: b.hp > 60
+                  ? 'linear-gradient(90deg,#791f1f,#e24b4a)'
+                  : 'linear-gradient(90deg,#854f0b,#f5c542)',
+                transition: 'width .6s ease',
+              }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ASCENSION SCORE */}
+      <div style={{ ...card, marginTop: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline' }}>
+          <div style={{ ...label, flex: 1 }}>ASCENSION SCORE</div>
+          <div style={{ fontSize: 22, fontWeight: 600 }}>{asc.total}</div>
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--dim2)', marginBottom: 8 }}>
+          XP birikir, bu düşebilir. Şu anki halini gösterir.
+        </div>
+        {asc.axes.map((a) => (
+          <div key={a.key} style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+            <span style={{ fontSize: 12, color: 'var(--dim)', width: 66 }}>{a.label}</span>
+            <div style={{ flex: 1, height: 6, background: '#20252f', borderRadius: 99 }}>
+              <div style={{
+                height: '100%', width: `${a.value}%`, borderRadius: 99,
+                background: 'linear-gradient(90deg,#1D9E75,#5DCAA5)',
+              }} />
+            </div>
+            <span style={{ fontSize: 11.5, width: 26, textAlign: 'right' }}>{a.value}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* UNVANLAR */}
+      <div style={{ ...card, marginTop: 10 }}>
+        <div style={label}>UNVANLAR · {earned.length}/{titles.length}</div>
+        {earned.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+            {earned.map((t) => (
+              <span key={t.id} style={{
+                fontSize: 11.5, padding: '4px 10px', borderRadius: 99,
+                border: '1px solid #f5c542', color: '#f5c542', background: '#2a220c',
+              }}>{t.label}</span>
+            ))}
+          </div>
+        )}
+        <div style={{ marginTop: earned.length ? 12 : 8 }}>
+          {nextTitles.map((t) => (
+            <div key={t.id} style={{ marginTop: 8 }}>
+              <div style={{ display: 'flex', fontSize: 12.5 }}>
+                <span style={{ flex: 1, color: 'var(--dim)' }}>{t.label}</span>
+                <span style={{ fontSize: 11, color: 'var(--dim2)' }}>
+                  {Math.round(t.progress * 100)}%
+                </span>
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--dim2)' }}>{t.description}</div>
+              <div style={{ height: 4, background: '#20252f', borderRadius: 99, marginTop: 3 }}>
+                <div style={{
+                  height: '100%', width: `${t.progress * 100}%`,
+                  borderRadius: 99, background: '#5F5E5A',
+                }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* HEDEFLER */}
       <div style={{ ...card, marginTop: 10 }}>
         <div style={label}>HEDEFLERE MESAFE</div>
         {goals.map((g) => {
@@ -194,9 +275,7 @@ export function Progress({ state }: { state: PlayerState }) {
                   {g.done}/{g.total} adım
                 </span>
               </div>
-              <div style={{
-                height: 6, background: '#20252f', borderRadius: 99, marginTop: 4,
-              }}>
+              <div style={{ height: 6, background: '#20252f', borderRadius: 99, marginTop: 4 }}>
                 <div style={{
                   height: '100%', width: `${pct}%`, borderRadius: 99,
                   background: 'linear-gradient(90deg,#f5c542,#a855f7)',
@@ -207,7 +286,7 @@ export function Progress({ state }: { state: PlayerState }) {
         })}
       </div>
 
-      {/* kademe dağılımı */}
+      {/* KADEME DAĞILIMI + DENGE */}
       <div style={{ ...card, marginTop: 10 }}>
         <div style={label}>KADEME DAĞILIMI</div>
         <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
@@ -217,6 +296,7 @@ export function Progress({ state }: { state: PlayerState }) {
               <div key={t} style={{
                 flex: 1, textAlign: 'center', padding: '8px 4px',
                 background: '#0e1117', borderRadius: 8,
+                border: `1px solid ${n > 0 ? TIER_COLOR[t] + '44' : 'transparent'}`,
               }}>
                 <div style={{ fontSize: 18, fontWeight: 600, color: TIER_COLOR[t] }}>{n}</div>
                 <div style={{ fontSize: 10, color: 'var(--dim2)' }}>{TIER_LABEL[t]}</div>
@@ -224,21 +304,13 @@ export function Progress({ state }: { state: PlayerState }) {
             );
           })}
         </div>
+        {balance !== null && (
+          <div style={{ marginTop: 10, fontSize: 12.5, color: 'var(--dim)' }}>
+            Denge puanı <b style={{ color: balance > 70 ? '#86efac' : '#fbbf24' }}>{balance}</b>
+            {balance <= 70 && ' — bir kategoride yığılma var'}
+          </div>
+        )}
       </div>
-    </div>
-  );
-}
-
-function Stat({ n, d, t }: { n: number; d: number; t: string }) {
-  return (
-    <div style={{
-      flex: 1, textAlign: 'center', padding: '8px 2px',
-      background: '#0e1117', borderRadius: 8,
-    }}>
-      <div style={{ fontSize: 15, fontWeight: 600 }}>
-        {n}<span style={{ fontSize: 11, color: 'var(--dim2)' }}>/{d}</span>
-      </div>
-      <div style={{ fontSize: 10, color: 'var(--dim2)' }}>{t}</div>
     </div>
   );
 }
@@ -253,6 +325,9 @@ const label: React.CSSProperties = {
 };
 const roleBox: React.CSSProperties = {
   border: '1px solid var(--line)', borderRadius: 8, padding: '4px 9px',
+  fontSize: 12.5,
 };
-
-export type { SlotRole };
+const rowStyle: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', gap: 8,
+  padding: '7px 0', borderBottom: '1px solid var(--line)', fontSize: 13.5,
+};

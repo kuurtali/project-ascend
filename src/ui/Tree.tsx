@@ -14,6 +14,7 @@ import layoutJson from '../data/layout.json';
 import type { MovementDatabase, PlayerState } from '../engine/types';
 import { MASTERY_TIERS } from '../engine/types';
 import { equipmentOk, indexMovements, isExcluded, isOpen, proximity } from '../engine/mastery';
+import { bossStates } from '../engine/game';
 
 const DB = dbJson as unknown as MovementDatabase;
 const IDX = indexMovements(DB);
@@ -168,6 +169,18 @@ export function Tree({ state }: { state: PlayerState }) {
           transform: `translate(${view.x}px,${view.y}px) scale(${view.k})`,
         }}>
           <svg width={L.canvas.w} height={L.canvas.h}>
+            <defs>
+              <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="6" result="b" />
+                <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+              <style>{`
+                @keyframes nodePulse { 0%,100% { opacity:.30 } 50% { opacity:.85 } }
+                .aura { animation: nodePulse 2.4s ease-in-out infinite }
+                @keyframes edgeFlow { to { stroke-dashoffset: -24 } }
+                .flow { stroke-dasharray: 6 6; animation: edgeFlow 1.2s linear infinite }
+              `}</style>
+            </defs>
             {/* kategori bantları */}
             {L.catOrder.map((c) => {
               const b = L.bands[c];
@@ -196,6 +209,7 @@ export function Tree({ state }: { state: PlayerState }) {
                   <path key={`${p}-${mv.id}`}
                     d={`M${a[0] + 85},${a[1]} C${(a[0] + b[0]) / 2},${a[1]} ${(a[0] + b[0]) / 2},${b[1]} ${b[0] - 85},${b[1]}`}
                     fill="none"
+                    className={onPath ? 'flow' : undefined}
                     stroke={onPath ? '#22d3ee' : active ? '#f5c54288' : '#2b323f'}
                     strokeWidth={onPath ? 2.6 : active ? 2 : 1.4}
                     opacity={dim ? 0.12 : 1} />
@@ -216,19 +230,38 @@ export function Tree({ state }: { state: PlayerState }) {
               const fill = tier
                 ? ['#2a1d10', '#232732', '#33290c', '#2a1740'][MASTERY_TIERS.indexOf(tier)]!
                 : open ? '#151a24' : '#13161d';
-              const label = mv.name.length > 26 ? mv.name.slice(0, 25) + '…' : mv.name;
+              const label = mv.name.length > 24 ? mv.name.slice(0, 23) + '…' : mv.name;
+              // "sırada": açık, henüz kademe yok — hedeflenecek düğüm
+              const upNext = open && !tier && usable;
+              const aura = mv.isBoss
+                ? (tier ? TIER_COLOR[tier]! : '#e24b4a')
+                : tier ? TIER_COLOR[tier]! : upNext ? '#22d3ee' : null;
               return (
                 <g key={mv.id} opacity={dim ? 0.14 : 1}
                    onClick={() => setSel(mv.id)} style={{ cursor: 'pointer' }}>
+                  {/* hale — kazanılmış ve boss düğümler ışır */}
+                  {aura && !dim && (
+                    <rect x={p[0] - 88} y={p[1] - 18} width={176} height={36} rx={11}
+                          fill="none" stroke={aura}
+                          strokeWidth={mv.isBoss ? 3 : 2}
+                          className={upNext || (mv.isBoss && !tier) ? 'aura' : undefined}
+                          opacity={upNext || (mv.isBoss && !tier) ? undefined : 0.32}
+                          filter="url(#glow)" />
+                  )}
                   <rect x={p[0] - 85} y={p[1] - 15} width={170} height={30} rx={8}
                         fill={fill} stroke={sel === mv.id ? '#fff' : stroke}
                         strokeWidth={sel === mv.id ? 3 : mv.isBoss ? 2.5 : 1.5}
                         strokeDasharray={!usable && !tier ? '4 3' : undefined} />
+                  {mv.isBoss && (
+                    <text x={p[0] - 85} y={p[1] - 19} fontSize={13}
+                          fill={tier ? TIER_COLOR[tier]! : '#e24b4a'}>♛</text>
+                  )}
                   <text x={p[0] - 77} y={p[1] + 4} fontSize={11}
                         fill={open || tier ? '#e6e8ee' : '#4e5666'}>
-                    {mv.isBoss ? '★ ' : ''}{label}
+                    {label}
                   </text>
-                  <text x={p[0] + 79} y={p[1] + 4} fontSize={9} fill="#8b93a5" textAnchor="end">
+                  <text x={p[0] + 79} y={p[1] + 4} fontSize={9}
+                        fill={tier ? TIER_COLOR[tier]! : '#8b93a5'} textAnchor="end">
                     {tier ? '●'.repeat(MASTERY_TIERS.indexOf(tier) + 1) : `T${mv.tier}`}
                   </text>
                 </g>
@@ -268,6 +301,33 @@ export function Tree({ state }: { state: PlayerState }) {
               <span style={{ ...pill, borderColor: '#e24b4a', color: '#e24b4a' }}>kısıt: listede değil</span>
             )}
           </div>
+
+          {selMv.isBoss && (() => {
+            const b = bossStates(DB, state).find((x) => x.movement.id === selMv.id);
+            if (!b) return null;
+            return (
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ display: 'flex', fontSize: 11.5, color: 'var(--dim)' }}>
+                  <span style={{ flex: 1 }}>
+                    BOSS · {b.prereqDone}/{b.prereqTotal} ön koşul tamam
+                  </span>
+                  <span style={{ color: b.defeated ? '#86efac' : '#e24b4a' }}>
+                    {b.defeated ? 'YENİLDİ' : `${b.hp} HP`}
+                  </span>
+                </div>
+                <div style={{
+                  height: 8, background: '#20252f', borderRadius: 99, marginTop: 4,
+                  overflow: 'hidden',
+                }}>
+                  <div style={{
+                    height: '100%', width: `${b.hp}%`,
+                    background: 'linear-gradient(90deg,#791f1f,#e24b4a)',
+                    transition: 'width .6s ease',
+                  }} />
+                </div>
+              </div>
+            );
+          })()}
 
           {selProx?.remaining != null && selProx.remaining > 0 && (
             <div style={{

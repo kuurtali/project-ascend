@@ -16,6 +16,8 @@ import { indexMovements, levelOf, proximity } from '../engine/mastery';
 import { buildInput, nextTarget } from '../engine/adaptation';
 import { dayFor, MENU, resolveExercise, type ProgramExercise } from '../program';
 import { hasBar, recordSession, save } from '../storage';
+import { rankOf, streakOf } from '../engine/game';
+import { Celebrate, type CelebrationItem } from './Celebrate';
 
 const DB = dbJson as unknown as MovementDatabase;
 const IDX = indexMovements(DB);
@@ -50,6 +52,9 @@ export function Today({ state, onState }: Props) {
     gainedXp: number;
     tierUps: { movementId: string; tier: string }[];
     nexts: { label: string; from: number; to: number }[];
+  }>(null);
+  const [celebration, setCelebration] = useState<null | {
+    items: CelebrationItem[]; levelUp: number | null;
   }>(null);
 
   const all = [...exercises, ...extras];
@@ -97,8 +102,21 @@ export function Today({ state, onState }: Props) {
 
     if (payload.length === 0) return;
 
+    const levelBefore = levelOf(DB, state.xp);
     const res = recordSession(DB, IDX as never, state, payload, today);
     onState(res.state);
+    const levelAfter = levelOf(DB, res.state.xp);
+
+    if (res.tierUps.length > 0) {
+      setCelebration({
+        items: res.tierUps.map((t) => ({
+          movementName: IDX.get(t.movementId)?.name ?? t.movementId,
+          tier: t.tier,
+          xp: IDX.get(t.movementId)?.mastery[t.tier].xp ?? 0,
+        })),
+        levelUp: levelAfter > levelBefore ? levelAfter : null,
+      });
+    }
 
     const nexts = payload.map((p) => {
       const ex = all.find((x) => x.movementId === p.movementId)!;
@@ -115,11 +133,14 @@ export function Today({ state, onState }: Props) {
   }
 
   const level = levelOf(DB, state.xp);
+  const rank = rankOf(DB, state);
+  const streak = streakOf(state);
 
   // ─────────────────────────────────────────── dinlenme günü
   if (day.kind === 'rest') {
     return (
-      <Shell level={level} xp={state.xp} day={day.name} kind={day.kind}>
+      <Shell level={level} xp={state.xp} day={day.name} kind={day.kind}
+        rank={rank.label} streakWeeks={streak.weeks}>
         <p style={{ color: 'var(--dim)', lineHeight: 1.6 }}>
           Bugün dinlenme. {day.focusNote}
         </p>
@@ -131,10 +152,22 @@ export function Today({ state, onState }: Props) {
     );
   }
 
+  // ─────────────────────────────────────────── kutlama
+  if (celebration) {
+    return (
+      <Celebrate
+        items={celebration.items}
+        levelUp={celebration.levelUp}
+        onDone={() => setCelebration(null)}
+      />
+    );
+  }
+
   // ─────────────────────────────────────────── seans bitti
   if (done) {
     return (
-      <Shell level={level} xp={state.xp} day={day.name} kind={day.kind}>
+      <Shell level={level} xp={state.xp} day={day.name} kind={day.kind}
+        rank={rank.label} streakWeeks={streak.weeks}>
         <h2 style={{ fontSize: 20, fontWeight: 500, margin: '0 0 4px' }}>
           Seans kaydedildi
         </h2>
@@ -171,7 +204,8 @@ export function Today({ state, onState }: Props) {
 
   // ─────────────────────────────────────────── seans ekranı
   return (
-    <Shell level={level} xp={state.xp} day={day.name} kind={day.kind}>
+    <Shell level={level} xp={state.xp} day={day.name} kind={day.kind}
+        rank={rank.label} streakWeeks={streak.weeks}>
       <p style={{ color: 'var(--dim)', fontSize: 13, margin: '0 0 12px' }}>
         {day.focusNote}
       </p>
@@ -286,8 +320,9 @@ export function Today({ state, onState }: Props) {
 
 // ───────────────────────────────────────────────── kabuk ve stiller
 
-function Shell({ children, level, xp, day, kind }: {
-  children: React.ReactNode; level: number; xp: number; day: string; kind: string;
+function Shell({ children, level, xp, day, kind, rank, streakWeeks }: {
+  children: React.ReactNode; level: number; xp: number; day: string;
+  kind: string; rank?: string; streakWeeks?: number;
 }) {
   return (
     <div style={{ maxWidth: 440, margin: '0 auto', padding: '12px 14px 40px' }}>
@@ -295,17 +330,27 @@ function Shell({ children, level, xp, day, kind }: {
         display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14,
       }}>
         <div style={{
-          width: 38, height: 38, borderRadius: 10, display: 'grid',
-          placeItems: 'center', fontWeight: 600, color: '#0b0d12',
+          width: 40, height: 40, borderRadius: 11, display: 'grid',
+          placeItems: 'center', fontWeight: 700, fontSize: 16, color: '#0b0d12',
           background: 'linear-gradient(135deg,#f5c542,#a855f7)',
+          boxShadow: '0 0 18px #a855f733',
         }}>{level}</div>
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 17, fontWeight: 500 }}>{day}</div>
           <div style={{ fontSize: 11.5, color: 'var(--dim)' }}>
+            {rank ? `${rank} · ` : ''}
             {kind === 'heavy' ? 'ağır gün' : kind === 'light' ? 'hafif gün' : 'dinlenme'}
             {' · '}{xp.toLocaleString('tr')} XP
           </div>
         </div>
+        {streakWeeks !== undefined && streakWeeks > 0 && (
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: 17, fontWeight: 600, color: '#f5c542' }}>
+              {streakWeeks}
+            </div>
+            <div style={{ fontSize: 9, color: 'var(--dim2)' }}>HAFTA</div>
+          </div>
+        )}
       </header>
       {children}
     </div>

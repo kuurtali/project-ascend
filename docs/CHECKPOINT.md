@@ -100,12 +100,49 @@ PWA BITTI (public/):
 
 GEZINME: Bugun · Agac · Ilerleme · Ayarlar (alt cubuk)
 
+OYUN KATMANI BITTI - 2026-08-01 (src/engine/game.ts + src/ui/Celebrate.tsx):
+  Kurucunun tespiti: "opus5'e prompt verdim oyun yaptı falan oluyor, biz o
+  seviyede bi sey yapmadik." Dogruydu. SECOND_BRAIN 18'de 20 oyun sistemi
+  tasarlanmisti, uygulamada ~6'si vardi. Eksikler yazildi:
+
+    rankOf()      RUTBE - 6 asama x 3 alt kademe (Beginner I .. Legendary III)
+                  MEDYAN'dan hesaplanir, ortalamadan degil. Tek yuksek
+                  dugum rutbeyi sismez.
+    streakOf()    SERI - HAFTALIK. Icinde bulunulan hafta seriyi KIRMAZ.
+                  Gunluk seri dinlenmeyi cezalandirirdi -> M-3 ihlali.
+    bossStates()  BOSS HP = 100 x (1 - ilerleme). 22 boss, en yakin once.
+    titlesOf()    8 UNVAN. Yarisi disiplin odullendiriyor, guc degil.
+    ascensionOf() 6 EKSEN. XP birikir, bu DUSEBILIR (istikrar ekseni).
+
+  ONEMLI TEST DERSI: zamana bagli fonksiyon icinde new Date() cagirirsa
+  test edilemez. titlesOf/ascensionOf/streakOf hepsi `today` parametresi
+  alir. Uc test bu yuzden patlamisti.
+
+  UI'ya baglandi:
+    Today.tsx     basliga rutbe + haftalik seri sayaci
+    Celebrate.tsx TAM EKRAN KADEME KUTLAMASI - CSS animasyon (ring/pulse/
+                  rise/spark) + navigator.vibrate(). Titresim deseni
+                  kademeyle guclenir (bronz 1 vurus, master 5 vurus).
+                  Seans bitiminde tierUps varsa otomatik acilir.
+    Progress.tsx  YENIDEN YAZILDI: rutbe karti, haftalik seri noktalari,
+                  terfi, yakinlik, BOSS HP CUBUKLARI, ASCENSION eksenleri,
+                  unvanlar (kazanilan + en yakin 3), hedefler, dagilim.
+    Tree.tsx      boss dugumlerde TAC (♛) + kirmizi nabizli hale,
+                  kazanilmis dugumlerde kademe rengi hale,
+                  siradaki dugumlerde camgobegi nabiz,
+                  GPS yolunda akan kesikli cizgi,
+                  boss secilince detay panelinde HP cubugu.
+
+  DOGRULAMA: tsc temiz, 52/52 test (35 engine + 17 game), build 419 KB
+  (gzip 94 KB). Karar kaydi: SECOND_BRAIN D-052.
+
 SIRADAKI KOD ISI:
   1. Veriye sessionBlock + handLoad/wristLoad alanlari
-  2. Seri (streak) takibi — HAFTALIK, gunluk degil (M-3)
-  3. Gunluk gorev ureticisi (18.7) — kurallı, rastgele degil
-  4. Planner'i Bugun ekranina bagla (su an program.ts sabit sablon;
+  2. Planner'i Bugun ekranina bagla (su an program.ts sabit sablon;
      planner slotlari uretebiliyor ama UI hala sablonu kullaniyor)
+  3. Gunluk gorev ureticisi (18.7) — kurallı, rastgele degil
+     (2'den SONRA yapilmali; sabit sablonda gorev anlamsiz)
+  4. Sezon sistemi (18.12) — ertelendi
 
 ANTRENMAN DURUMU:
   Kullanici AGUSTOS basinda basliyor, alet o zamana geliyor.
@@ -116,7 +153,7 @@ ANTRENMAN DURUMU:
   Detay: ANTRENMAN_KAYDI_YEREL.md (depoda YOK, yerel)
 
 --------------------------------------------------------------------------------
-SON GUNCELLEME : 2026-07-26  (kod basladi)
+SON GUNCELLEME : 2026-08-01  (oyun katmani baglandi)
 DURUM          : Faz 0 BITTI  (veri temeli, 196 hareket, 0 hata 0 uyari)
                  Faz 0.5 DEVAM (PLAN - v2.0 yazildi, 1 haftalik takvim var)
                  Faz 1 prototipi calisiyor, 61/61 test geciyor

@@ -3961,6 +3961,45 @@ Sonuç: Bugün ekranı **telefon genişliğine** tasarlanır. Mağaza gerekmez;
 web app olarak telefonun ana ekranına eklenir (PWA). `D-034` (App Store
 ertelendi) geçerliliğini koruyor ama artık mobil *kullanım* birinci sınıf.
 
+**D-052 · 2026-08-01 · Oyun katmanı tasarımdan uygulamaya taşındı**
+Kurucunun geri bildirimi: *"opus5'e prompt verdim oyun yaptı falan oluyor,
+biz o seviyede bi şey yapmadık aslında."* Haklıydı. §18'de **20 oyun
+sistemi** tasarlanmıştı, uygulamada yalnızca ~6'sı vardı: XP, seviye,
+kademe, ağaç, denge puanı, terfi. Rütbe, seri, boss HP, unvanlar ve
+Ascension Score sadece kâğıttaydı.
+
+Sebebi teşhis edilebilir: motor katmanı (`adaptation`, `planner`, `mastery`)
+"doğru çalışan uygulama" için zorunluydu, oyun katmanı değildi. Zorunlu
+olan önce yazıldı, his sonraya kaldı. Ama kurucunun tarif ettiği motivasyon
+mekanizması —*"kademeleri gördükçe derim ki 2 tane daha yapayım"*— tam
+olarak bu katmanda yaşıyor. Yani "sonraya kalan" şey aslında ürünün amacıydı.
+
+Uygulanan kararlar:
+1. **Rütbe medyandan hesaplanır, ortalamadan değil.** Ortalama tek bir
+   yüksek düğümle şişer; bir tane tuck front lever seni Advanced yapmaz.
+2. **Seri HAFTALIK.** Günlük seri dinlenmeyi cezalandırır ve aşırı
+   antrenmanı ödüllendirir — M-3'e aykırı. İçinde bulunulan hafta seriyi
+   kırmaz; sadece *tamamlanmış* haftalar sayılır.
+3. **Boss HP = 100 × (1 − ilerleme).** Mekanik olarak normal düğümle aynı,
+   sunum farklı. Tamamen psikolojik, maliyeti sıfır.
+4. **Unvanların yarısı disiplin ödüllendirir**, güç değil (İstikrarlı,
+   Sabırlı, Kayıtçı, Mobilite Delisi). Sistem sadece yasak koymuyor,
+   doğru davranışı da ödüllendiriyor — M-3'ün pozitif tarafı.
+5. **Ascension Score düşebilir.** XP birikimlidir ve asla azalmaz; bu
+   dürüst değil. İstikrar ekseni 6 hafta boşluktan sonra düşer, yani
+   Ascension "şu an neredesin"i gösterir.
+6. **Zamana bağlı fonksiyonlar `today` parametresi alır.** İçeride
+   `new Date()` çağıran fonksiyon test edilemez — üç test bu yüzden
+   patladı, imza değiştirilerek düzeltildi.
+
+Kademe atlama artık tam ekran kutlama + `navigator.vibrate()` ile
+karşılanıyor; titreşim deseni kademeyle güçleniyor. Telefonda dokunsal
+geri bildirim ekrandan güçlü (D-051).
+
+Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâlâ
+yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
+şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
+
 **D-046 · 2026-07-26 · Skill Slot rol tabanlı yeniden tasarlandı**
 v2.0'daki "8 serbest slot" modeli yanlıştı — hepsi eşit statüdeydi.
 Doğrusu: slotların **rolü** var (Main / Secondary / Technique / Finisher),
