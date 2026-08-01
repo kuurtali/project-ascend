@@ -39,6 +39,12 @@ export interface PoseSet {
   /** a = başlangıç/alt, b = bitiş/üst. Statik tutuşta ikisi çok yakın. */
   a: Pose;
   b: Pose;
+  /**
+   * Ara kare. Uzuvların yolu düz bir çizgi değilse gerekir: iki kare
+   * arasında doğrusal geçiş dirseği bedenin İÇİNDEN geçirir. Barfikste
+   * dirsek dışarı savrularak yukarı çıkar, o yay burada tarif edilir.
+   */
+  m?: Pose;
   props: Prop[];
   /** Saniye — yavaş tutuşlar uzun, patlayıcı hareketler kısa */
   dur: number;
@@ -50,6 +56,8 @@ export interface PoseSet {
 
 const PUSHUP: PoseSet = {
   props: ['ground'], dur: 2.6,
+  m: { head: [19, 61], neck: [29, 67], hip: [57, 74], elbow: [36, 79],
+       hand: [26, 90], knee: [75, 81], foot: [93, 88] },
   b: { head: [18, 54], neck: [28, 60], hip: [56, 70], elbow: [27, 75],
        hand: [26, 90], knee: [74, 78], foot: [92, 88] },
   a: { head: [20, 69], neck: [30, 74], hip: [58, 78], elbow: [45, 83],
@@ -67,6 +75,9 @@ const EXPLOSIVE: PoseSet = {
 
 const PULLUP: PoseSet = {
   props: ['bar'], dur: 3.0,
+  // dirsek yanlara savrulup yukarı çıkar, gövdeden geçmez
+  m: { head: [57, 29], neck: [48, 33], hip: [47, 59], elbow: [40, 21],
+       hand: [46, 10], knee: [47, 75], foot: [57, 85] },
   a: { head: [56, 36], neck: [48, 40], hip: [47, 66], elbow: [47, 25],
        hand: [46, 10], knee: [47, 82], foot: [57, 92] },
   b: { head: [57, 22], neck: [48, 26], hip: [47, 52], elbow: [34, 18],
@@ -83,6 +94,8 @@ const HANG: PoseSet = {
 
 const DIP: PoseSet = {
   props: ['parallettes'], dur: 2.8,
+  m: { head: [56, 27], neck: [48, 33], hip: [48, 60], elbow: [37, 45],
+       hand: [38, 52], knee: [58, 75], foot: [48, 84] },
   b: { head: [56, 18], neck: [48, 24], hip: [48, 52], elbow: [43, 38],
        hand: [38, 52], knee: [58, 68], foot: [48, 78] },
   a: { head: [56, 36], neck: [48, 42], hip: [48, 68], elbow: [31, 51],
@@ -91,6 +104,8 @@ const DIP: PoseSet = {
 
 const PIKE: PoseSet = {
   props: ['ground'], dur: 2.8,
+  m: { head: [24, 60], neck: [34, 61], hip: [62, 35], elbow: [34, 72],
+       hand: [26, 88], knee: [74, 61], foot: [82, 88] },
   b: { head: [26, 46], neck: [34, 52], hip: [62, 34], elbow: [30, 66],
        hand: [26, 88], knee: [74, 60], foot: [82, 88] },
   a: { head: [22, 74], neck: [34, 70], hip: [62, 36], elbow: [40, 78],
@@ -99,6 +114,8 @@ const PIKE: PoseSet = {
 
 const HSPU: PoseSet = {
   props: ['ground', 'wall'], dur: 3.0,
+  m: { head: [59, 75], neck: [50, 68], hip: [50, 42], elbow: [42, 77],
+       hand: [50, 90], knee: [50, 25], foot: [50, 10] },
   b: { head: [58, 64], neck: [50, 58], hip: [50, 32], elbow: [50, 74],
        hand: [50, 90], knee: [50, 16], foot: [50, 4] },
   a: { head: [60, 86], neck: [50, 78], hip: [50, 52], elbow: [34, 80],
@@ -147,6 +164,8 @@ const LSIT: PoseSet = {
 
 const LEG_RAISE: PoseSet = {
   props: ['bar'], dur: 3.0,
+  m: { head: [56, 36], neck: [48, 40], hip: [47, 65], elbow: [47, 25],
+       hand: [46, 10], knee: [60, 70], foot: [72, 74] },
   a: { head: [56, 36], neck: [48, 40], hip: [47, 66], elbow: [47, 25],
        hand: [46, 10], knee: [47, 82], foot: [48, 96] },
   b: { head: [56, 36], neck: [48, 40], hip: [47, 64], elbow: [47, 25],
@@ -171,6 +190,8 @@ const HOLLOW: PoseSet = {
 
 const SQUAT: PoseSet = {
   props: ['ground'], dur: 2.8,
+  m: { head: [42, 33], neck: [45, 45], hip: [46, 67], elbow: [48, 54],
+       hand: [51, 58], knee: [58, 75], foot: [50, 90] },
   b: { head: [50, 20], neck: [50, 32], hip: [50, 58], elbow: [44, 46],
        hand: [40, 58], knee: [50, 74], foot: [50, 90] },
   a: { head: [34, 48], neck: [40, 58], hip: [42, 77], elbow: [52, 62],
@@ -205,6 +226,9 @@ const ROW: PoseSet = {
 
 const MUSCLEUP: PoseSet = {
   props: ['bar'], dur: 2.2,
+  // geçiş anı: göğüs bara yakın, dirsek dışarıda
+  m: { head: [58, 22], neck: [49, 27], hip: [48, 53], elbow: [34, 20],
+       hand: [46, 10], knee: [54, 70], foot: [50, 82] },
   a: { head: [56, 34], neck: [48, 38], hip: [47, 64], elbow: [47, 24],
        hand: [46, 10], knee: [47, 80], foot: [57, 90] },
   b: { head: [58, 14], neck: [50, 20], hip: [50, 46], elbow: [33, 15],

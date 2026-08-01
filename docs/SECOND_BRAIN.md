@@ -4000,6 +4000,32 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-054 · 2026-08-01 · Service worker iki sürümü görünmez etti**
+Kurucu: *"linkte değişen ne var ki."* Haklıydı — hiçbir şey değişmemişti,
+çünkü **görebilmesi mümkün değildi.**
+
+`sw.js` v1 cache-first yazılmıştı: gelen her isteği önce önbellekte arıyor,
+bulursa ağa hiç çıkmıyordu. `index.html` bir kez önbelleğe girdikten sonra
+sonsuza kadar oradan servis edildi. Önbellek adı da (`ascend-v1`) hiç
+değişmediği için `activate` temizliği de asla tetiklenmedi. İki sürüm
+boyunca push edilen her şey sunucuda duruyordu, kullanıcıya ulaşmıyordu.
+
+Doğrusu — istek tipine göre ayrı strateji:
+- **HTML / gezinme → önce ağ.** Güncellik önemli; ağ koparsa önbellek.
+- **`/assets/*` → önce önbellek.** Vite dosya adına hash koyuyor, içerik
+  asla değişmiyor; burada cache-first hem doğru hem hızlı.
+
+Kural olarak yazıldı: **adı değişmeyen bir dosyayı cache-first servis etme.**
+
+Ayrıca `controllerchange` dinleyicisi eklendi — yeni sürüm devralınca sayfa
+bir kez yenileniyor. Bu olmadan kullanıcı güncellemeyi ancak ikinci
+açılışta görürdü.
+
+Ders: **"push ettim, canlıda" demek "kullanıcı görüyor" demek değildir.**
+Doğrulama zinciri paket hash'ini kontrol etmekle bitiyordu; oysa araya
+kullanıcının cihazındaki service worker giriyordu. Sunucudaki dosyayı
+doğrulamak yeterli değil, teslim yolunun tamamı doğrulanmalı.
+
 **D-053 · 2026-08-01 · Uygulamada beden yok — figür motoru eklendi**
 Kurucunun geri bildirimi: *"eklediğin şeylere saygı duydum da pek içimi
 açmadı, iyi bir proje olmadı yani sanki."* İki kez üst üste aynı hatayı
@@ -4045,6 +4071,13 @@ Yani bedeni hayal etmek motive ediyordu; uygulama ise beden hakkında
    İlk açılışta 8 ölçüm noktası sorulur, mastery tohumlanır, ağacın büyük
    kısmı açılır. Ekranda açıkça yazıyor: gerçek sayını yaz, şişirirsen
    uyarlama kuralı zaten aşağı çeker, sadece bir hafta kaybedersin.
+
+Sonradan eklendi — hareket akıcılığı: iki kare arasında doğrusal geçiş
+uzuvları bedenin içinden geçiriyordu (barfikste dirsek gövdeyi kesiyordu).
+Yolu eğri olan hareketlere **ara kare** (`m`) eklendi: şınav, barfiks,
+HSPU, dips, squat, muscle-up, pike, bacak kaldırma. Kare sırası artık
+alt → ara → üst → ara → alt; dönüş noktalarında yavaşlıyor, ortada
+hızlanıyor. Gerçek bir tekrarın ritmi bu.
 
 Genel ders — bir sonraki ajan için: **kullanıcı "his" hakkında konuşuyorsa
 sistem ekleme.** Sistem eklemek ölçülebilir olduğu için güvenli hissettirir;

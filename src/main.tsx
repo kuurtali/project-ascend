@@ -56,10 +56,21 @@ function App() {
 createRoot(document.getElementById('root')!).render(<App />);
 
 // Çevrimdışı çalışma — parkta / salonda internet olmayabilir
+//
+// Yeni sürüm devralınca sayfa BİR KEZ yenilenir. Bu olmadan kullanıcı
+// güncellemeyi ancak ikinci açılışta görürdü; v1'de hiç göremedi. (D-054)
 if ('serviceWorker' in navigator) {
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloaded) return;
+    reloaded = true;
+    window.location.reload();
+  });
+
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register(
-      new URL('sw.js', document.baseURI).href,
-    ).catch(() => { /* sessizce geç */ });
+    navigator.serviceWorker
+      .register(new URL('sw.js', document.baseURI).href)
+      .then((reg) => { reg.update().catch(() => {}); })
+      .catch(() => { /* sessizce geç */ });
   });
 }

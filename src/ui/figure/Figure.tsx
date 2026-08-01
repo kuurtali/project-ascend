@@ -37,43 +37,52 @@ export function Figure({
   const dur = `${ps.dur}s`;
   const opacity = ghost ? 0.26 : 1;
 
-  /** Bir çizgi + iki uç arasında gidip gelen animasyon */
+  /**
+   * Bir tekrarın kare sırası: alt -> (ara) -> üst -> (ara) -> alt.
+   * Ara kare varsa 5 nokta, yoksa 3. Dönüş noktalarında yavaşlar
+   * (spline), ortada hızlanır — gerçek tekrarın ritmi böyle.
+   */
+  const seq = <T,>(fa: T, fm: T | null, fb: T): T[] =>
+    fm ? [fa, fm, fb, fm, fa] : [fa, fb, fa];
+
+  const KT = ps.m ? '0;0.28;0.5;0.78;1' : '0;0.5;1';
+  const KS = ps.m
+    ? '.35 0 .25 1;.35 0 .25 1;.35 0 .25 1;.35 0 .25 1'
+    : '.4 0 .3 1;.4 0 .3 1';
+
+  const Anim = ({ attr, va }: { attr: string; va: (number)[] }) => (
+    <animate attributeName={attr} dur={dur} repeatCount="indefinite"
+             values={va.join(';')} calcMode="spline"
+             keyTimes={KT} keySplines={KS} />
+  );
+
+  /** Bir çizgi + uçlarının kare kare yolu */
   const Seg = (
-    key: string, p1a: P, p2a: P, p1b: P, p2b: P,
-    w: number, dim = false,
+    key: string, e1: P[], e2: P[], w: number, dim = false,
   ) => (
     <line key={key}
-      x1={p1a[0]} y1={p1a[1]} x2={p2a[0]} y2={p2a[1]}
+      x1={e1[0]![0]} y1={e1[0]![1]} x2={e2[0]![0]} y2={e2[0]![1]}
       stroke={color} strokeWidth={w} strokeLinecap="round"
       opacity={(dim ? 0.42 : 1) * opacity}
       strokeDasharray={ghost ? '5 4' : undefined}>
       {on && <>
-        <animate attributeName="x1" dur={dur} repeatCount="indefinite"
-                 values={`${p1a[0]};${p1b[0]};${p1a[0]}`} calcMode="spline"
-                 keyTimes="0;0.5;1" keySplines=".4 0 .3 1;.4 0 .3 1" />
-        <animate attributeName="y1" dur={dur} repeatCount="indefinite"
-                 values={`${p1a[1]};${p1b[1]};${p1a[1]}`} calcMode="spline"
-                 keyTimes="0;0.5;1" keySplines=".4 0 .3 1;.4 0 .3 1" />
-        <animate attributeName="x2" dur={dur} repeatCount="indefinite"
-                 values={`${p2a[0]};${p2b[0]};${p2a[0]}`} calcMode="spline"
-                 keyTimes="0;0.5;1" keySplines=".4 0 .3 1;.4 0 .3 1" />
-        <animate attributeName="y2" dur={dur} repeatCount="indefinite"
-                 values={`${p2a[1]};${p2b[1]};${p2a[1]}`} calcMode="spline"
-                 keyTimes="0;0.5;1" keySplines=".4 0 .3 1;.4 0 .3 1" />
+        <Anim attr="x1" va={e1.map((p) => p[0])} />
+        <Anim attr="y1" va={e1.map((p) => p[1])} />
+        <Anim attr="x2" va={e2.map((p) => p[0])} />
+        <Anim attr="y2" va={e2.map((p) => p[1])} />
       </>}
     </line>
   );
 
-  const arm = (p: Pose) => ({
-    e: p.elbow2 ?? p.elbow, h: p.hand2 ?? p.hand,
-  });
-  const leg = (p: Pose) => ({
-    k: p.knee2 ?? p.knee, f: p.foot2 ?? p.foot,
-  });
+  /** Bu poz asimetrik mi — öyleyse uzak uzuvlar kaydırılmaz */
+  const asym = !!(a.elbow2 || a.knee2);
+  const shift = (q: P): P => (asym ? q : off(q));
 
-  const farA = { arm: arm(a), leg: leg(a) };
-  const farB = { arm: arm(b), leg: leg(b) };
-  const useOff = (p: Pose, q: P) => (p.elbow2 || p.knee2 ? q : off(q));
+  const frames: Pose[] = seq(a, ghost ? null : (ps.m ?? null), b);
+
+  /** Bir eklemin kare kare yolu */
+  const path = (pick: (p: Pose) => P): P[] => frames.map(pick);
+  const farPath = (pick: (p: Pose) => P): P[] => frames.map((f) => shift(pick(f)));
 
   return (
     <svg viewBox="0 0 100 100" width={size} height={size}
@@ -81,17 +90,15 @@ export function Figure({
       <Props_ props={ps.props} color={color} ghost={ghost} />
 
       {/* uzak taraf — derinlik */}
-      {Seg('fa1', useOff(a, a.neck), useOff(a, farA.arm.e),
-                  useOff(b, b.neck), useOff(b, farB.arm.e), 5, true)}
-      {Seg('fa2', useOff(a, farA.arm.e), useOff(a, farA.arm.h),
-                  useOff(b, farB.arm.e), useOff(b, farB.arm.h), 4.5, true)}
-      {Seg('fl1', useOff(a, a.hip), useOff(a, farA.leg.k),
-                  useOff(b, b.hip), useOff(b, farB.leg.k), 6, true)}
-      {Seg('fl2', useOff(a, farA.leg.k), useOff(a, farA.leg.f),
-                  useOff(b, farB.leg.k), useOff(b, farB.leg.f), 5, true)}
+      {Seg('fa1', farPath((p) => p.neck), farPath((p) => p.elbow2 ?? p.elbow), 5, true)}
+      {Seg('fa2', farPath((p) => p.elbow2 ?? p.elbow),
+                  farPath((p) => p.hand2 ?? p.hand), 4.5, true)}
+      {Seg('fl1', farPath((p) => p.hip), farPath((p) => p.knee2 ?? p.knee), 6, true)}
+      {Seg('fl2', farPath((p) => p.knee2 ?? p.knee),
+                  farPath((p) => p.foot2 ?? p.foot), 5, true)}
 
       {/* gövde */}
-      {Seg('torso', a.neck, a.hip, b.neck, b.hip, 8.5)}
+      {Seg('torso', path((p) => p.neck), path((p) => p.hip), 8.5)}
 
       {/* baş */}
       <circle cx={a.head[0]} cy={a.head[1]} r={7.5}
@@ -99,22 +106,16 @@ export function Figure({
               strokeWidth={ghost ? 2 : 0} opacity={opacity}
               strokeDasharray={ghost ? '4 3' : undefined}>
         {on && <>
-          <animate attributeName="cx" dur={dur} repeatCount="indefinite"
-                   values={`${a.head[0]};${b.head[0]};${a.head[0]}`}
-                   calcMode="spline" keyTimes="0;0.5;1"
-                   keySplines=".4 0 .3 1;.4 0 .3 1" />
-          <animate attributeName="cy" dur={dur} repeatCount="indefinite"
-                   values={`${a.head[1]};${b.head[1]};${a.head[1]}`}
-                   calcMode="spline" keyTimes="0;0.5;1"
-                   keySplines=".4 0 .3 1;.4 0 .3 1" />
+          <Anim attr="cx" va={path((p) => p.head).map((p) => p[0])} />
+          <Anim attr="cy" va={path((p) => p.head).map((p) => p[1])} />
         </>}
       </circle>
 
       {/* yakın taraf */}
-      {Seg('a1', a.neck, a.elbow, b.neck, b.elbow, 5.5)}
-      {Seg('a2', a.elbow, a.hand, b.elbow, b.hand, 5)}
-      {Seg('l1', a.hip, a.knee, b.hip, b.knee, 6.5)}
-      {Seg('l2', a.knee, a.foot, b.knee, b.foot, 5.5)}
+      {Seg('a1', path((p) => p.neck), path((p) => p.elbow), 5.5)}
+      {Seg('a2', path((p) => p.elbow), path((p) => p.hand), 5)}
+      {Seg('l1', path((p) => p.hip), path((p) => p.knee), 6.5)}
+      {Seg('l2', path((p) => p.knee), path((p) => p.foot), 5.5)}
     </svg>
   );
 }

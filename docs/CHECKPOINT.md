@@ -165,6 +165,22 @@ FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
 
   Karar kaydi: SECOND_BRAIN D-053.
 
+!!! SERVICE WORKER TUZAGI - 2026-08-01 (D-054)
+  sw.js v1 CACHE-FIRST idi. index.html bir kez onbellege girince sonsuza
+  kadar oradan servis edildi. IKI SURUM boyunca kullanici hicbir
+  degisiklik goremedi; push basariliydi, teslim degildi.
+
+  KURAL: adi degismeyen bir dosyayi cache-first servis etme.
+    HTML/gezinme -> ONCE AG   (guncellik onemli)
+    /assets/*    -> once onbellek (dosya adinda hash var, icerik sabit)
+  Ayrica main.tsx'te controllerchange -> tek seferlik reload.
+
+  DERS: "push ettim, canlida" != "kullanici goruyor". Paket hash'ini
+  dogrulamak yetmez; teslim yolunun tamami dogrulanmali.
+
+  Kullanici hala eskisini goruyorsa: telefonda site verilerini temizle
+  ya da PWA'yi ana ekrandan kaldirip yeniden ekle. (Bir kerelik.)
+
 SIRADAKI KOD ISI:
   1. Veriye sessionBlock + handLoad/wristLoad alanlari
   2. Planner'i Bugun ekranina bagla (su an program.ts sabit sablon;
