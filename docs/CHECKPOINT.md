@@ -165,6 +165,27 @@ FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
 
   Karar kaydi: SECOND_BRAIN D-053.
 
+KRONOMETRE + UCTAN UCA TEST - 2026-08-02 (D-056)
+  src/ui/Timer.tsx      HoldTimer (plank/aski) + RestTimer (set arasi)
+                        Sure BASLANGIC ZAMAN DAMGASINDAN hesaplanir;
+                        sekme arkada kalinca setInterval yavasliyor.
+  src/ui/flow.test.tsx  18 test, GERCEK React bilesenleri jsdom'da
+                        kalibrasyon -> seans -> kutlama -> tum ekranlar
+
+  DOGRULANDI: 30 sinav girilince pushup MASTER kademeye cikiyor, XP
+  geliyor. Kalibrasyon gercekten isliyor, uygulama bos acilmiyor.
+
+  Test ortami: vite.config.ts icinde environmentMatchGlobs ile
+  *.test.tsx -> jsdom, *.test.ts -> node (motor testleri hizli kalsin).
+  Yeni devDeps: jsdom, @testing-library/react + dom + user-event.
+
+  !!! HALA EKSIK: gorsel dogrulama. Sandbox'a tarayici kurulamadi
+  (playwright indirme engelli, sudo yok). Bu testler COKMEDIGINI
+  kanitlar, GUZEL GORUNDUGUNU degil.
+
+  DERS: birim testi sayisi calisan uygulama demek degil. 52 test
+  geciyordu ve hicbiri uygulamayi ACMAMISTI.
+
 !!! FIGUR ISKELETI ACI TABANLI - 2026-08-01 (D-055)
   Kurucu: "adamlar uyusturucu icmis gibiler." Sebep: poz = eklem KONUMU
   idi, ara degerde on kol uzayip kisaliyordu. Kemik boyu sabit olmali.

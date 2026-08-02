@@ -19,6 +19,7 @@ import { hasBar, recordSession, save } from '../storage';
 import { rankOf, streakOf } from '../engine/game';
 import { Celebrate, type CelebrationItem } from './Celebrate';
 import { Figure } from './figure/Figure';
+import { HoldTimer, RestTimer } from './Timer';
 
 const DB = dbJson as unknown as MovementDatabase;
 const IDX = indexMovements(DB);
@@ -278,6 +279,16 @@ export function Today({ state, onState }: Props) {
               ))}
             </div>
 
+            {/* Saniyeyle ölçülen hareketlerde kronometre: ölçülen süre
+                doğrudan ilk boş sete yazılır, elle sayma yok. */}
+            {mv?.measure.type === 'hold' && (
+              <HoldTimer target={target} onDone={(sec) => {
+                const idx = Math.max(0, [...Array(ex.sets)]
+                  .findIndex((_, i) => vals[i] === undefined || vals[i] === ''));
+                setValue(ex.movementId, idx, String(sec));
+              }} />
+            )}
+
             <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
               {(['easy', 'ok', 'hard'] as const).map((k) => (
                 <button
@@ -323,6 +334,10 @@ export function Today({ state, onState }: Props) {
           </div>
         </details>
       )}
+
+      <div style={{ ...card, marginTop: 10 }}>
+        <RestTimer />
+      </div>
 
       <button style={primaryBtn} onClick={finish}>Seansı bitir</button>
       <button

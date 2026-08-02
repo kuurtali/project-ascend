@@ -4000,6 +4000,39 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-056 · 2026-08-02 · Kronometre ve uçtan uca akış testi**
+İlk antrenman günü geldi. İki pratik boşluk kapatıldı.
+
+**Kronometre.** Plank ve ölü askı SANİYE cinsinden ölçülüyor ama uygulamada
+sayaç yoktu; kullanıcının antrenman ortasında başka bir uygulama açması
+gerekiyordu. Her seansta tekrar eden bir sürtünme, ve tam da uygulamanın
+var olma sebebine aykırı. Tutuş sayacı ölçtüğü süreyi doğrudan ilk boş set
+alanına yazıyor. Ayrıca set arası dinlenme sayacı (60/90/120/180 sn).
+
+Teknik not: geçen süre **başlangıç zaman damgasından** hesaplanıyor, sayaç
+artırarak değil. Sekme arkaya alınınca `setInterval` yavaşlar veya durur;
+telefon kilitlenip açıldığında süre yanlış olurdu.
+
+**Uçtan uca test** (`src/ui/flow.test.tsx`, 18 test). O ana kadar 52 test
+vardı ve hepsi motoru doğruluyordu — fonksiyonlar doğruydu ama ekranların
+bir araya gelmiş hâlini kimse çalıştırmamıştı. `tsc` temiz ve testler
+yeşilken uygulama ilk açılışta çökebilirdi. İlk antrenman gününde bunun
+olması kabul edilemezdi.
+
+Test gerçek React bileşenlerini jsdom içinde sürüyor: kalibrasyon
+doldurulur, seans girilir, kutlama tetiklenir, sayaç geri sayar, tüm
+ekranlar hem boş hem dolu durumda açılır, ağaçta düğüme dokunulur.
+
+Doğrulanan kritik davranış: **30 şınav girilince pushup master kademeye
+çıkıyor ve XP geliyor.** Yani kalibrasyon gerçekten işe yarıyor, uygulama
+boş açılmıyor. Ayrıca 197 hareketin tamamının bir poza düştüğü test edildi.
+
+Tarayıcı kurulamadığı için görsel doğrulama hâlâ eksik — bu test çökmediğini
+kanıtlar, güzel göründüğünü değil. Fark bilinçli olarak kayda geçiriliyor.
+
+Ders: **birim testi sayısı çalışan uygulama demek değildir.** 52 test
+geçiyordu ve hiçbiri uygulamayı açmamıştı.
+
 **D-055 · 2026-08-01 · Figürler "sarhoş" görünüyordu — iskelet açıya geçti**
 Kurucu: *"o kadar kötü ki adamlar uyuşturucu içmiş gibiler."* Teşhis nettir
 ve tasarım hatasıdır: poz, eklem **KONUMLARI** olarak tanımlanmıştı. İki
