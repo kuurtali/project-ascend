@@ -165,6 +165,23 @@ FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
 
   Karar kaydi: SECOND_BRAIN D-053.
 
+DOSYA DUZENI - 2026-08-02
+  Kok dizin temizlendi. Cop tek klasorde: "_SIL - bu klasoru silebilirsin"
+  Icinde: eski .gitBAK_* klasorleri, eski prototip, eskimis araclar.
+  Windows'tan sag tik > sil ile gidebilir, hicbiri gerekli degil.
+
+  !!! MOUNT KURALI: bu diskte dosya SILINEMIYOR (Operation not permitted),
+  sadece TASINABILIYOR. Silmek yerine _SIL klasorune tasi.
+
+  KULLANICI KISAYOLLARI (depoda degil, .gitignore'da):
+    "UYGULAMAYI AC.html"   buyuk buton + telefon icin karekod
+    "PROJECT ASCEND.url"   cift tiklayinca siteyi acar
+
+  README BASTAN YAZILDI. Iki gorsel eklendi (docs/img/):
+    hareketler.gif   figur animasyonu (tools/rig/render.py uretti)
+    agac.png         197 dugumluk agac (layout.json'dan uretildi)
+  Sayilar guncellendi: 67 test, 25 poz, 56 karar kaydi.
+
 KRONOMETRE + UCTAN UCA TEST - 2026-08-02 (D-056)
   src/ui/Timer.tsx      HoldTimer (plank/aski) + RestTimer (set arasi)
                         Sure BASLANGIC ZAMAN DAMGASINDAN hesaplanir;

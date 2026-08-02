@@ -4,11 +4,15 @@
 > ön koşullarını tamamlamadan ilerleyemediğin, RPG mantığında bir gelişim sistemi.
 
 **Bu bir antrenman kaydedici değil.** Kaydediciler geçmişi tutar; bu sistem
-sıradaki adımı gösterir.
+sıradaki adımı gösterir ve senin yaptığına göre kendini ayarlar.
 
-**▶ Canlı:** [kuurtali.github.io/project-ascend](https://kuurtali.github.io/project-ascend)
+**▶ Canlı: [kuurtali.github.io/project-ascend](https://kuurtali.github.io/project-ascend)**
 Telefonda aç, tarayıcı menüsünden "Ana ekrana ekle" — uygulama gibi çalışır,
 internetsiz de açılır.
+
+<p align="center">
+  <img src="docs/img/hareketler.gif" width="440" alt="Hareket figürleri — açı tabanlı iskelet animasyonu">
+</p>
 
 ---
 
@@ -26,118 +30,207 @@ değil. Üç şeyden biri:
 
 ---
 
-## Şu an ne var
+## Hareket ağacı
+
+197 hareket, 237 ön koşul bağlantısı, 11 katman derinlik. Kırmızı çerçeveli
+düğümler boss — yolun sonundaki hedefler.
+
+<p align="center">
+  <img src="docs/img/agac.png" width="820" alt="197 düğümlük hareket ağacı">
+</p>
+
+Ağaç elle çizilmedi. `tools/movements_data.py` içindeki tanımlardan üretiliyor,
+`build_db.py` doğruluyor, `make_layout.py` yerleştiriyor.
+
+---
+
+## Sistemin çekirdeği
+
+### Uyarlama kuralı
+
+Projenin var olma sebebi bu. "12 yap" deyip 10 yaptığında yol haritası
+değişmezse, sistemin internetteki bir listeden farkı kalmaz.
+
+| Ne oldu | Sonraki hedef |
+|---|---|
+| Hedefi tutturdu, **kolaydı** dedi | **+2** |
+| Hedefi tutturdu, normal/zor | **+1** |
+| 1-2 eksik kaldı | **aynı sayı** — kalibrasyon, başarısızlık değil |
+| 3+ eksik kaldı | **%20 düşür** |
+| 3 seans üst üste aynı sayı | **ekseni değiştir** — 3-1-3 tempo, ~%60 tekrar |
+
+Deterministik. LLM yok, sunucu yok. Uygulama tek başına çalışır.
+
+### Mastery kademeleri
+
+Her hareketin dört eşiği var: bronz, gümüş, altın, master. Eşikler **RIR 2'de**
+tanımlı — yani "2 tekrar payla bırakabildiğin sayı". Haftada bir ölçüm günü var,
+o gün bir seti sonuna kadar götürebiliyorsun. Bu, oyunlaştırmanın kullanıcıyı
+kendini paralamaya itmesini engelliyor.
+
+Kademe ancak **14 gün içinde 2 ayrı seansta** doğrulanırsa sayılıyor. Tek şanslı
+gün kademe kazandırmaz.
+
+### Skill Slot — hareketler rol değiştirir
+
+Dört slot, dört farklı nitelik: **Main** (yoğunluk), **Secondary** (hacim),
+**Technique** (motor öğrenme), **Finisher** (kapasite).
+
+Main altın kademeye ulaşınca terfi olur: ağaçtaki bir üst düğüm Main'e çıkar,
+eski Main Secondary'ye iner. Silinmez, rolü değişir. Terfi takvimle değil
+**mastery ile** olur.
+
+---
+
+## Oyun katmanı
 
 | | |
 |---|---|
-| **197 hareket** | Ön koşul grafı ile bağlanmış, 237 bağlantı, 11 katman derinlik |
-| **22 boss** | Muscle-Up, Front Lever, Planche, Human Flag, Iron Cross… |
-| **12 kategori** | Push, Pull, Core, Legs, Balance, Mobility, Elite… |
-| **11 otomatik kontrol** | Kırık referans, döngü, yetim düğüm, erişilemez boss, ekipman kaskadı |
-| **Doğrulama** | 0 hata, 0 uyarı |
-| **35 motor testi** | Kilit, mastery, uyarlama, planner — hepsi geçiyor |
-| **Uygulama** | Bugün · Ağaç · İlerleme · Ayarlar — telefonda çalışır |
+| **Rütbe** | 6 aşama × 3 alt kademe. Ulaşılan düğümlerin tier **medyanından** — ortalama tek bir yüksek düğümle şişer, bir tane tuck front lever kimseyi Advanced yapmaz |
+| **Seri** | **Haftalık**, günlük değil. Günlük seri dinlenmeyi cezalandırır ve aşırı antrenmanı ödüllendirir — bilinçli olarak reddedildi |
+| **Boss HP** | 22 boss, HP = 100 × (1 − ilerleme) |
+| **Unvanlar** | 8 tane, yarısı gücü değil **disiplini** ödüllendiriyor (İstikrarlı, Sabırlı, Kayıtçı, Mobilite Delisi) |
+| **Ascension Score** | 6 eksen. XP'nin aksine **düşebilir** — 6 hafta ara verilirse istikrar ekseni iner. "Şu an neredesin"i gösterir |
 
-```
-197 hareket · 22 boss · 23 başlangıç düğümü · 50 aksesuar
-237 bağlantı · maksimum derinlik 11 · toplam kazanılabilir XP 525.480
-```
+### Figürler
 
----
+Ekranda 197 hareketin hepsi bir insan siluetiyle çiziliyor ve hareketi
+gerçekten yapıyor. 197 çizim yok — **25 poz** var, hareket ailelerine bağlı
+(veride zaten 26 aile vardı). Yeni hareket eklendiğinde ailesi bir poza düşer,
+çizim borcu birikmez.
 
-## Depo yapısı
+İskelet **açı tabanlı** (ileri kinematik): poz = kök nokta + eklem açıları.
+Kemik boyu yapı gereği sabit. İlk sürüm eklem *konumlarını* saklıyordu ve ara
+karelerde ön kol uzayıp kısalıyordu — figürler sarhoş gibi görünüyordu. Açı
+interpolasyonu ayrıca uzvu doğal yay üzerinde taşıyor, dirsek gövdenin içinden
+geçmiyor.
 
-```
-.
-├── docs/
-│   ├── SECOND_BRAIN.md      ← projenin tamamı: amaç, mimari, kararlar (3.7k satır)
-│   ├── CHECKPOINT.md        ← nerede kaldık
-│   └── archive/             ← ilk vizyon notları, aşılmış dokümanlar
-├── data/
-│   ├── movements.json       ← TEK DOĞRULUK KAYNAĞI (197 hareket)
-│   └── validation_report.txt
-├── src/
-│   ├── engine/              ← MOTOR: UI'sız, saf TypeScript, 35 test
-│   │   ├── mastery.ts       kilit mantığı, kademe, yakınlık, denge puanı
-│   │   ├── adaptation.ts    uyarlama kuralı — hedefi kayıttan hesaplar
-│   │   ├── planner.ts       progression planner + slot atama
-│   │   └── types.ts
-│   ├── ui/                  ← Bugün · Ağaç · İlerleme · Ayarlar
-│   ├── program.ts           haftalık şablon
-│   └── storage.ts           yerel kayıt, dışa/içe aktarma
-├── tools/
-│   ├── movements_data.py    ← elle düzenlenen kaynak veri
-│   ├── build_db.py          ← genişletici + doğrulayıcı (11 kontrol)
-│   ├── make_layout.py       ← ağaç yerleşimi
-│   └── test_prototype.js    ← prototip testleri
-├── public/                  ← manifest, ikon, service worker
-├── .github/workflows/       ← test + doğrulama + otomatik yayın
-└── prototype/
-    └── index.html           ← ilk deneme tahtası (arşiv)
-```
+Pozlar elle yazılmıyor, `tools/rig/` üretiyor. Aynı iskelet matematiği hem
+önizleme aracında hem uygulamada gerekiyordu; iki yerde elle tutulursa ayrışır.
 
-### Motor katmanı neden ayrı
-
-`src/engine/` DOM bilmez, React bilmez. Girdi `(movements, playerState)`,
-çıktı yeni durum. Böylece oyun kuralları tek tek test edilebiliyor ve arayüz
-baştan yazılsa bile mekanikler korunuyor.
-
-Ayrıca uyarlama kuralı ve planner **deterministik** — dil modeli
-gerektirmiyorlar. Uygulama kendi başına hedef ayarlıyor ve slot seçiyor.
+Animasyon SMIL ile — JavaScript döngüsü yok. Ekranda altı figür olsa bile pil
+maliyeti sıfıra yakın; telefon antrenman boyunca açık duracak.
 
 ---
 
-## Nasıl çalıştırılır
+## Mimari
 
-**Uygulama:**
+```
+tools/                 Python veri hattı
+  movements_data.py    197 hareketin elle yazılmış tanımı — TEK DOĞRULUK KAYNAĞI
+  build_db.py          11 doğrulama kontrolü → src/data/movements.json
+  make_layout.py       ağaç yerleşimi → src/data/layout.json
+  rig/                 figür pozları → src/ui/figure/poses.ts
+
+src/engine/            saf TypeScript, DOM'a dokunmaz, LLM gerektirmez
+  mastery.ts           kilit, kademe, doğrulama, yakınlık, denge puanı
+  adaptation.ts        uyarlama kuralı
+  planner.ts           slot şablonları, yol bulma, terfi
+  game.ts              rütbe, seri, boss HP, unvanlar, ascension
+
+src/ui/                React 19, mobil öncelikli
+  Calibrate · Today · Tree · Progress · Settings
+  Timer · Celebrate · Avatar · figure/
+```
+
+**Yerel-öncelikli.** Sunucu yok, hesap yok. Veri `localStorage`'da durur ve tek
+tuşla dışa aktarılır. Servis worker sayesinde internetsiz açılır — parkta ya da
+salonda bağlantı olmayabilir.
+
+### Veri doğrulama
+
+`build_db.py` her üretimde 11 kontrol çalıştırır: kırık referans, döngü, yetim
+düğüm, erişilemez boss, artmayan eşikler, kategori tutarlılığı, ekipman kaskadı.
+
+Ekipman kaskadı kontrolü gerçek bir hata yakaladı: bir mobilite düğümü yanlışlıkla
+"sadece direnç bandı" olarak işaretlenmişti ve arkasındaki **39 düğüm, 8 boss**
+sessizce erişilemez hâle gelmişti. Ekipmansız erişim %72'den %93'e çıktı.
+
+CI her push'ta veriyi yeniden üretip commit edilenle karşılaştırır — üretim
+zinciri bozulursa derleme kırılır.
+
+---
+
+## Rakamlar
+
+```
+197 hareket   ·   22 boss   ·   23 başlangıç düğümü   ·   50 aksesuar
+237 bağlantı  ·   12 kategori   ·   26 aile   ·   maks derinlik 11
+25 figür pozu ·   toplam kazanılabilir XP 525.335
+```
+
+**67 test** — 52 motor testi (kilit, mastery, uyarlama, planner, oyun sistemleri)
+ve 15 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm ekranlar; gerçek
+React bileşenleri jsdom içinde çalışıyor).
+
+---
+
+## Çalıştırma
 
 ```bash
 npm ci
-npm run dev        # geliştirme sunucusu
-npm test           # motor testleri
-npm run build      # üretim derlemesi
+npm run dev            # geliştirme sunucusu
+
+npx tsc --noEmit       # tip kontrolü
+npx vitest run         # testler
+npm run build          # üretim derlemesi
+
+python3 tools/build_db.py      # veriyi yeniden üret
+python3 tools/make_layout.py   # ağaç yerleşimini yeniden üret
+cd tools/rig && python3 emit.py > ../../src/ui/figure/poses.ts   # pozlar
 ```
 
-**Veriyi yeniden üretmek için:**
+Poz değiştirildiyse gözle bakmak gerekir — tip kontrolü bir çizimin doğru
+olduğunu söylemez:
 
 ```bash
-cd tools
-python3 build_db.py        # movements.json + doğrulama raporu — 0 hata vermeli
-python3 make_layout.py     # ağaç yerleşimi + src/data/layout.json
+cd tools/rig
+python3 render.py strip PUSHUP,PULLUP,DIP && convert -density 120 strip.svg strip.png
 ```
-
-`build_db.py` hata verirse değişiklik kabul edilmez. Bu bir kural, tavsiye
-değil — CI de aynı kontrolü yapıyor ve veri güncel değilse derlemeyi kırıyor.
 
 ---
 
 ## Tasarım kararları
 
-Tam liste ve gerekçeler: [`docs/SECOND_BRAIN.md`](docs/SECOND_BRAIN.md) bölüm 29
-(51 karar kaydı). Öne çıkanlar:
+Tam liste ve gerekçeler: [`docs/SECOND_BRAIN.md`](docs/SECOND_BRAIN.md) — 56 karar
+kaydı. Öne çıkanlar:
 
-- **Veri elle düzenlenmez.** `movements.json` script tarafından üretilir.
+- **Veri elle düzenlenmez.** `movements.json` script tarafından üretilir;
   197 düğüm elle tutarlı tutulamaz.
 - **Ön koşullar VE mantığıyla çalışır.** Basit kural, akıllı kuraldan iyidir.
 - **Kilit açmak için bronz kademe yeterli.** Master şartı ağacı tıkar.
-- **Seri haftalık, günlük değil.** Günlük seri dinlenmeyi cezalandırır ve aşırı
-  antrenmanı ödüllendirir.
 - **Liderlik tablosu yok.** Kalistenikte acele = sakatlık; karşılaştırma aceleyi
   teşvik eder.
 - **Mobilite gerçek bir ön koşul.** Bilek mobilitesi olmadan handstand,
   ayak bileği mobilitesi olmadan pistol açılmaz.
+- **Adı değişmeyen dosya cache-first servis edilmez.** Servis worker'ın ilk hâli
+  `index.html`'i önbellekten veriyordu; iki sürüm boyunca hiçbir güncelleme
+  kullanıcıya ulaşmadı. "Yayınladım" ile "kullanıcı görüyor" aynı şey değil.
 
 ---
 
 ## Durum
 
-**Faz 0 — Veri temeli:** tamamlandı · 197 hareket, 0 hata
-**Faz 0.5 — Planlama:** tamamlandı · [`SECOND_BRAIN.md`](docs/SECOND_BRAIN.md), 51 karar kaydı
-**Faz 1 — Uygulama:** dört ekran çalışıyor, gerçek kullanım bekleniyor
+Veri temeli, motor, uygulama ve oyun katmanı çalışıyor; canlıda. Bilinen
+eksikler, dürüstçe:
 
-Sırada: seri takibi, günlük görev üreticisi, planner'ın Bugün ekranına bağlanması.
+- **Terfi henüz görsel.** İlerleme ekranı terfiyi duyuruyor ama Bugün ekranı hâlâ
+  sabit haftalık şablonu okuyor. Planlayıcı yazılı ve test edilmiş, ekrana
+  bağlanmayı bekliyor.
+- **Günlük görev üreteci ve sezon sistemi** tasarımda var, uygulamada yok.
+  Bilinçli ertelendi — planlayıcı bağlanmadan anlamsızlar.
+- **Görsel regresyon testi yok.** Testler çökmediğini kanıtlıyor, güzel
+  göründüğünü değil.
 
-Yol haritası: [`docs/SECOND_BRAIN.md`](docs/SECOND_BRAIN.md) bölüm 22.
+---
+
+## Belgeler
+
+- **[docs/SECOND_BRAIN.md](docs/SECOND_BRAIN.md)** — ana doküman. Amaç, anayasa,
+  mimari, kalistenik bilgisi, oyun mekanikleri, karar geçmişi. Her kararın *neden*
+  öyle olduğu burada; projeye sonradan bakan biri bağlamı buradan kurar.
+- **[docs/CHECKPOINT.md](docs/CHECKPOINT.md)** — nerede kalındı, sıradaki iş,
+  bilinen tuzaklar.
 
 ---
 
@@ -145,5 +238,5 @@ Yol haritası: [`docs/SECOND_BRAIN.md`](docs/SECOND_BRAIN.md) bölüm 22.
 
 MIT — bkz. [LICENSE](LICENSE).
 
-Hareket veritabanı serbestçe kullanılabilir. Bir hatası olduğunu düşünüyorsan
-issue aç; kalistenik bilgisi tek kişinin yargısıyla doğrulanmaz.
+Hareket veritabanı serbestçe kullanılabilir. Bir hatası olduğunu düşünen olursa
+issue açabilir; kalistenik bilgisi tek kişinin yargısıyla doğrulanmaz.

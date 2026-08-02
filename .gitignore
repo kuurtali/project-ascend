@@ -44,8 +44,15 @@ PROFIL_*.md
 # Antrenman kaydi - kisisel performans verisi
 ANTRENMAN_KAYDI_YEREL.md
 
-# Yedek klasoru - kullanici silebilir
+# Yedek klasoru - kullanici Windows'tan silebilir
+# (mount uzerinde dosya SILINEMIYOR, sadece tasinabiliyor; bu yuzden
+#  cop tek klasorde toplaniyor)
 _SILINEBILIR_yedekler/
+_SIL*/
+
+# Yerel kisayollar - kullaniciya ozel, depoda isi yok
+UYGULAMAYI AC.html
+*.url
 
 # Uygulama build ciktisi ve bagimliliklar
 node_modules/
