@@ -17,22 +17,21 @@ const KEY = 'ascend.state.v1';
 
 export const DEFAULT_STATE: PlayerState = {
   xp: 0,
-  // Evde barfiks demiri + dips aleti var; salonda ikisi de mevcut. (D-057)
+  // Yaygın ev kurulumu. Kullanıcı Ayarlar'dan değiştirir; ekipman
+  // yoksa program otomatik olarak alternatiflere düşer.
   equipment: ['floor', 'wall', 'box', 'bench', 'jump-rope',
               'pullup-bar', 'dip-station'],
-  constraints: [
-    {
-      area: 'hand', side: 'right', type: 'hardware',
-      // Metakarp implantı: yük doğrudan metakarp başlarına biniyor
-      excludedMovements: ['knuckle-pushup', 'fingertip-pushup', 'finger-pushup'],
-      clearedByProfessional: true,
-    },
-    {
-      area: 'wrist', side: 'left', type: 'chronic',
-      excludedMovements: [],
-      clearedByProfessional: false,
-    },
-  ],
+  // Varsayılan: kısıt yok. Kullanıcı kendi durumunu Ayarlar'dan girer —
+  // sağlık verisi varsayılan duruma gömülmez. (D-014, D-044)
+  //
+  // Kısıt şeması örneği:
+  //   { area: 'hand', side: 'right', type: 'hardware',
+  //     excludedMovements: ['knuckle-pushup', 'fingertip-pushup'],
+  //     clearedByProfessional: true }
+  // Elde implant/plaka varsa avuç içi yerine yumruk veya parmak ucu
+  // yükü doğrudan metakarp başlarına biner; o hareketler listeden çıkar
+  // ve ağaçta "kısıt: listede değil" olarak işaretlenir.
+  constraints: [],
   mastery: {},
   logs: [],
   weeklyTarget: 5,

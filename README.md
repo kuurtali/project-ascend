@@ -1,216 +1,234 @@
 # Project Ascend
 
-> Kalistenik öğrenmenin haritası — her hareketin bir beceri düğümü olduğu,
-> ön koşullarını tamamlamadan ilerleyemediğin, RPG mantığında bir gelişim sistemi.
+***English** · [Türkçe](README.tr.md)*
 
-**Bu bir antrenman kaydedici değil.** Kaydediciler geçmişi tutar; bu sistem
-sıradaki adımı gösterir ve senin yaptığına göre kendini ayarlar.
+> A map for learning calisthenics — every movement is a skill node, you
+> can't reach one without clearing its prerequisites, and the whole thing
+> is laid out like an RPG progression tree.
 
-**▶ Canlı: [kuurtali.github.io/project-ascend](https://kuurtali.github.io/project-ascend)**
-Telefonda aç, tarayıcı menüsünden "Ana ekrana ekle" — uygulama gibi çalışır,
-internetsiz de açılır.
+**This is not a workout logger.** Loggers record the past; this system
+shows the next step and adjusts it based on what you actually did.
+
+**▶ Live: [kuurtali.github.io/project-ascend](https://kuurtali.github.io/project-ascend)**
+Open it on a phone, "Add to Home Screen" — it behaves like an app and works
+offline.
 
 <p align="center">
-  <img src="docs/img/hareketler.gif" width="440" alt="Hareket figürleri — açı tabanlı iskelet animasyonu">
+  <img src="docs/img/hareketler.gif" width="440" alt="Movement figures — angle-based skeletal animation">
 </p>
 
 ---
 
-## Neden var
+## Why it exists
 
-Kalistenikte insanların bıraktığı nokta neredeyse hiçbir zaman "yeteneğim yok"
-değil. Üç şeyden biri:
+People almost never quit calisthenics because they lack the talent. It's
+one of three things:
 
-1. **Sırayı bilmemek.** Planche istiyor, pseudo planche push-up'ı hiç duymamış.
-2. **İlerlediğini görememek.** 8 haftada push-up'ı 12'den 16'ya çıkarmış — ciddi
-   bir gelişme, ama hiçbir yerde yazılı olmadığı için hissedilmiyor.
-3. **Ölçek körlüğü.** Front lever 2 yıllık bir iş. Bunu bilmeyen 3. ayda bırakıyor.
+1. **Not knowing the order.** They want a planche and have never heard of
+   a pseudo planche push-up.
+2. **Not seeing progress.** Eight weeks took their push-up from 12 to 16 —
+   a real gain — but nothing recorded it, so it never registered.
+3. **Scale blindness.** A front lever is a two-year project. Someone who
+   doesn't know that quits in month three.
 
-Üçü de bilgi ve görünürlük problemi, antrenman problemi değil.
+All three are information and visibility problems, not training problems.
 
 ---
 
-## Hareket ağacı
+## The skill tree
 
-197 hareket, 237 ön koşul bağlantısı, 11 katman derinlik. Kırmızı çerçeveli
-düğümler boss — yolun sonundaki hedefler.
+197 movements, 237 prerequisite edges, 11 layers deep. Red-bordered nodes
+are bosses — the targets at the end of each path.
 
 <p align="center">
-  <img src="docs/img/agac.png" width="820" alt="197 düğümlük hareket ağacı">
+  <img src="docs/img/agac.png" width="820" alt="197-node skill tree">
 </p>
 
-Ağaç elle çizilmedi. `tools/movements_data.py` içindeki tanımlardan üretiliyor,
-`build_db.py` doğruluyor, `make_layout.py` yerleştiriyor.
+The tree isn't hand-drawn. It's generated from definitions in
+`tools/movements_data.py`, validated by `build_db.py`, and laid out by
+`make_layout.py`.
 
 ---
 
-## Sistemin çekirdeği
+## Core systems
 
-### Uyarlama kuralı
+### The adaptation rule
 
-Projenin var olma sebebi bu. "12 yap" deyip 10 yaptığında yol haritası
-değişmezse, sistemin internetteki bir listeden farkı kalmaz.
+This is the reason the project exists. If the system says "do 12", you do
+10, and the plan doesn't change, then it's no better than a list on the
+internet.
 
-| Ne oldu | Sonraki hedef |
+| What happened | Next target |
 |---|---|
-| Hedefi tutturdu, **kolaydı** dedi | **+2** |
-| Hedefi tutturdu, normal/zor | **+1** |
-| 1-2 eksik kaldı | **aynı sayı** — kalibrasyon, başarısızlık değil |
-| 3+ eksik kaldı | **%20 düşür** |
-| 3 seans üst üste aynı sayı | **ekseni değiştir** — 3-1-3 tempo, ~%60 tekrar |
+| Hit the target, said **easy** | **+2** |
+| Hit the target, normal or hard | **+1** |
+| Missed by 1-2 | **same number** — that's calibration, not failure |
+| Missed by 3 or more | **drop 20%** |
+| Same number three sessions running | **change the axis** — 3-1-3 tempo, ~60% reps |
 
-Deterministik. LLM yok, sunucu yok. Uygulama tek başına çalışır.
+Deterministic. No LLM, no server. The app decides on its own.
 
-### Mastery kademeleri
+### Mastery tiers
 
-Her hareketin dört eşiği var: bronz, gümüş, altın, master. Eşikler **RIR 2'de**
-tanımlı — yani "2 tekrar payla bırakabildiğin sayı". Haftada bir ölçüm günü var,
-o gün bir seti sonuna kadar götürebiliyorsun. Bu, oyunlaştırmanın kullanıcıyı
-kendini paralamaya itmesini engelliyor.
+Every movement has four thresholds: bronze, silver, gold, master. They are
+defined **at RIR 2** — the number you can hit while leaving two reps in the
+tank. One test day per week lets you take a single set to the limit. This
+is what stops the gamification from pushing people into grinding
+themselves down.
 
-Kademe ancak **14 gün içinde 2 ayrı seansta** doğrulanırsa sayılıyor. Tek şanslı
-gün kademe kazandırmaz.
+A tier only counts once it's been **verified in two separate sessions
+within 14 days.** One lucky day doesn't earn a tier.
 
-### Salonla birlikte çalışma
+### Designed to coexist with other training
 
-Sistem tek başına bir program değil; ağırlık antrenmanının yanında çalışacak
-şekilde kuruldu. Haftalık şablon **3 sert / 2 hafif / 2 boş**:
+Calisthenics isn't a whole life program. Most people also lift, play a
+sport, or run. The weekly template assumes that — **3 hard / 2 light /
+2 off**:
 
 | | |
 |---|---|
-| **Pzt · Çar · Cum** | Beceri işi (15-20 dk, taze) → sonra salon |
-| **Sal · Cmt** | Hafif ev günü — RIR 3-4, başarısızlık yok |
-| **Per · Paz** | Tam dinlenme |
+| **1 · 3 · 5** | Skill day, 15-20 min. If other training happens that day, calisthenics goes first |
+| **2 · 6** | Light day — RIR 3-4, nothing taken to failure |
+| **4 · 7** | Full rest |
 
-Beceri işi **önce** yapılır çünkü motor öğrenmedir; yorgunken yanlış kalıp
-öğretir. Bench press'ten sonra pike push-up hem işe yaramaz hem risklidir.
+Skill work comes **first** because it's motor learning; done tired, it
+teaches the wrong pattern. A pike push-up after a heavy pressing session
+is both useless and risky.
 
-Ayrı günler yerine aynı gün seçildi: ayrı gün haftada 6 antrenman günü demek
-olurdu ve dirsek, bilek, omuz hiçbir gün tamamen boşta kalmazdı. Kas 48 saatte
-toparlanır, tendon daha yavaş — sakatlık oradan gelir. Buna karşılık beceri
-sıklık ister, o yüzden iki hafif gün eklendi: haftada 5 gün temas, 3 gün sert
-yük.
+Load is **stacked onto the same day rather than spread out.** Spread out,
+you end up training six days a week and the elbows, wrists and shoulders
+never get a fully clear day. Muscle recovers in 48 hours; tendon and
+connective tissue take longer, and that's where injuries come from. But
+skill acquisition wants frequency, so two light days sit in between:
+five days of contact, three days of real load.
 
-İtme hacmi çakışması bilinçli olarak çözüldü. Salonda bench ve omuz press
-varken kalistenik taraftaki itme **hacim değil beceri** olarak kuruldu: az set,
-düşük tekrar, yüksek kalite. Bacak işi de salona bırakıldı — ağacın bacak kolu
-öncelik olmaktan çıktı.
+The pressing-volume clash is handled deliberately. If you're also bench
+pressing, that's the same tissue — so pressing here is built as **skill,
+not volume**: few sets, low reps, high quality. Leg work is minimal for
+the same reason; barbell training covers legs far better, so that branch
+of the tree sits in the optional menu.
 
-### Skill Slot — hareketler rol değiştirir
+### Skill slots — movements change role
 
-Dört slot, dört farklı nitelik: **Main** (yoğunluk), **Secondary** (hacim),
-**Technique** (motor öğrenme), **Finisher** (kapasite).
+Four slots, four qualities: **Main** (intensity), **Secondary** (volume),
+**Technique** (motor learning), **Finisher** (capacity).
 
-Main altın kademeye ulaşınca terfi olur: ağaçtaki bir üst düğüm Main'e çıkar,
-eski Main Secondary'ye iner. Silinmez, rolü değişir. Terfi takvimle değil
-**mastery ile** olur.
+When a Main reaches gold, it gets promoted: a node further up the tree
+becomes the new Main and the old one drops to Secondary. It isn't removed,
+its role changes. Promotion is driven by **mastery, not the calendar.**
 
 ---
 
-## Oyun katmanı
+## Game layer
 
 | | |
 |---|---|
-| **Rütbe** | 6 aşama × 3 alt kademe. Ulaşılan düğümlerin tier **medyanından** — ortalama tek bir yüksek düğümle şişer, bir tane tuck front lever kimseyi Advanced yapmaz |
-| **Seri** | **Haftalık**, günlük değil. Günlük seri dinlenmeyi cezalandırır ve aşırı antrenmanı ödüllendirir — bilinçli olarak reddedildi |
-| **Boss HP** | 22 boss, HP = 100 × (1 − ilerleme) |
-| **Unvanlar** | 8 tane, yarısı gücü değil **disiplini** ödüllendiriyor (İstikrarlı, Sabırlı, Kayıtçı, Mobilite Delisi) |
-| **Ascension Score** | 6 eksen. XP'nin aksine **düşebilir** — 6 hafta ara verilirse istikrar ekseni iner. "Şu an neredesin"i gösterir |
+| **Rank** | 6 stages × 3 sub-tiers, computed from the **median** tier of reached nodes — a mean gets inflated by a single high node, and one tuck front lever shouldn't make anyone Advanced |
+| **Streak** | **Weekly, not daily.** A daily streak punishes rest days and rewards overtraining; it was rejected on purpose |
+| **Boss HP** | 22 bosses, HP = 100 × (1 − progress) |
+| **Titles** | 8 of them, half rewarding **discipline** rather than strength (Consistent, Patient, Logger, Mobility Nut) |
+| **Ascension Score** | 6 axes. Unlike XP it can **go down** — six weeks off and the consistency axis drops. It answers "where are you now" |
 
-### Figürler
+### Figures
 
-Ekranda 197 hareketin hepsi bir insan siluetiyle çiziliyor ve hareketi
-gerçekten yapıyor. 197 çizim yok — **25 poz** var, hareket ailelerine bağlı
-(veride zaten 26 aile vardı). Yeni hareket eklendiğinde ailesi bir poza düşer,
-çizim borcu birikmez.
+All 197 movements are drawn as a human silhouette that actually performs
+the movement. There aren't 197 drawings — there are **25 poses**, bound to
+movement families (the data already had 26). A new movement falls into an
+existing family's pose, so drawing debt never accumulates.
 
-İskelet **açı tabanlı** (ileri kinematik): poz = kök nokta + eklem açıları.
-Kemik boyu yapı gereği sabit. İlk sürüm eklem *konumlarını* saklıyordu ve ara
-karelerde ön kol uzayıp kısalıyordu — figürler sarhoş gibi görünüyordu. Açı
-interpolasyonu ayrıca uzvu doğal yay üzerinde taşıyor, dirsek gövdenin içinden
-geçmiyor.
+The skeleton is **angle-based** (forward kinematics): a pose is a root
+point plus joint angles, so bone length is constant by construction. The
+first version stored joint *positions* and the forearm stretched and
+shrank between frames — the figures looked drunk. Interpolating angles
+also carries limbs along natural arcs, so the elbow no longer passes
+through the torso.
 
-Pozlar elle yazılmıyor, `tools/rig/` üretiyor. Aynı iskelet matematiği hem
-önizleme aracında hem uygulamada gerekiyordu; iki yerde elle tutulursa ayrışır.
+Poses aren't hand-written; `tools/rig/` generates them. The same skeleton
+math was needed in both the preview tool and the app, and two hand-kept
+copies inevitably drift.
 
-Animasyon SMIL ile — JavaScript döngüsü yok. Ekranda altı figür olsa bile pil
-maliyeti sıfıra yakın; telefon antrenman boyunca açık duracak.
+Animation uses SMIL — no JavaScript loop. Six figures on screen cost
+almost no battery, which matters when the phone stays open through a
+whole session.
 
 ---
 
-## Mimari
+## Architecture
 
 ```
-tools/                 Python veri hattı
-  movements_data.py    197 hareketin elle yazılmış tanımı — TEK DOĞRULUK KAYNAĞI
-  build_db.py          11 doğrulama kontrolü → src/data/movements.json
-  make_layout.py       ağaç yerleşimi → src/data/layout.json
-  rig/                 figür pozları → src/ui/figure/poses.ts
+tools/                 Python data pipeline
+  movements_data.py    hand-written definitions of 197 movements — SINGLE SOURCE OF TRUTH
+  build_db.py          11 validation checks → src/data/movements.json
+  make_layout.py       tree layout → src/data/layout.json
+  rig/                 figure poses → src/ui/figure/poses.ts
 
-src/engine/            saf TypeScript, DOM'a dokunmaz, LLM gerektirmez
-  mastery.ts           kilit, kademe, doğrulama, yakınlık, denge puanı
-  adaptation.ts        uyarlama kuralı
-  planner.ts           slot şablonları, yol bulma, terfi
-  game.ts              rütbe, seri, boss HP, unvanlar, ascension
+src/engine/            pure TypeScript, never touches the DOM, needs no LLM
+  mastery.ts           unlocking, tiers, verification, proximity, balance score
+  adaptation.ts        the adaptation rule
+  planner.ts           slot templates, pathfinding, promotion
+  game.ts              rank, streak, boss HP, titles, ascension
 
-src/ui/                React 19, mobil öncelikli
+src/ui/                React 19, mobile-first
   Calibrate · Today · Tree · Progress · Settings
   Timer · Celebrate · Avatar · figure/
 ```
 
-**Yerel-öncelikli.** Sunucu yok, hesap yok. Veri `localStorage`'da durur ve tek
-tuşla dışa aktarılır. Servis worker sayesinde internetsiz açılır — parkta ya da
-salonda bağlantı olmayabilir.
+**Local-first.** No server, no account. Data lives in `localStorage` and
+exports with one tap. A service worker makes it open offline — there may
+be no signal in a park or a basement gym.
 
-### Veri doğrulama
+### Data validation
 
-`build_db.py` her üretimde 11 kontrol çalıştırır: kırık referans, döngü, yetim
-düğüm, erişilemez boss, artmayan eşikler, kategori tutarlılığı, ekipman kaskadı.
+`build_db.py` runs 11 checks on every build: broken references, cycles,
+orphan nodes, unreachable bosses, non-increasing thresholds, category
+consistency, equipment cascade.
 
-Ekipman kaskadı kontrolü gerçek bir hata yakaladı: bir mobilite düğümü yanlışlıkla
-"sadece direnç bandı" olarak işaretlenmişti ve arkasındaki **39 düğüm, 8 boss**
-sessizce erişilemez hâle gelmişti. Ekipmansız erişim %72'den %93'e çıktı.
+The equipment-cascade check caught a real bug. A single mobility node was
+mistakenly tagged as requiring a resistance band, and that silently made
+**39 nodes and 8 bosses** unreachable for anyone without one. Equipment-free
+access went from 72% to 93%.
 
-CI her push'ta veriyi yeniden üretip commit edilenle karşılaştırır — üretim
-zinciri bozulursa derleme kırılır.
-
----
-
-## Rakamlar
-
-```
-197 hareket   ·   22 boss   ·   23 başlangıç düğümü   ·   50 aksesuar
-237 bağlantı  ·   12 kategori   ·   26 aile   ·   maks derinlik 11
-25 figür pozu ·   toplam kazanılabilir XP 525.335
-```
-
-**78 test** — 60 motor testi (kilit, mastery, uyarlama, planner, oyun sistemleri,
-program yapısı) ve 18 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
-ekranlar; gerçek React bileşenleri jsdom içinde çalışıyor).
-
-Program testleri yapıyı koruyor: iki sert gün arka arkaya gelemez, hafif
-günlerde RIR ≥ 3, ölçüm günü haftada bir, bar gerektiren her hareketin barsız
-alternatifi var.
+CI regenerates the data on every push and diffs it against what was
+committed — if the generation chain breaks, the build fails.
 
 ---
 
-## Çalıştırma
+## Numbers
+
+```
+197 movements  ·  22 bosses  ·  23 entry nodes  ·  50 accessories
+237 edges      ·  12 categories  ·  26 families  ·  max depth 11
+25 figure poses  ·  total earnable XP 525,335
+```
+
+**77 tests** — 59 engine tests (unlocking, mastery, adaptation, planner,
+game systems, program structure) and 18 end-to-end flow tests (calibration
+→ session → celebration → every screen, running the real React components
+inside jsdom).
+
+The program tests protect the structure: two hard days can't land
+back-to-back, light days must keep RIR ≥ 3, exactly one test day per week,
+and every bar-dependent movement must have a bar-free alternative.
+
+---
+
+## Running it
 
 ```bash
 npm ci
-npm run dev            # geliştirme sunucusu
+npm run dev            # dev server
 
-npx tsc --noEmit       # tip kontrolü
-npx vitest run         # testler
-npm run build          # üretim derlemesi
+npx tsc --noEmit       # type check
+npx vitest run         # tests
+npm run build          # production build
 
-python3 tools/build_db.py      # veriyi yeniden üret
-python3 tools/make_layout.py   # ağaç yerleşimini yeniden üret
-cd tools/rig && python3 emit.py > ../../src/ui/figure/poses.ts   # pozlar
+python3 tools/build_db.py      # regenerate data
+python3 tools/make_layout.py   # regenerate tree layout
+cd tools/rig && python3 emit.py > ../../src/ui/figure/poses.ts   # poses
 ```
 
-Poz değiştirildiyse gözle bakmak gerekir — tip kontrolü bir çizimin doğru
-olduğunu söylemez:
+If you change a pose, look at it — a type check can't tell you a drawing
+is wrong:
 
 ```bash
 cd tools/rig
@@ -219,53 +237,57 @@ python3 render.py strip PUSHUP,PULLUP,DIP && convert -density 120 strip.svg stri
 
 ---
 
-## Tasarım kararları
+## Design decisions
 
-Tam liste ve gerekçeler: [`docs/SECOND_BRAIN.md`](docs/SECOND_BRAIN.md) — 56 karar
-kaydı. Öne çıkanlar:
+Full list with reasoning: [`docs/SECOND_BRAIN.md`](docs/SECOND_BRAIN.md) —
+57 decision records, written in Turkish. Highlights:
 
-- **Veri elle düzenlenmez.** `movements.json` script tarafından üretilir;
-  197 düğüm elle tutarlı tutulamaz.
-- **Ön koşullar VE mantığıyla çalışır.** Basit kural, akıllı kuraldan iyidir.
-- **Kilit açmak için bronz kademe yeterli.** Master şartı ağacı tıkar.
-- **Liderlik tablosu yok.** Kalistenikte acele = sakatlık; karşılaştırma aceleyi
-  teşvik eder.
-- **Mobilite gerçek bir ön koşul.** Bilek mobilitesi olmadan handstand,
-  ayak bileği mobilitesi olmadan pistol açılmaz.
-- **Adı değişmeyen dosya cache-first servis edilmez.** Servis worker'ın ilk hâli
-  `index.html`'i önbellekten veriyordu; iki sürüm boyunca hiçbir güncelleme
-  kullanıcıya ulaşmadı. "Yayınladım" ile "kullanıcı görüyor" aynı şey değil.
-
----
-
-## Durum
-
-Veri temeli, motor, uygulama ve oyun katmanı çalışıyor; canlıda. Bilinen
-eksikler, dürüstçe:
-
-- **Terfi henüz görsel.** İlerleme ekranı terfiyi duyuruyor ama Bugün ekranı hâlâ
-  sabit haftalık şablonu okuyor. Planlayıcı yazılı ve test edilmiş, ekrana
-  bağlanmayı bekliyor.
-- **Günlük görev üreteci ve sezon sistemi** tasarımda var, uygulamada yok.
-  Bilinçli ertelendi — planlayıcı bağlanmadan anlamsızlar.
-- **Görsel regresyon testi yok.** Testler çökmediğini kanıtlıyor, güzel
-  göründüğünü değil.
+- **Data is never hand-edited.** `movements.json` is generated; 197 nodes
+  can't be kept consistent by hand.
+- **Prerequisites use AND logic.** A simple rule beats a clever one.
+- **Bronze is enough to unlock.** Requiring master would clog the tree.
+- **No leaderboard.** In calisthenics, rushing means injury, and comparison
+  encourages rushing.
+- **Mobility is a real prerequisite.** No handstand without wrist mobility,
+  no pistol squat without ankle mobility.
+- **Never serve a file cache-first if its name doesn't change.** The first
+  service worker served `index.html` from cache and two releases never
+  reached the user. "Deployed" and "the user can see it" are not the same
+  thing.
 
 ---
 
-## Belgeler
+## Status
 
-- **[docs/SECOND_BRAIN.md](docs/SECOND_BRAIN.md)** — ana doküman. Amaç, anayasa,
-  mimari, kalistenik bilgisi, oyun mekanikleri, karar geçmişi. Her kararın *neden*
-  öyle olduğu burada; projeye sonradan bakan biri bağlamı buradan kurar.
-- **[docs/CHECKPOINT.md](docs/CHECKPOINT.md)** — nerede kalındı, sıradaki iş,
-  bilinen tuzaklar.
+Data foundation, engine, app and game layer all work and are live. Known
+gaps, stated plainly:
+
+- **Promotion is still cosmetic.** The progress screen announces it, but
+  the Today screen still reads a static weekly template. The planner is
+  written and tested; it just isn't wired to the screen yet.
+- **Daily quest generator and season system** exist in the design docs
+  only. Deliberately deferred — they're meaningless until the planner is
+  wired.
+- **No visual regression testing.** The tests prove it doesn't crash, not
+  that it looks right.
 
 ---
 
-## Lisans
+## Docs
 
-MIT — bkz. [LICENSE](LICENSE).
+- **[docs/SECOND_BRAIN.md](docs/SECOND_BRAIN.md)** — the main document
+  (Turkish). Purpose, constitution, architecture, calisthenics knowledge,
+  game mechanics, decision history. Every decision records *why*, so
+  anyone picking the project up later can rebuild the context.
+- **[docs/CHECKPOINT.md](docs/CHECKPOINT.md)** — where things stand, what's
+  next, and the traps worth knowing about.
 
-Hareket veritabanı serbestçe kullanılabilir. Bir hatası olduğunu düşünen olursa
-issue açabilir; kalistenik bilgisi tek kişinin yargısıyla doğrulanmaz.
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+The movement database is free to use. If you think something in it is
+wrong, open an issue; calisthenics knowledge shouldn't rest on one
+person's judgement.

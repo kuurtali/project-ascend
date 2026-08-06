@@ -4000,50 +4000,70 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
-**D-057 · 2026-08-02 · Ufuk 1 yıla çıktı, salon eklendi, program yeniden kuruldu**
-Kurucu kararı: *"6 ay sınırı kalktı, normal spor + bu program, en az 1 yıl,
-spor salonu — ilk ay tüm vücut sonra parçalar hâlinde. Sadece barfiks demiri
-alacağım, dips ve şınav evdeki aletler + salon."*
+**D-058 · 2026-08-02 · Kişisel plan depodan çıktı, sınır netleşti**
+Kurucu: *"kişisel şeyler kalmasın GitHub'da ama seninle kişisel şeyleri
+paylaşırım. Ben spor yapacağım, sen kalistenik kısmını GitHub'a dökeceksin,
+genel hepsi için de bana koçluk yapacaksın."*
 
-Üç şey birden değişti ve programın tamamı yeniden kuruldu.
+Net bir ayrım ve doğru bir içgüdü: **depo bir kalistenik sistemidir, bir
+kişinin antrenman günlüğü değildir.** Halka açık bir projede birinin
+kişisel salon bölünmesinin, sağlık verisinin ya da o haftaki tekrar
+sayısının işi yok — ne mahremiyet açısından ne de proje tutarlılığı
+açısından.
 
-**1. Ufuk 6 ay → en az 1 yıl.** En önemli değişiklik. HSPU ve muscle-up 6 ayda
-zorlama hedeflerdi; 12-18 ayda bu başlangıç noktasından gerçekten ulaşılabilir.
-Acele baskısı kalkınca eşikleri şişirme ihtiyacı da kalkıyor.
+Bu tur temizlenenler:
+- Kişiye özel salon programı (A/B/C hareket listeleri) ve `GYM_PLAN` sabiti
+- Bugün ekranındaki salon hatırlatma kartı
+- `program.ts` içindeki, kullanıcının sağlık durumuna ve o anki
+  performansına doğrudan seslenen gerekçe metinleri → genel ifadelere
+  çevrildi (bu satırı yazarken bile örnek vermemek gerekiyor: temizliği
+  anlatırken veriyi tekrar yazmak aynı sızıntıdır, ve bu hata bu projede
+  iki kez yapıldı)
+- `storage.ts` **varsayılan durumundaki sağlık kısıtları.** Bu en önemlisiydi:
+  el ve bilek kısıtları uygulamanın varsayılan state'ine gömülüydü, yani
+  uygulamayı açan HERKES o kısıtlarla başlıyordu. Artık `constraints: []`
+  ve şema örnek olarak yorumda duruyor; kullanıcı kendi durumunu Ayarlar'dan
+  girer. (D-014 ve D-044'ün gereği, ilk seferde eksik uygulanmış.)
 
-**2. Haftada 3 gün salon.** Bu bir ekleme değil, bir yeniden dağıtım:
-- **Bacak işi salona geçti.** Squat ve deadlift, kalistenik bacak dalından çok
-  daha iyi karşılıyor. Ağaçtaki bacak kolu öncelik olmaktan çıktı, menüde kaldı.
-- **İtme hacmi salona geçti.** Kalistenik taraftaki itme artık hacim değil
-  BECERİ: az set, düşük tekrar, yüksek kalite. Şınav ana hacim kaynağı değil.
-- Sebep: bench + omuz press + dips + şınav + pike şınav aynı dokuyu vuruyor.
-  İkisi de hacim yaparsa dirsek ve omuz önü 6 haftada konuşmaya başlar.
+Depoda kalan: **3 sert / 2 hafif / 2 boş** yapısı ve gerekçesi. Bu kişisel
+bir tercih değil, genellenebilir bir tasarım kararı — "kalistenik başka
+antrenmanın yanında çalışabilmeli" kısıtından çıkıyor. Şablon artık gün
+adları yerine indekslerle (1·3·5, 2·6, 4·7) anlatılıyor.
 
-**3. Yerleşim — aynı gün, kalistenik ÖNCE.** Kurucu önce ayrı gün düşünmüştü,
-gerekçesini sordu. Cevap:
-- Ayrı gün = 3 salon + 3 kalistenik = **6 antrenman günü.** Hiçbir gün dirsek,
-  bilek ve omuz tamamen boşta kalmıyor. Kas 48 saatte toparlanır, tendon ve bağ
-  dokusu daha yavaş — sakatlık oradan gelir. Sağ elde metakarp platini, solda
-  kist varken bu daha da ağır basıyor.
-- Ayrı günün tek gerçek avantajı tazelikti; onu **sıra** çözüyor. Beceri işi
-  motor öğrenmedir, yorgunken yanlış kalıp öğretir. Bench'ten sonra pike şınav
-  hem işe yaramaz hem risklidir. Bu yüzden kalistenik önce, 15-20 dk, taze.
+Ders: **kişisel veri yalnızca metinde değil, VARSAYILAN DEĞERLERDE de
+sızar.** Bir sağlık kısıtını `DEFAULT_STATE` içine yazmak, onu README'ye
+yazmakla aynı şey — hatta daha kötü, çünkü göze çarpmıyor.
 
-**Ama tam "aynı gün" de değil — 3 sert / 2 hafif / 2 boş.** Kurucunun ilk isteği
-*"her gün şınav ve barfiks"* idi ve arkasında doğru bir içgüdü vardı: beceri
-SIKLIK ister. Haftada 3 kez pike şınav ile 5 kez arasında öğrenme farkı var.
-Çözüm: 2 hafif ev günü eklendi (Salı, Cumartesi) — RIR 3-4, başarısızlık yok,
-amaç hacim değil temas. Böylece beceriye haftada 5 gün dokunuluyor ama sadece
-3 gün sert yükleniliyor.
+**D-057 · 2026-08-02 · Program başka antrenmanın yanında çalışacak şekilde kuruldu**
+Ufuk 6 aydan en az 1 yıla çıktı ve kullanıcının haftada birkaç gün ağırlık
+da çalışacağı netleşti. Program bu kısıtla yeniden kuruldu — kişisel
+detaylar değil, kısıtın kendisi kayda değer:
 
-Hafta: Pzt·Çar·Cum beceri+salon · Sal·Cmt hafif ev · Per·Paz tam dinlenme.
+**Yapı: 3 sert / 2 hafif / 2 boş.**
 
-Uygulamaya yansıyanlar: `program.ts` v2, Bugün ekranında **salon kartı**
-(uygulama ağırlık kaydetmiyor, sadece hatırlatıyor — bu sistemin işi beceri
-ağacı), her egzersizde **"neden burada"** satırı, varsayılan ekipmana
-`pullup-bar` ve `dip-station` eklendi. 8 yeni program testi: sert günler arka
-arkaya gelemez, hafif günlerde RIR ≥ 3, ölçüm günü haftada bir, her egzersiz
-gerçek bir hareketi işaret eder, bar gerektiren her hareketin alternatifi var.
+1. **Beceri işi önce.** Pike şınav, negatif barfiks ve skapular iş motor
+   öğrenmedir; yorgunken yapılırsa yanlış kalıp öğrenilir. Ağır bir itme
+   seansından sonra pike şınav hem işe yaramaz hem risklidir.
+
+2. **Yük aynı güne toplanır, dağıtılmaz.** Kalistenik ve diğer antrenman
+   ayrı günlere konursa haftada 6 antrenman günü olur ve dirsek, bilek,
+   omuz hiçbir gün tamamen boşta kalmaz. Kas 48 saatte toparlanır, tendon
+   ve bağ dokusu daha yavaş — sakatlık oradan gelir.
+
+3. **Ama yine de 2 hafif gün.** Beceri SIKLIK ister; haftada 3 kez pike
+   şınav ile 5 kez arasında öğrenme farkı var. Hafif günler hacim için
+   değil temas için: RIR 3-4, başarısızlık yok. Kullanıcının ilk isteği
+   "her gün şınav ve barfiks" idi ve arkasındaki içgüdü doğruydu.
+
+4. **İtme hacmi çakışması.** Ağırlık çalışan biri için bench ve omuz press
+   aynı dokuyu vuruyor. Bu yüzden buradaki itme hacim değil BECERİ olarak
+   kuruldu: az set, düşük tekrar, yüksek kalite. Aynı mantıkla bacak işi
+   minimumda — ağırlık bacağı kalistenikten iyi karşılıyor.
+
+8 program testi bu yapıyı koruyor: iki sert gün arka arkaya gelemez, hafif
+günlerde RIR ≥ 3, ölçüm günü haftada bir, her egzersiz gerçek bir hareketi
+işaret eder, bar gerektiren her hareketin alternatifi var. **Tasarım kararı
+testle korunmuyorsa zamanla aşınır.**
 
 **D-056 · 2026-08-02 · Kronometre ve uçtan uca akış testi**
 İlk antrenman günü geldi. İki pratik boşluk kapatıldı.

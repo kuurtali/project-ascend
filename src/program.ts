@@ -1,34 +1,38 @@
 /**
- * HAFTALIK PROGRAM ŞABLONU — salon + kalistenik, 1 yıl ufku
+ * HAFTALIK PROGRAM ŞABLONU
  *
- * v2 (2026-08-02). Değişen koşullar: 6 ay sınırı kalktı (en az 1 yıl),
- * haftada 3 gün spor salonu eklendi, evde barfiks ve dips var.
+ * v2 — bu şablon, kullanıcının BAŞKA antrenmanlar da yaptığı varsayımıyla
+ * kuruldu (ağırlık, spor dalı, koşu — hangisi olursa). Kalistenik tek
+ * başına bir hayat programı değil; başka yükün yanında çalışabilmesi
+ * gerekiyor. Tasarımın tamamı bu kısıttan çıkıyor.
  *
  * YAPI — 3 sert / 2 hafif / 2 boş:
- *   Pzt·Çar·Cum   BECERİ (15-20 dk, TAZE) → sonra salon
- *   Sal·Cmt       HAFİF ev günü (25-30 dk, başarısızlığa gitmez)
- *   Per·Paz       tamamen dinlenme
+ *   1·3·5   BECERİ günü (15-20 dk, taze). Aynı gün başka antrenman
+ *           yapılacaksa kalistenik ÖNCE gelir.
+ *   2·6     HAFİF gün (25-30 dk, başarısızlığa gitmez)
+ *   4·7     tamamen dinlenme
  *
  * NEDEN BECERİ ÖNCE: pike şınav, negatif barfiks ve skapular iş motor
- * öğrenmedir. Yorgunken yapılırsa yanlış kalıp öğrenilir. Bench'ten sonra
- * pike şınav yapmak omuz zaten bittiği için hem işe yaramaz hem risklidir.
+ * öğrenmedir. Yorgunken yapılırsa yanlış kalıp öğrenilir. Ağır bir itme
+ * seansından sonra pike şınav hem işe yaramaz hem risklidir.
  *
- * NEDEN AYNI GÜN (ayrı gün değil): 3 salon + 3 kalistenik = 6 antrenman
- * günü demekti; hiçbir gün dirsek, bilek ve omuz tamamen boşta kalmıyordu.
- * Kas 48 saatte toparlanır, tendon daha yavaş — sakatlık oradan gelir.
- * Yükü toplayınca 3 sert gün + 4 boş gün oluyor, bir yıl taşınabilir.
+ * NEDEN YÜK AYNI GÜNE TOPLANIR: kalistenik ve diğer antrenman ayrı
+ * günlere dağıtılırsa haftada 6 antrenman günü olur ve dirsek, bilek,
+ * omuz hiçbir gün tamamen boşta kalmaz. Kas 48 saatte toparlanır, tendon
+ * ve bağ dokusu daha yavaş — sakatlık oradan gelir. Yükü toplayınca
+ * 3 sert + 4 boş gün oluyor; yıllarca taşınabilen tek düzen bu.
  *
- * NEDEN YİNE DE 2 HAFİF GÜN: beceri sıklık ister. Haftada 3 kez pike
+ * NEDEN YİNE DE 2 HAFİF GÜN: beceri SIKLIK ister. Haftada 3 kez pike
  * şınav ile 5 kez arasında öğrenme farkı var. Hafif günler hacim değil
- * SIKLIK için — RIR yüksek, başarısızlık yok.
+ * temas için — RIR yüksek, başarısızlık yok.
  *
- * İTME HACMİ ÇAKIŞMASI: salonda bench ve omuz press var. Bu yüzden
- * kalistenik tarafındaki itme işi hacim değil BECERİ olarak kuruldu:
- * az set, düşük tekrar, yüksek kalite. Şınav artık ana hacim kaynağı
- * değil — o iş salona geçti.
+ * İTME HACMİ ÇAKIŞMASI: kullanıcı ağırlık da çalışıyorsa bench ve omuz
+ * press aynı dokuyu vuruyor. Bu yüzden buradaki itme işi hacim değil
+ * BECERİ olarak kuruldu: az set, düşük tekrar, yüksek kalite.
  *
- * BACAK: salon karşılıyor. Ağaçtaki bacak dalı öncelik olmaktan çıktı,
- * kalistenik tarafı üst gövde becerisine odaklanıyor. Menüde duruyor.
+ * BACAK: burada minimum. Ağırlık antrenmanı bacağı kalistenikten çok
+ * daha iyi karşılıyor; ağacın bacak kolu öncelik değil, menüde duruyor.
+ * Ağırlık çalışmayan biri menüden squat ekleyebilir.
  *
  * Hedef tekrarlar BURADA SABİT DEĞİL — sadece başlangıç değerleri.
  * Sonraki hedefler `engine/adaptation.ts` tarafından kayıttan hesaplanır.
@@ -68,8 +72,6 @@ export interface ProgramDay {
   ropeMinutes: number;
   /** Ölçüm günü: bir harekette RIR 0'a çıkılabilir (D-049) */
   isTestDay?: boolean;
-  /** Bu günün ardından salon var mı — ekranda hatırlatılır */
-  gym?: 'A' | 'B' | 'C';
 }
 
 // ───────────────────────────────────────────────── ORTAK BLOKLAR
@@ -77,7 +79,7 @@ export interface ProgramDay {
 const WRIST: ProgramExercise = {
   movementId: 'wrist-mobility', label: 'Bilek hazırlığı', role: 'technique',
   sets: 1, startTarget: 120, rir: 0, unit: 'saniye',
-  why: 'Handstand yolunun ön koşulu. Bileğinde kist var, bu atlanmaz.',
+  why: 'Handstand yolunun ön koşulu. Bilekte sorun geçmişi varsa atlanmaz.',
 };
 
 const SCAP_PULL: ProgramExercise = {
@@ -104,22 +106,23 @@ const HOLLOW: ProgramExercise = {
 
 export const WEEK: ProgramDay[] = [
   {
-    index: 1, name: 'Pazartesi', kind: 'heavy', gym: 'A', isTestDay: true,
-    focusNote: 'Beceri önce, taze kafayla. Sonra salon — tam vücut A. '
-             + 'Ölçüm günü: pike şınavda bir seti sonuna kadar götürebilirsin.',
+    index: 1, name: 'Pazartesi', kind: 'heavy', isTestDay: true,
+    focusNote: 'Beceri önce, taze kafayla. Ölçüm günü: pike şınavda bir seti '
+             + 'sonuna kadar götürebilirsin. Bugün ayrıca ağırlık çalışacaksan '
+             + 'buradan sonra.',
     ropeMinutes: 5,
     exercises: [
       WRIST,
       {
         movementId: 'pike-pushup', label: 'Pike şınav', role: 'main',
         sets: 3, startTarget: 5, rir: 2, unit: 'tekrar',
-        why: 'HSPU yolunun ilk gerçek adımı. Salondan ÖNCE, omuz taze iken.',
+        why: 'HSPU yolunun ilk gerçek adımı. Omuz taze iken yapılır.',
       },
       {
         movementId: 'negative-pullup', label: 'Negatif barfiks', role: 'main',
         sets: 3, startTarget: 5, rir: 2, unit: 'tekrar', needsBar: true,
         altMovementId: 'australian-row', altLabel: 'Masa kenarı row',
-        why: '2 barfiks çekiyorsun; negatif tekrar sayısını en hızlı büyüten yol.',
+        why: 'Az sayıda barfiks çekebilen biri için tekrarı en hızlı büyüten yol.',
       },
       SCAP_PULL,
       HOLLOW,
@@ -134,7 +137,7 @@ export const WEEK: ProgramDay[] = [
       {
         movementId: 'pushup', label: 'Şınav', role: 'secondary',
         sets: 3, startTarget: 15, rir: 4, unit: 'tekrar',
-        why: 'Rahat setler. Dün bench yaptın, burada yorulmak istemiyoruz.',
+        why: 'Rahat setler. Dün sert gündü, burada yorulmak istemiyoruz.',
       },
       HANG,
       SCAP_PULL,
@@ -146,8 +149,8 @@ export const WEEK: ProgramDay[] = [
     ],
   },
   {
-    index: 3, name: 'Çarşamba', kind: 'heavy', gym: 'B',
-    focusNote: 'Beceri önce. Sonra salon — tam vücut B.',
+    index: 3, name: 'Çarşamba', kind: 'heavy',
+    focusNote: 'Beceri günü. Ağır iş burada, taze kafayla.',
     ropeMinutes: 5,
     exercises: [
       WRIST,
@@ -155,7 +158,7 @@ export const WEEK: ProgramDay[] = [
         movementId: 'parallel-bar-dip', label: 'Dips', role: 'main',
         sets: 3, startTarget: 6, rir: 2, unit: 'tekrar', needsBar: true,
         altMovementId: 'bench-dip', altLabel: 'Bench dip (sandalye)',
-        why: 'Evdeki aletle. Muscle-up’ın itme yarısı buradan geçiyor.',
+        why: 'Muscle-up’ın itme yarısı buradan geçiyor.',
       },
       {
         movementId: 'negative-pullup', label: 'Negatif barfiks', role: 'main',
@@ -173,12 +176,12 @@ export const WEEK: ProgramDay[] = [
   },
   {
     index: 4, name: 'Perşembe', kind: 'rest',
-    focusNote: 'Tam dinlenme. Canın isterse yürüyüş veya hafif koşu — antrenman değil.',
+    focusNote: 'Tam dinlenme. Yürüyüş veya hafif koşu olur — antrenman değil.',
     ropeMinutes: 0, exercises: [],
   },
   {
-    index: 5, name: 'Cuma', kind: 'heavy', gym: 'C',
-    focusNote: 'Beceri önce. Sonra salon — tam vücut C. Haftanın son sert günü.',
+    index: 5, name: 'Cuma', kind: 'heavy',
+    focusNote: 'Haftanın son sert günü. Beceri önce.',
     ropeMinutes: 5,
     exercises: [
       WRIST,
@@ -218,48 +221,10 @@ export const WEEK: ProgramDay[] = [
   },
   {
     index: 7, name: 'Pazar', kind: 'rest',
-    focusNote: 'Tam dinlenme. Bu gün antrenman yok — bir yıl sürdürmenin bedeli bu.',
+    focusNote: 'Tam dinlenme. Yıllarca sürdürmenin bedeli bu gün.',
     ropeMinutes: 0, exercises: [],
   },
 ];
-
-/**
- * Salon şablonu — uygulama bunu kaydetmiyor, sadece hatırlatıyor.
- * Ağırlık ilerlemesi salonda kâğıtla/uygulamayla takip edilir; bu sistemin
- * işi beceri ağacı. İlk ay tam vücut, sonra üst/alt bölünmesine geçilecek.
- */
-export const GYM_PLAN: Record<'A' | 'B' | 'C', { title: string; items: string[] }> = {
-  A: {
-    title: 'Tam vücut A',
-    items: [
-      'Squat — 3×6-8',
-      'Bench press — 3×6-8',
-      'Barfiks veya lat pulldown — 3×6-10',
-      'Romen deadlift — 3×8',
-      'Yan plank / karın — 2 set',
-    ],
-  },
-  B: {
-    title: 'Tam vücut B',
-    items: [
-      'Deadlift — 3×5',
-      'Omuz press — 3×6-8',
-      'Kürek (row) — 3×8-10',
-      'Bacak press veya lunge — 3×10',
-      'Face pull — 3×15  (omuz sağlığı, atlama)',
-    ],
-  },
-  C: {
-    title: 'Tam vücut C',
-    items: [
-      'Front squat veya goblet squat — 3×8',
-      'Eğimli bench — 3×8',
-      'Tek kol dumbbell row — 3×10',
-      'Biceps + triceps — 2’şer set',
-      'Face pull — 3×15',
-    ],
-  },
-};
 
 /** Menü — canı çekerse ekleyeceği hareketler */
 export const MENU: ProgramExercise[] = [

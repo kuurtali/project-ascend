@@ -319,9 +319,9 @@ describe('seviye ve denge', () => {
   });
 });
 
-// ─────────────────────────────────────── PROGRAM YAPISI (v2: salon + kalistenik)
+// ─────────────────────────────────────────────────── PROGRAM YAPISI
 
-describe('haftalık program — salon düzeni', () => {
+describe('haftalık program — yük dağılımı', () => {
   it('3 sert · 2 hafif · 2 boş gün', () => {
     const kinds = WEEK.map((d) => d.kind);
     expect(kinds.filter((k) => k === 'heavy').length).toBe(3);
@@ -329,14 +329,7 @@ describe('haftalık program — salon düzeni', () => {
     expect(kinds.filter((k) => k === 'rest').length).toBe(2);
   });
 
-  it('salon sadece sert günlerde ve üçü de farklı şablon', () => {
-    const gymDays = WEEK.filter((d) => d.gym);
-    expect(gymDays.length).toBe(3);
-    expect(gymDays.every((d) => d.kind === 'heavy')).toBe(true);
-    expect(new Set(gymDays.map((d) => d.gym)).size).toBe(3);
-  });
-
-  it('sert günler Pzt/Çar/Cum — araya dinlenme giriyor', () => {
+  it('sert günler 1·3·5 — araya hep bir gün giriyor', () => {
     expect(WEEK.filter((d) => d.kind === 'heavy').map((d) => d.index))
       .toEqual([1, 3, 5]);
   });

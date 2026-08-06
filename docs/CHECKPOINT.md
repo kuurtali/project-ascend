@@ -165,28 +165,49 @@ FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
 
   Karar kaydi: SECOND_BRAIN D-053.
 
-!!! PROGRAM v2 - SALON + KALISTENIK - 2026-08-02 (D-057)
-  UFUK DEGISTI: 6 ay -> EN AZ 1 YIL. Hedefler artik gercekci.
-  Haftada 3 gun SALON (ilk ay tam vucut, sonra parcali).
-  Evde barfiks demiri + dips aleti. Salonda ikisi de var.
+!!! SINIR: DEPO = KALISTENIK, KISISEL PLAN = YEREL - (D-058)
+  Kurucu karari: "kisisel seyler kalmasin GitHubda ama seninle kisisel
+  seyleri paylasirim." Depo bir kalistenik SISTEMI, bir kisinin
+  antrenman gunlugu degil.
 
-  HAFTA:
-    Pzt/Car/Cum  BECERI (15-20 dk, TAZE) -> sonra salon
-    Sal/Cmt      HAFIF ev gunu, RIR 3-4, basarisizlik YOK
-    Per/Paz      tam dinlenme
+  DEPODAN CIKANLAR: kisiye ozel salon programi (GYM_PLAN), Bugun
+  ekranindaki salon karti, kisiye seslenen gerekce metinleri, ve EN
+  ONEMLISI storage.ts DEFAULT_STATE icindeki saglik kisitlari
+  (uygulamayi acan HERKES o kisitlarla basliyordu).
+
+  !!! BU DOSYA DA DEPODA. Temizligi ANLATIRKEN veriyi tekrar yazma
+  hatasi iki kez yapildi. Ornek verme, "kisiye seslenen gerekce" de.
+
+  !!! DERS: kisisel veri yalnizca metinde degil VARSAYILAN DEGERLERDE
+  de sizar. DEFAULT_STATE'e saglik kisiti yazmak README'ye yazmakla
+  ayni sey, hatta daha kotu cunku goze carpmiyor.
+
+  KISISEL OLANLAR NEREDE: PROFIL_YEREL.md ve ANTRENMAN_KAYDI_YEREL.md
+  (ikisi de .gitignore'da). Salon programi, olculer, saglik durumu,
+  haftalik kayit orada.
+
+!!! PROGRAM v2 - BASKA ANTRENMANIN YANINDA - 2026-08-02 (D-057)
+  UFUK DEGISTI: 6 ay -> EN AZ 1 YIL. Hedefler artik gercekci.
+  Sablon, kullanicinin BASKA antrenman da yaptigi varsayimiyla kuruldu.
+
+  HAFTA (depoda gun adi degil INDEKS ile anlatilir):
+    1/3/5   BECERI gunu (15-20 dk, TAZE). Ayni gun baska antrenman
+            varsa kalistenik ONCE.
+    2/6     HAFIF gun, RIR 3-4, basarisizlik YOK
+    4/7     tam dinlenme
 
   NEDEN BECERI ONCE: motor ogrenme yorgunken yanlis kalip ogretir.
-  NEDEN AYNI GUN: ayri gun = 6 antrenman gunu, tendon hic bosta kalmiyor.
-  NEDEN YINE DE 2 HAFIF GUN: beceri SIKLIK ister (kullanicinin ilk
-  istegi "her gun sinav barfiks" idi, icgudusu dogruydu).
+  NEDEN YUK AYNI GUNE TOPLANIR: dagitilirsa 6 antrenman gunu olur,
+  tendon hic bosta kalmiyor.
+  NEDEN YINE DE 2 HAFIF GUN: beceri SIKLIK ister.
 
-  ITME CAKISMASI COZULDU: salonda bench + omuz press var, o yuzden
-  kalistenik itme HACIM degil BECERI (az set, dusuk tekrar, kalite).
-  BACAK salona gecti; agactaki bacak kolu oncelik degil, menude.
+  ITME CAKISMASI: agirlik calisan biri icin bench + omuz press ayni
+  dokuyu vuruyor, o yuzden buradaki itme HACIM degil BECERI.
+  BACAK minimumda; agactaki bacak kolu oncelik degil, menude.
 
-  src/program.ts v2 · Bugun ekraninda SALON KARTI + "neden" satiri
-  storage.ts varsayilan ekipman: pullup-bar + dip-station EKLENDI
-  8 yeni program testi. Toplam 78/78.
+  src/program.ts v2 · Bugun ekraninda "neden burada" satiri
+  8 program testi yapiyi koruyor. Toplam 77/77.
+  TASARIM KARARI TESTLE KORUNMUYORSA ZAMANLA ASINIR.
 
 DOSYA DUZENI - 2026-08-02
   Kok dizin temizlendi. Cop tek klasorde: "_SIL - bu klasoru silebilirsin"
@@ -272,15 +293,14 @@ SIRADAKI KOD ISI:
   4. Sezon sistemi (18.12) — ertelendi
 
 ANTRENMAN DURUMU:
-  Kullanici AGUSTOS basinda basliyor, alet o zamana geliyor.
-  Baslangic: sinav max ~30 (master ustu), barfiks 2, hollow iyi.
-  Sigarayi Agustos basinda birakiyor.
-  Program: her gun (5/7) ip + sinav 2 tip + dips + cekis + core
-           siklik her gun, YOGUNLUK doner (agir 2 / hafif 3 gun)
-  Detay: ANTRENMAN_KAYDI_YEREL.md (depoda YOK, yerel)
+  Kullaniciya ait hicbir sey burada YAZILMAZ - olcu, saglik, baslangic
+  sayilari, takvim, aliskanlik. Hepsi yerel dosyalarda:
+    PROFIL_YEREL.md            profil, kisitlar, ekipman, hedefler
+    ANTRENMAN_KAYDI_YEREL.md   haftalik plan ve kayit
+  Ikisi de .gitignore'da ve depoya ASLA girmez. (D-014, D-044, D-058)
 
 --------------------------------------------------------------------------------
-SON GUNCELLEME : 2026-08-02  (program v2: salon + kalistenik, 1 yil)
+SON GUNCELLEME : 2026-08-02  (depo genellestirildi, README EN+TR)
 DURUM          : Faz 0 BITTI  (veri temeli, 196 hareket, 0 hata 0 uyari)
                  Faz 0.5 DEVAM (PLAN - v2.0 yazildi, 1 haftalik takvim var)
                  Faz 1 prototipi calisiyor, 61/61 test geciyor
