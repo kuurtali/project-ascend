@@ -71,6 +71,31 @@ kendini paralamaya itmesini engelliyor.
 Kademe ancak **14 gün içinde 2 ayrı seansta** doğrulanırsa sayılıyor. Tek şanslı
 gün kademe kazandırmaz.
 
+### Salonla birlikte çalışma
+
+Sistem tek başına bir program değil; ağırlık antrenmanının yanında çalışacak
+şekilde kuruldu. Haftalık şablon **3 sert / 2 hafif / 2 boş**:
+
+| | |
+|---|---|
+| **Pzt · Çar · Cum** | Beceri işi (15-20 dk, taze) → sonra salon |
+| **Sal · Cmt** | Hafif ev günü — RIR 3-4, başarısızlık yok |
+| **Per · Paz** | Tam dinlenme |
+
+Beceri işi **önce** yapılır çünkü motor öğrenmedir; yorgunken yanlış kalıp
+öğretir. Bench press'ten sonra pike push-up hem işe yaramaz hem risklidir.
+
+Ayrı günler yerine aynı gün seçildi: ayrı gün haftada 6 antrenman günü demek
+olurdu ve dirsek, bilek, omuz hiçbir gün tamamen boşta kalmazdı. Kas 48 saatte
+toparlanır, tendon daha yavaş — sakatlık oradan gelir. Buna karşılık beceri
+sıklık ister, o yüzden iki hafif gün eklendi: haftada 5 gün temas, 3 gün sert
+yük.
+
+İtme hacmi çakışması bilinçli olarak çözüldü. Salonda bench ve omuz press
+varken kalistenik taraftaki itme **hacim değil beceri** olarak kuruldu: az set,
+düşük tekrar, yüksek kalite. Bacak işi de salona bırakıldı — ağacın bacak kolu
+öncelik olmaktan çıktı.
+
 ### Skill Slot — hareketler rol değiştirir
 
 Dört slot, dört farklı nitelik: **Main** (yoğunluk), **Secondary** (hacim),
@@ -159,9 +184,13 @@ zinciri bozulursa derleme kırılır.
 25 figür pozu ·   toplam kazanılabilir XP 525.335
 ```
 
-**67 test** — 52 motor testi (kilit, mastery, uyarlama, planner, oyun sistemleri)
-ve 15 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm ekranlar; gerçek
-React bileşenleri jsdom içinde çalışıyor).
+**78 test** — 60 motor testi (kilit, mastery, uyarlama, planner, oyun sistemleri,
+program yapısı) ve 18 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
+ekranlar; gerçek React bileşenleri jsdom içinde çalışıyor).
+
+Program testleri yapıyı koruyor: iki sert gün arka arkaya gelemez, hafif
+günlerde RIR ≥ 3, ölçüm günü haftada bir, bar gerektiren her hareketin barsız
+alternatifi var.
 
 ---
 

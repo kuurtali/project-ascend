@@ -14,7 +14,7 @@ import dbJson from '../data/movements.json';
 import type { MovementDatabase, PlayerState } from '../engine/types';
 import { indexMovements, levelOf, proximity } from '../engine/mastery';
 import { buildInput, nextTarget } from '../engine/adaptation';
-import { dayFor, MENU, resolveExercise, type ProgramExercise } from '../program';
+import { dayFor, GYM_PLAN, MENU, resolveExercise, type ProgramExercise } from '../program';
 import { hasBar, recordSession, save } from '../storage';
 import { rankOf, streakOf } from '../engine/game';
 import { Celebrate, type CelebrationItem } from './Celebrate';
@@ -250,8 +250,14 @@ export function Today({ state, onState }: Props) {
                 <div style={{ fontSize: 12.5, color: 'var(--dim)' }}>
                   hedef {ex.sets} × {target} {ex.unit}
                   {ex.rir > 0 && ` · ${ex.rir} tekrar rezerv`}
-                  {day.isTestDay && ex.role === 'secondary' && ' · bugün son sete kadar gidebilirsin'}
+                  {day.isTestDay && ex.role === 'main' && ' · bugün bir seti sonuna götürebilirsin'}
                 </div>
+                {ex.why && (
+                  <div style={{
+                    fontSize: 11.5, color: 'var(--dim2)', marginTop: 4,
+                    borderLeft: '2px solid #2b323f', paddingLeft: 7, lineHeight: 1.45,
+                  }}>{ex.why}</div>
+                )}
               </div>
             </div>
 
@@ -317,6 +323,26 @@ export function Today({ state, onState }: Props) {
             : 'Hafif. Koştuğun sabahların akşamı 3-4 dakikaya indir.'}
         </div>
       </div>
+
+      {day.gym && (
+        <div style={{
+          ...card, marginTop: 8, borderColor: '#3a3563', background: '#151426',
+        }}>
+          <div style={{ ...label, color: '#a89ff5' }}>
+            ⟶ ŞİMDİ SALON · {GYM_PLAN[day.gym].title}
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--dim2)', margin: '4px 0 8px' }}>
+            Beceri işi bitti, ağırlığa geçebilirsin. Bunları uygulama kaydetmiyor —
+            burada sadece hatırlatma.
+          </div>
+          {GYM_PLAN[day.gym].items.map((it) => (
+            <div key={it} style={{
+              fontSize: 13.5, padding: '5px 0',
+              borderBottom: '1px solid var(--line)',
+            }}>{it}</div>
+          ))}
+        </div>
+      )}
 
       {extras.length < MENU.length && (
         <details style={{ ...card, marginTop: 8 }}>

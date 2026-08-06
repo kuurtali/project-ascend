@@ -17,8 +17,9 @@ const KEY = 'ascend.state.v1';
 
 export const DEFAULT_STATE: PlayerState = {
   xp: 0,
-  // Ağustos'ta power tower gelecek; o zamana kadar bar yok
-  equipment: ['floor', 'wall', 'box', 'bench', 'jump-rope'],
+  // Evde barfiks demiri + dips aleti var; salonda ikisi de mevcut. (D-057)
+  equipment: ['floor', 'wall', 'box', 'bench', 'jump-rope',
+              'pullup-bar', 'dip-station'],
   constraints: [
     {
       area: 'hand', side: 'right', type: 'hardware',

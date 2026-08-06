@@ -165,6 +165,29 @@ FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
 
   Karar kaydi: SECOND_BRAIN D-053.
 
+!!! PROGRAM v2 - SALON + KALISTENIK - 2026-08-02 (D-057)
+  UFUK DEGISTI: 6 ay -> EN AZ 1 YIL. Hedefler artik gercekci.
+  Haftada 3 gun SALON (ilk ay tam vucut, sonra parcali).
+  Evde barfiks demiri + dips aleti. Salonda ikisi de var.
+
+  HAFTA:
+    Pzt/Car/Cum  BECERI (15-20 dk, TAZE) -> sonra salon
+    Sal/Cmt      HAFIF ev gunu, RIR 3-4, basarisizlik YOK
+    Per/Paz      tam dinlenme
+
+  NEDEN BECERI ONCE: motor ogrenme yorgunken yanlis kalip ogretir.
+  NEDEN AYNI GUN: ayri gun = 6 antrenman gunu, tendon hic bosta kalmiyor.
+  NEDEN YINE DE 2 HAFIF GUN: beceri SIKLIK ister (kullanicinin ilk
+  istegi "her gun sinav barfiks" idi, icgudusu dogruydu).
+
+  ITME CAKISMASI COZULDU: salonda bench + omuz press var, o yuzden
+  kalistenik itme HACIM degil BECERI (az set, dusuk tekrar, kalite).
+  BACAK salona gecti; agactaki bacak kolu oncelik degil, menude.
+
+  src/program.ts v2 · Bugun ekraninda SALON KARTI + "neden" satiri
+  storage.ts varsayilan ekipman: pullup-bar + dip-station EKLENDI
+  8 yeni program testi. Toplam 78/78.
+
 DOSYA DUZENI - 2026-08-02
   Kok dizin temizlendi. Cop tek klasorde: "_SIL - bu klasoru silebilirsin"
   Icinde: eski .gitBAK_* klasorleri, eski prototip, eskimis araclar.
@@ -257,7 +280,7 @@ ANTRENMAN DURUMU:
   Detay: ANTRENMAN_KAYDI_YEREL.md (depoda YOK, yerel)
 
 --------------------------------------------------------------------------------
-SON GUNCELLEME : 2026-08-01  (oyun katmani baglandi)
+SON GUNCELLEME : 2026-08-02  (program v2: salon + kalistenik, 1 yil)
 DURUM          : Faz 0 BITTI  (veri temeli, 196 hareket, 0 hata 0 uyari)
                  Faz 0.5 DEVAM (PLAN - v2.0 yazildi, 1 haftalik takvim var)
                  Faz 1 prototipi calisiyor, 61/61 test geciyor

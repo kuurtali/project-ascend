@@ -4000,6 +4000,51 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-057 · 2026-08-02 · Ufuk 1 yıla çıktı, salon eklendi, program yeniden kuruldu**
+Kurucu kararı: *"6 ay sınırı kalktı, normal spor + bu program, en az 1 yıl,
+spor salonu — ilk ay tüm vücut sonra parçalar hâlinde. Sadece barfiks demiri
+alacağım, dips ve şınav evdeki aletler + salon."*
+
+Üç şey birden değişti ve programın tamamı yeniden kuruldu.
+
+**1. Ufuk 6 ay → en az 1 yıl.** En önemli değişiklik. HSPU ve muscle-up 6 ayda
+zorlama hedeflerdi; 12-18 ayda bu başlangıç noktasından gerçekten ulaşılabilir.
+Acele baskısı kalkınca eşikleri şişirme ihtiyacı da kalkıyor.
+
+**2. Haftada 3 gün salon.** Bu bir ekleme değil, bir yeniden dağıtım:
+- **Bacak işi salona geçti.** Squat ve deadlift, kalistenik bacak dalından çok
+  daha iyi karşılıyor. Ağaçtaki bacak kolu öncelik olmaktan çıktı, menüde kaldı.
+- **İtme hacmi salona geçti.** Kalistenik taraftaki itme artık hacim değil
+  BECERİ: az set, düşük tekrar, yüksek kalite. Şınav ana hacim kaynağı değil.
+- Sebep: bench + omuz press + dips + şınav + pike şınav aynı dokuyu vuruyor.
+  İkisi de hacim yaparsa dirsek ve omuz önü 6 haftada konuşmaya başlar.
+
+**3. Yerleşim — aynı gün, kalistenik ÖNCE.** Kurucu önce ayrı gün düşünmüştü,
+gerekçesini sordu. Cevap:
+- Ayrı gün = 3 salon + 3 kalistenik = **6 antrenman günü.** Hiçbir gün dirsek,
+  bilek ve omuz tamamen boşta kalmıyor. Kas 48 saatte toparlanır, tendon ve bağ
+  dokusu daha yavaş — sakatlık oradan gelir. Sağ elde metakarp platini, solda
+  kist varken bu daha da ağır basıyor.
+- Ayrı günün tek gerçek avantajı tazelikti; onu **sıra** çözüyor. Beceri işi
+  motor öğrenmedir, yorgunken yanlış kalıp öğretir. Bench'ten sonra pike şınav
+  hem işe yaramaz hem risklidir. Bu yüzden kalistenik önce, 15-20 dk, taze.
+
+**Ama tam "aynı gün" de değil — 3 sert / 2 hafif / 2 boş.** Kurucunun ilk isteği
+*"her gün şınav ve barfiks"* idi ve arkasında doğru bir içgüdü vardı: beceri
+SIKLIK ister. Haftada 3 kez pike şınav ile 5 kez arasında öğrenme farkı var.
+Çözüm: 2 hafif ev günü eklendi (Salı, Cumartesi) — RIR 3-4, başarısızlık yok,
+amaç hacim değil temas. Böylece beceriye haftada 5 gün dokunuluyor ama sadece
+3 gün sert yükleniliyor.
+
+Hafta: Pzt·Çar·Cum beceri+salon · Sal·Cmt hafif ev · Per·Paz tam dinlenme.
+
+Uygulamaya yansıyanlar: `program.ts` v2, Bugün ekranında **salon kartı**
+(uygulama ağırlık kaydetmiyor, sadece hatırlatıyor — bu sistemin işi beceri
+ağacı), her egzersizde **"neden burada"** satırı, varsayılan ekipmana
+`pullup-bar` ve `dip-station` eklendi. 8 yeni program testi: sert günler arka
+arkaya gelemez, hafif günlerde RIR ≥ 3, ölçüm günü haftada bir, her egzersiz
+gerçek bir hareketi işaret eder, bar gerektiren her hareketin alternatifi var.
+
 **D-056 · 2026-08-02 · Kronometre ve uçtan uca akış testi**
 İlk antrenman günü geldi. İki pratik boşluk kapatıldı.
 

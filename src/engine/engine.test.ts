@@ -8,6 +8,7 @@
 import { describe, expect, it } from 'vitest';
 import db from '../data/movements.json';
 import type { MovementDatabase, PlayerState, SetLog } from './types';
+import { MENU, WEEK } from '../program';
 import {
   balanceScore, equipmentOk, indexMovements, isOpen, isTrainable,
   levelOf, proximity, tierForValue, verifiedTierOf,
@@ -315,5 +316,67 @@ describe('seviye ve denge', () => {
       };
     }
     expect(balanceScore(DB, s)!).toBeGreaterThan(90);
+  });
+});
+
+// ─────────────────────────────────────── PROGRAM YAPISI (v2: salon + kalistenik)
+
+describe('haftalık program — salon düzeni', () => {
+  it('3 sert · 2 hafif · 2 boş gün', () => {
+    const kinds = WEEK.map((d) => d.kind);
+    expect(kinds.filter((k) => k === 'heavy').length).toBe(3);
+    expect(kinds.filter((k) => k === 'light').length).toBe(2);
+    expect(kinds.filter((k) => k === 'rest').length).toBe(2);
+  });
+
+  it('salon sadece sert günlerde ve üçü de farklı şablon', () => {
+    const gymDays = WEEK.filter((d) => d.gym);
+    expect(gymDays.length).toBe(3);
+    expect(gymDays.every((d) => d.kind === 'heavy')).toBe(true);
+    expect(new Set(gymDays.map((d) => d.gym)).size).toBe(3);
+  });
+
+  it('sert günler Pzt/Çar/Cum — araya dinlenme giriyor', () => {
+    expect(WEEK.filter((d) => d.kind === 'heavy').map((d) => d.index))
+      .toEqual([1, 3, 5]);
+  });
+
+  it('iki sert gün asla arka arkaya gelmez', () => {
+    for (let i = 0; i < WEEK.length - 1; i++) {
+      const a = WEEK[i]!.kind, b = WEEK[i + 1]!.kind;
+      expect(a === 'heavy' && b === 'heavy').toBe(false);
+    }
+  });
+
+  it('hafif günlerde RIR yüksek — orada başarısızlığa gidilmez', () => {
+    for (const d of WEEK.filter((x) => x.kind === 'light')) {
+      for (const ex of d.exercises) {
+        if (ex.unit === 'saniye' && ex.rir === 0) continue;  // askı/tutuş
+        expect(ex.rir).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+
+  it('ölçüm günü haftada bir tane (M-3: oyunlaştırma sağlığı bozmaz)', () => {
+    expect(WEEK.filter((d) => d.isTestDay).length).toBe(1);
+  });
+
+  it('her egzersiz gerçek bir hareketi işaret eder', () => {
+    const ids = new Set(DB.movements.map((m) => m.id));
+    for (const d of WEEK) {
+      for (const ex of d.exercises) {
+        expect(ids.has(ex.movementId)).toBe(true);
+        if (ex.altMovementId) expect(ids.has(ex.altMovementId)).toBe(true);
+      }
+    }
+    for (const ex of MENU) expect(ids.has(ex.movementId)).toBe(true);
+  });
+
+  it('bar gerektiren her hareketin barsız alternatifi var', () => {
+    for (const d of WEEK) {
+      for (const ex of d.exercises) {
+        if (ex.needsBar) expect(ex.altMovementId).toBeTruthy();
+      }
+    }
   });
 });
