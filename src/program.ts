@@ -30,6 +30,12 @@
  * press aynı dokuyu vuruyor. Bu yüzden buradaki itme işi hacim değil
  * BECERİ olarak kuruldu: az set, düşük tekrar, yüksek kalite.
  *
+ * EKSANTRİK SIKLIĞI: negatif barfiks haftada EN FAZLA 2 gün. Eksantrik
+ * çalışma kas hasarını konsantrikten fazla yapar ve toparlanması uzun
+ * sürer; barfiks çekemeyen biri için haftada 3 gün negatif, ilerlemeyi
+ * hızlandırmaz, sadece yorgunluk biriktirir. Üçüncü çekiş günü YATAY
+ * düzlemde (row): aynı kaslar, farklı açı, çok daha az doku hasarı.
+ *
  * BACAK: burada minimum. Ağırlık antrenmanı bacağı kalistenikten çok
  * daha iyi karşılıyor; ağacın bacak kolu öncelik değil, menüde duruyor.
  * Ağırlık çalışmayan biri menüden squat ekleyebilir.
@@ -108,8 +114,8 @@ export const WEEK: ProgramDay[] = [
   {
     index: 1, name: 'Pazartesi', kind: 'heavy', isTestDay: true,
     focusNote: 'Beceri önce, taze kafayla. Ölçüm günü: pike şınavda bir seti '
-             + 'sonuna kadar götürebilirsin. Bugün ayrıca ağırlık çalışacaksan '
-             + 'buradan sonra.',
+             + 'sonuna kadar götürebilirsin — ama o setten sonra aynı kas '
+             + 'grubunu ağır çalışma. Başka antrenman varsa buradan sonra.',
     ropeMinutes: 5,
     exercises: [
       WRIST,
@@ -161,10 +167,11 @@ export const WEEK: ProgramDay[] = [
         why: 'Muscle-up’ın itme yarısı buradan geçiyor.',
       },
       {
-        movementId: 'negative-pullup', label: 'Negatif barfiks', role: 'main',
-        sets: 3, startTarget: 5, rir: 2, unit: 'tekrar', needsBar: true,
-        altMovementId: 'australian-row', altLabel: 'Masa kenarı row',
-        why: 'Haftada 3 kez çekiş — barfiks sıklıkla gelir, ağırlıkla değil.',
+        movementId: 'australian-row', label: 'Yatay çekiş (row)', role: 'main',
+        sets: 3, startTarget: 8, rir: 2, unit: 'tekrar', needsBar: true,
+        altMovementId: 'inverted-row', altLabel: 'Inverted row',
+        why: 'Negatif barfiks haftada 2 kez yeter — eksantrik yük dokuyu '
+           + 'yavaş toparlatır. Bugün yatay düzlem: aynı kaslar, daha az hasar.',
       },
       SCAP_PULL,
       {

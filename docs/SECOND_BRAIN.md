@@ -4000,6 +4000,35 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-059 · 2026-08-02 · Yük güvenlik kuralları teste bağlandı**
+Kullanıcı programı gerçekten kullanmadan önce sordu: *"o kadar iyi ve
+güvenilir mi?"* Doğru soru — ve cevap vermeden önce program yeniden
+incelendi. İki gerçek kusur bulundu.
+
+**1. Eksantrik sıklığı fazlaydı.** Negatif barfiks haftada 3 gün yazılıydı.
+Eksantrik (negatif) çalışma kas hasarını konsantrikten daha fazla yapar ve
+toparlanması daha uzun sürer. Barfiks çekemeyen biri için haftada 3 gün
+negatif ilerlemeyi hızlandırmaz, sadece yorgunluk biriktirir. Üçüncü çekiş
+günü **yatay düzleme** çevrildi (row): aynı kaslar, farklı açı, çok daha
+az doku hasarı. Kural teste bağlandı — `negative-pullup` haftada en fazla
+2 günde görünebilir.
+
+**2. Ölçüm günü uyarısı eksikti.** Bir seti sonuna kadar götürdükten sonra
+aynı kas grubunu ağır çalışmak, hem test sonucunu hem sonraki işi bozar.
+Gün notuna yazıldı.
+
+Ayrıca üç yapısal kural daha teste bağlandı: aynı hareket bir günde iki kez
+yazılamaz, her sert günde hem itme hem çekme bulunur (tek yönlü yüklenme
+olmaz), hiçbir gün 6 hareketi geçmez.
+
+**Hâlâ eksik ve bilerek kayda geçiriliyor: DELOAD.** Bir yıllık programda
+her 6-8 haftada bir hafif hafta olmalı; sistem bunu bilmiyor. Şu an elle
+takip ediliyor. Uygulamaya girmesi gereken bir özellik.
+
+Genel ilke: **bir tasarım kararı testle korunmuyorsa zamanla aşınır.**
+Antrenman güvenliğiyle ilgili kararlar için bu daha da geçerli, çünkü
+ihlalin bedelini kod değil kullanıcının dirseği öder.
+
 **D-058 · 2026-08-02 · Kişisel plan depodan çıktı, sınır netleşti**
 Kurucu: *"kişisel şeyler kalmasın GitHub'da ama seninle kişisel şeyleri
 paylaşırım. Ben spor yapacağım, sen kalistenik kısmını GitHub'a dökeceksin,

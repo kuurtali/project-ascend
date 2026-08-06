@@ -373,3 +373,38 @@ describe('haftalık program — yük dağılımı', () => {
     }
   });
 });
+
+describe('yük güvenlik kuralları', () => {
+  const idsOn = (d: (typeof WEEK)[number]) =>
+    d.exercises.map((e) => e.movementId);
+
+  it('eksantrik ağırlıklı iş haftada en fazla 2 gün', () => {
+    // Negatif tekrarlar kas hasarını konsantrikten fazla yapar ve
+    // toparlanması uzun sürer. Haftada 3 gün ilerlemeyi hızlandırmaz,
+    // sadece yorgunluk biriktirir.
+    const days = WEEK.filter((d) => idsOn(d).includes('negative-pullup'));
+    expect(days.length).toBeLessThanOrEqual(2);
+  });
+
+  it('aynı hareket bir günde iki kez yazılmaz', () => {
+    for (const d of WEEK) {
+      const ids = idsOn(d);
+      expect(new Set(ids).size).toBe(ids.length);
+    }
+  });
+
+  it('her sert günde hem itme hem çekme var — tek yönlü yüklenme olmaz', () => {
+    const PUSH = new Set(['push', 'vertical_push', 'dips']);
+    const PULL = new Set(['pull', 'back']);
+    const byId = new Map(DB.movements.map((m) => [m.id, m]));
+    for (const d of WEEK.filter((x) => x.kind === 'heavy')) {
+      const cats = idsOn(d).map((i) => byId.get(i)?.category ?? '');
+      expect(cats.some((c) => PUSH.has(c))).toBe(true);
+      expect(cats.some((c) => PULL.has(c))).toBe(true);
+    }
+  });
+
+  it('hiçbir gün 6 hareketi geçmez — seans 20 dakikada bitmeli', () => {
+    for (const d of WEEK) expect(d.exercises.length).toBeLessThanOrEqual(6);
+  });
+});
