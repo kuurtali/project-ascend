@@ -117,6 +117,20 @@ When a Main reaches gold, it gets promoted: a node further up the tree
 becomes the new Main and the old one drops to Secondary. It isn't removed,
 its role changes. Promotion is driven by **mastery, not the calendar.**
 
+The weekly template describes the *shape* of a week — which quality on
+which day, how much, in what order. Which movement fills a slot is
+resolved from the tree at runtime, so promotion actually changes tomorrow's
+session rather than just being announced. Both the Today and Progress
+screens call the same resolver, so they can't disagree.
+
+### Deload
+
+Every sixth week the set count halves, target reps stay the same, and the
+test day is dropped. Reps stay because dropping them makes the movement
+easier and removes the stimulus entirely — the point isn't to rest, it's
+to shed accumulated fatigue. The week counter follows the **user's**
+weeks, counted from their first logged session, not the calendar.
+
 ---
 
 ## Game layer
@@ -201,10 +215,10 @@ committed — if the generation chain breaks, the build fails.
 25 figure poses  ·  total earnable XP 525,335
 ```
 
-**77 tests** — 59 engine tests (unlocking, mastery, adaptation, planner,
-game systems, program structure) and 18 end-to-end flow tests (calibration
-→ session → celebration → every screen, running the real React components
-inside jsdom).
+**96 tests** — 78 engine tests (unlocking, mastery, adaptation, planner,
+session resolution, deload, game systems, program structure) and 18
+end-to-end flow tests (calibration → session → celebration → every screen,
+running the real React components inside jsdom).
 
 The program tests protect the structure: two hard days can't land
 back-to-back, light days must keep RIR ≥ 3, exactly one test day per week,
@@ -262,12 +276,11 @@ Full list with reasoning: [`docs/SECOND_BRAIN.md`](docs/SECOND_BRAIN.md) —
 Data foundation, engine, app and game layer all work and are live. Known
 gaps, stated plainly:
 
-- **Promotion is still cosmetic.** The progress screen announces it, but
-  the Today screen still reads a static weekly template. The planner is
-  written and tested; it just isn't wired to the screen yet.
 - **Daily quest generator and season system** exist in the design docs
-  only. Deliberately deferred — they're meaningless until the planner is
-  wired.
+  only.
+- **No progress history view.** The app shows how close you are to the
+  next tier, but not the curve that got you there — which is the second
+  reason listed above for why people quit. Next thing to build.
 - **No visual regression testing.** The tests prove it doesn't crash, not
   that it looks right.
 

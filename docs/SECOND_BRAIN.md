@@ -4000,6 +4000,46 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-060 · 2026-08-06 · Terfi gerçek oldu, deload sisteme girdi**
+Sistemin en uzun süredir açık duran vaadi kapandı. Terfi bugüne kadar
+yalnızca İlerleme ekranında *duyuruluyordu*; Bugün ekranı sabit şablonu
+okuduğu için altın kademeye çıkınca programda hiçbir şey değişmiyordu.
+README'de bile "bu eksik" diye yazılıydı.
+
+**Çözüm — şablon ŞEKLİ tarif eder, hareketi motor seçer.**
+Haftalık şablonu tamamen planlayıcıya bırakmak yanlış olurdu: haftanın
+şekli (hangi gün hangi nitelik, ne kadar, hangi sırayla) elle tasarlanmış
+bir karar ve testlerle korunuyor. Ama slotun İÇİNDEKİ hareket sabit
+olmamalı. Bu yüzden `ProgramExercise` alanına `track` eklendi — bir hedef
+düğüm id'si. Slot, mevcut hareket altın kademeye ulaşınca o hedefe giden
+yoldaki bir sonraki düğüme geçiyor. Çözümleme `engine/session.ts` içinde,
+hem Bugün hem İlerleme ekranı aynı fonksiyonu kullanıyor (biri terfi
+derken öbürünün dememesi mümkün değil, test bunu da doğruluyor).
+
+İki gerçek hata testlerle yakalandı:
+
+1. **Terfi geriye gidiyordu.** İlk sürüm tüm yolu arayıp "kademe
+   kazanılmamış ilk çalışılabilir düğüm"ü seçiyordu. Kademe kazanılmamış
+   bir slotta bu, yoldaki en alttaki düğümü döndürüyor ve sistem
+   kullanıcıyı geriye götürüp buna *terfi* diyordu. Boş durumda 4 sahte
+   terfi üretiyordu.
+2. Düzeltmenin ilk hâli fazla katıydı ve hiç terfi üretmiyordu. Doğrusu:
+   terfi **ileri** bakar — yol topolojik sırada geldiği için mevcut
+   hareketin bulunduğu noktadan SONRASI aranır.
+
+**Deload aynı katmana girdi.** Her 6. hafta set sayısı yarıya iniyor,
+hedef tekrar aynı kalıyor, ölçüm günü kalkıyor. Tekrarı düşürmek yerine
+set düşürmenin sebebi: tekrar düşünce hareket kolaylaşır ve uyaran
+tamamen kesilir; amaç dinlenmek değil biriken yorgunluğu boşaltmak.
+
+Hafta sayacı takvim haftası değil **kullanıcının haftası** — ilk kayıt
+hangi gün atıldıysa oradan sayılıyor. Salı başlayan biri için 6. hafta
+yine 6 hafta sonra geliyor.
+
+15 yeni test. Ders tekrar doğrulandı: **iki gerçek mantık hatasının
+ikisini de test yakaladı, gözle inceleme değil.** Terfi mantığı gibi
+"görünürde çalışıyor" sanılan kodda bu fark belirleyici.
+
 **D-059 · 2026-08-02 · Yük güvenlik kuralları teste bağlandı**
 Kullanıcı programı gerçekten kullanmadan önce sordu: *"o kadar iyi ve
 güvenilir mi?"* Doğru soru — ve cevap vermeden önce program yeniden

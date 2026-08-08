@@ -165,6 +165,30 @@ FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
 
   Karar kaydi: SECOND_BRAIN D-053.
 
+!!! TERFI ARTIK GERCEK + DELOAD - 2026-08-06 (D-060)
+  src/engine/session.ts  seans cozucu: sablon + agac durumu -> bugun
+
+  SABLON SEKLI tarif eder, HAREKETI MOTOR secer. ProgramExercise'e
+  `track` alani eklendi (hedef dugum id). Slot, mevcut hareket ALTIN
+  kademeye ulasinca hedefe giden yoldaki bir sonraki dugume gecer.
+  Bugun ve Ilerleme ekranlari AYNI fonksiyonu cagirir - biri terfi
+  derken obürünün dememesi imkansiz, test bunu da doguluyor.
+
+  !!! IKI GERCEK HATA TESTLE YAKALANDI:
+  1. Terfi GERIYE gidiyordu. Tum yolu arayip "kademe kazanilmamis ilk
+     dugum"u seciyordu; bos durumda yoldaki en alttaki dugume "terfi"
+     edip kullaniciyi geriye goturuyordu. 4 sahte terfi uretiyordu.
+  2. Duzeltmenin ilk hali fazla katiydi, hic terfi uretmedi.
+     Dogrusu: terfi ILERI bakar. Yol topolojik sirada geldigi icin
+     mevcut hareketin bulundugu noktadan SONRASI aranir.
+
+  DELOAD: her 6. hafta set sayisi YARIYA, hedef tekrar AYNI, olcum yok.
+  Tekrar dusurmemenin sebebi: dusunce hareket kolaylasir ve uyaran
+  tamamen kesilir. Amac dinlenmek degil yorgunlugu bosaltmak.
+  Hafta sayaci takvim degil KULLANICININ haftasi - ilk kayittan sayar.
+
+  15 yeni test. Toplam 96/96.
+
 !!! SINIR: DEPO = KALISTENIK, KISISEL PLAN = YEREL - (D-058)
   Kurucu karari: "kisisel seyler kalmasin GitHubda ama seninle kisisel
   seyleri paylasirim." Depo bir kalistenik SISTEMI, bir kisinin

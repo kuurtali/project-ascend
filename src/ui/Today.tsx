@@ -14,7 +14,8 @@ import dbJson from '../data/movements.json';
 import type { MovementDatabase, PlayerState } from '../engine/types';
 import { indexMovements, levelOf, proximity } from '../engine/mastery';
 import { buildInput, nextTarget } from '../engine/adaptation';
-import { dayFor, MENU, resolveExercise, type ProgramExercise } from '../program';
+import { dayFor, MENU, type ProgramExercise } from '../program';
+import { resolveDay, weeksToDeload, type ResolvedExercise } from '../engine/session';
 import { hasBar, recordSession, save } from '../storage';
 import { rankOf, streakOf } from '../engine/game';
 import { Celebrate, type CelebrationItem } from './Celebrate';
@@ -43,13 +44,18 @@ export function Today({ state, onState }: Props) {
   const day = dayFor(today);
   const bar = hasBar(state);
 
-  const exercises = useMemo(
-    () => day.exercises.map((e) => resolveExercise(e, bar)),
-    [day, bar],
+  // Şablon "hangi nitelik" der, motor "hangi hareket" der. Terfi ve
+  // deload burada uygulanır. (D-060)
+  const resolved = useMemo(
+    () => resolveDay(DB, IDX, state, day, bar, today),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [state, day, bar],
   );
+  const exercises = resolved.exercises;
+  const toDeload = weeksToDeload(state, today);
 
   const [entries, setEntries] = useState<Record<string, Entry>>({});
-  const [extras, setExtras] = useState<ProgramExercise[]>([]);
+  const [extras, setExtras] = useState<ResolvedExercise[]>([]);
   const [done, setDone] = useState<null | {
     gainedXp: number;
     tierUps: { movementId: string; tier: string }[];
@@ -59,7 +65,7 @@ export function Today({ state, onState }: Props) {
     items: CelebrationItem[]; levelUp: number | null;
   }>(null);
 
-  const all = [...exercises, ...extras];
+  const all: ResolvedExercise[] = [...exercises, ...extras];
 
   /** Hedef: kayıt varsa uyarlamadan, yoksa program başlangıcından. */
   function targetFor(ex: ProgramExercise): number {
@@ -210,8 +216,26 @@ export function Today({ state, onState }: Props) {
   return (
     <Shell level={level} xp={state.xp} day={day.name} kind={day.kind}
         rank={rank.label} streakWeeks={streak.weeks}>
+      {resolved.deload && (
+        <div style={{
+          ...card, borderColor: '#1D9E75', background: '#0d2019', marginBottom: 10,
+        }}>
+          <div style={{ ...label, color: '#5DCAA5' }}>
+            ⟳ DELOAD HAFTASI · {resolved.weekNo}. hafta
+          </div>
+          <div style={{ fontSize: 12.5, color: '#c2c8d4', marginTop: 4, lineHeight: 1.5 }}>
+            Set sayıları yarıya indi, hedef tekrarlar aynı. Ölçüm yok.
+            Amaç dinlenmek değil, biriken yorgunluğu boşaltmak — gelecek
+            hafta genelde sıçrama olur.
+          </div>
+        </div>
+      )}
+
       <p style={{ color: 'var(--dim)', fontSize: 13, margin: '0 0 12px' }}>
         {day.focusNote}
+        {!resolved.deload && toDeload <= 1 && resolved.weekNo > 0 && (
+          <span style={{ color: '#5DCAA5' }}> · Gelecek hafta deload.</span>
+        )}
       </p>
       {!bar && (
         <div style={{ ...card, borderColor: '#4a3d10', background: '#2a220c', fontSize: 12.5 }}>
@@ -247,10 +271,17 @@ export function Today({ state, onState }: Props) {
                 <div style={{ fontSize: 15.5, fontWeight: 500, margin: '4px 0 2px' }}>
                   {ex.label}
                 </div>
+                {ex.promotedFrom && (
+                  <div style={{
+                    fontSize: 11, color: '#a89ff5', marginBottom: 2,
+                  }}>
+                    ⬆ terfi · {IDX.get(ex.promotedFrom)?.name} artık yardımcı
+                  </div>
+                )}
                 <div style={{ fontSize: 12.5, color: 'var(--dim)' }}>
                   hedef {ex.sets} × {target} {ex.unit}
                   {ex.rir > 0 && ` · ${ex.rir} tekrar rezerv`}
-                  {day.isTestDay && ex.role === 'main' && ' · bugün bir seti sonuna götürebilirsin'}
+                  {resolved.isTestDay && ex.role === 'main' && ' · bugün bir seti sonuna götürebilirsin'}
                 </div>
                 {ex.why && (
                   <div style={{

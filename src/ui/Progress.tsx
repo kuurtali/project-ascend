@@ -13,7 +13,8 @@ import dbJson from '../data/movements.json';
 import type { MovementDatabase, PlayerState } from '../engine/types';
 import { MASTERY_TIERS } from '../engine/types';
 import { balanceScore, indexMovements, isOpen, levelOf, proximity } from '../engine/mastery';
-import { pathTo, shouldPromote } from '../engine/planner';
+import { pathTo } from '../engine/planner';
+import { promotionsOf, weeksToDeload, weekNumber } from '../engine/session';
 import { ascensionOf, bossStates, rankOf, streakOf, titlesOf } from '../engine/game';
 import { WEEK } from '../program';
 import { Avatar } from './Avatar';
@@ -45,20 +46,13 @@ export function Progress({ state }: { state: PlayerState }) {
   const titles = useMemo(() => titlesOf(DB, state), [state]);
   const asc = useMemo(() => ascensionOf(DB, state), [state]);
 
-  const promotions = useMemo(() => {
-    const mains = new Set<string>();
-    for (const day of WEEK) {
-      for (const ex of day.exercises) if (ex.role === 'main') mains.add(ex.movementId);
-    }
-    return [...mains].filter((id) => shouldPromote(state, id)).map((id) => {
-      const mv = IDX.get(id)!;
-      const next = mv.unlocks.map((u) => IDX.get(u))
-        .filter((m): m is NonNullable<typeof m> => !!m)
-        .filter((m) => isOpen(state, m))
-        .sort((a, b) => a.tier - b.tier)[0];
-      return { from: mv, to: next ?? null };
-    });
-  }, [state]);
+  // Terfi artık gerçekten oluyor: Bugün ekranı da aynı çözücüyü
+  // kullanıyor, yani burada gördüğün değişiklik yarın programında. (D-060)
+  const promotions = useMemo(
+    () => promotionsOf(DB, IDX, state, WEEK), [state],
+  );
+  const weekNo = weekNumber(state);
+  const toDeload = weeksToDeload(state);
 
   const closest = useMemo(() =>
     DB.movements
@@ -141,31 +135,38 @@ export function Progress({ state }: { state: PlayerState }) {
         <div key={p.from.id} style={{
           ...card, marginTop: 10, borderColor: '#7F77DD', background: '#1a1533',
         }}>
-          <div style={{ ...label, color: '#a89ff5' }}>⬆ TERFİ HAZIR</div>
+          <div style={{ ...label, color: '#a89ff5' }}>⬆ TERFİ OLDU</div>
           <div style={{ fontSize: 16, fontWeight: 500, margin: '6px 0 6px' }}>
             {p.from.name} altın kademede
           </div>
-          {p.to ? (
-            <>
-              <div style={{ fontSize: 12.5, color: 'var(--dim)', lineHeight: 1.55 }}>
-                Ana hareket <b style={{ color: '#e6e8ee' }}>{p.to.name}</b> oluyor.
-                {' '}{p.from.name} yardımcıya iniyor — silinmiyor, rolü değişiyor.
-              </div>
-              <div style={{ display: 'flex', gap: 8, marginTop: 10, alignItems: 'center' }}>
-                <span style={{ ...roleBox, color: '#8b93a5' }}>{p.from.name}</span>
-                <span style={{ color: '#5b6376' }}>↓</span>
-                <span style={{ ...roleBox, color: '#a89ff5', borderColor: '#7F77DD' }}>
-                  {p.to.name}
-                </span>
-              </div>
-            </>
-          ) : (
-            <div style={{ fontSize: 12.5, color: 'var(--dim)' }}>
-              Sıradaki düğüm kilitli — ön koşulları tamamlayınca terfi açılır.
-            </div>
-          )}
+          <div style={{ fontSize: 12.5, color: 'var(--dim)', lineHeight: 1.55 }}>
+            Ana hareket <b style={{ color: '#e6e8ee' }}>{p.to.name}</b> oldu —
+            bir sonraki seansta programında bunu göreceksin.
+            {' '}{p.from.name} silinmiyor, rolü değişiyor.
+          </div>
+          <div style={{ display: 'flex', gap: 8, marginTop: 10, alignItems: 'center' }}>
+            <span style={{ ...roleBox, color: '#8b93a5' }}>{p.from.name}</span>
+            <span style={{ color: '#5b6376' }}>↓</span>
+            <span style={{ ...roleBox, color: '#a89ff5', borderColor: '#7F77DD' }}>
+              {p.to.name}
+            </span>
+          </div>
         </div>
       ))}
+
+      {weekNo > 0 && (
+        <div style={{ ...card, marginTop: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline' }}>
+            <div style={{ ...label, flex: 1 }}>PROGRAM HAFTASI</div>
+            <div style={{ fontSize: 20, fontWeight: 600 }}>{weekNo}</div>
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--dim)', marginTop: 4 }}>
+            {toDeload === 0
+              ? 'Bu hafta deload — set sayıları yarıda, ölçüm yok.'
+              : `Deload'a ${toDeload} hafta kaldı.`}
+          </div>
+        </div>
+      )}
 
       {/* YAKINLIK */}
       {closest.length > 0 && (

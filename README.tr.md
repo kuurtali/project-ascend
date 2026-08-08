@@ -110,6 +110,19 @@ Main altın kademeye ulaşınca terfi olur: ağaçtaki bir üst düğüm Main'e 
 eski Main Secondary'ye iner. Silinmez, rolü değişir. Terfi takvimle değil
 **mastery ile** olur.
 
+Haftalık şablon bir haftanın *şeklini* tarif eder — hangi gün hangi nitelik,
+ne kadar, hangi sırayla. Slotu hangi hareketin dolduracağı ağaç durumundan
+çözülür; yani terfi duyurulmakla kalmaz, yarınki seansı gerçekten değiştirir.
+Bugün ve İlerleme ekranları aynı çözücüyü çağırdığı için birbirine ters
+düşemezler.
+
+### Deload
+
+Her 6. haftada set sayısı yarıya iner, hedef tekrar aynı kalır, ölçüm günü
+kalkar. Tekrar aynı kalır çünkü onu düşürmek hareketi kolaylaştırır ve uyaranı
+tamamen keser — amaç dinlenmek değil, biriken yorgunluğu boşaltmak. Hafta
+sayacı takvimi değil **kullanıcının** haftalarını sayar; ilk kayıttan başlar.
+
 ---
 
 ## Oyun katmanı
@@ -189,8 +202,8 @@ zinciri bozulursa derleme kırılır.
 25 figür pozu ·   toplam kazanılabilir XP 525.335
 ```
 
-**77 test** — 59 motor testi (kilit, mastery, uyarlama, planner, oyun sistemleri,
-program yapısı) ve 18 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
+**96 test** — 78 motor testi (kilit, mastery, uyarlama, planner, seans
+çözümleme, deload, oyun sistemleri, program yapısı) ve 18 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
 ekranlar; gerçek React bileşenleri jsdom içinde çalışıyor).
 
 Program testleri yapıyı koruyor: iki sert gün arka arkaya gelemez, hafif
@@ -248,11 +261,11 @@ kaydı. Öne çıkanlar:
 Veri temeli, motor, uygulama ve oyun katmanı çalışıyor; canlıda. Bilinen
 eksikler, dürüstçe:
 
-- **Terfi henüz görsel.** İlerleme ekranı terfiyi duyuruyor ama Bugün ekranı hâlâ
-  sabit haftalık şablonu okuyor. Planlayıcı yazılı ve test edilmiş, ekrana
-  bağlanmayı bekliyor.
 - **Günlük görev üreteci ve sezon sistemi** tasarımda var, uygulamada yok.
-  Bilinçli ertelendi — planlayıcı bağlanmadan anlamsızlar.
+- **İlerleme geçmişi ekranı yok.** Uygulama sonraki kademeye ne kadar
+  kaldığını gösteriyor ama seni oraya getiren eğriyi göstermiyor — oysa
+  yukarıda "insanlar bunu göremediği için bırakıyor" diye yazıyor.
+  Sıradaki iş bu.
 - **Görsel regresyon testi yok.** Testler çökmediğini kanıtlıyor, güzel
   göründüğünü değil.
 

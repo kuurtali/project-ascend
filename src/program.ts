@@ -67,6 +67,13 @@ export interface ProgramExercise {
   altLabel?: string;
   /** Neden bu hareket burada — ekranda gösterilir */
   why?: string;
+  /**
+   * Hedef düğüm id'si. Verilirse bu slot SABİT DEĞİLDİR: buradaki
+   * hareket altın kademeye ulaşınca slot kendiliğinden hedefe giden
+   * yoldaki bir sonraki düğüme geçer. Terfi mekanizması bu.
+   * Çözümleme `engine/session.ts` içinde.
+   */
+  track?: string;
 }
 
 export interface ProgramDay {
@@ -121,13 +128,14 @@ export const WEEK: ProgramDay[] = [
       WRIST,
       {
         movementId: 'pike-pushup', label: 'Pike şınav', role: 'main',
-        sets: 3, startTarget: 5, rir: 2, unit: 'tekrar',
+        sets: 3, startTarget: 5, rir: 2, unit: 'tekrar', track: 'hspu',
         why: 'HSPU yolunun ilk gerçek adımı. Omuz taze iken yapılır.',
       },
       {
         movementId: 'negative-pullup', label: 'Negatif barfiks', role: 'main',
         sets: 3, startTarget: 5, rir: 2, unit: 'tekrar', needsBar: true,
         altMovementId: 'australian-row', altLabel: 'Masa kenarı row',
+        track: 'bar-muscle-up',
         why: 'Az sayıda barfiks çekebilen biri için tekrarı en hızlı büyüten yol.',
       },
       SCAP_PULL,
@@ -164,6 +172,7 @@ export const WEEK: ProgramDay[] = [
         movementId: 'parallel-bar-dip', label: 'Dips', role: 'main',
         sets: 3, startTarget: 6, rir: 2, unit: 'tekrar', needsBar: true,
         altMovementId: 'bench-dip', altLabel: 'Bench dip (sandalye)',
+        track: 'korean-dip',
         why: 'Muscle-up’ın itme yarısı buradan geçiyor.',
       },
       {
@@ -176,7 +185,7 @@ export const WEEK: ProgramDay[] = [
       SCAP_PULL,
       {
         movementId: 'tuck-l-sit', label: 'Tuck L-sit', role: 'main',
-        sets: 3, startTarget: 15, rir: 2, unit: 'saniye',
+        sets: 3, startTarget: 15, rir: 2, unit: 'saniye', track: 'l-sit',
         why: 'L-sit’e giden yol. Kalça fleksörü ve gövde birlikte.',
       },
     ],
@@ -194,13 +203,14 @@ export const WEEK: ProgramDay[] = [
       WRIST,
       {
         movementId: 'pike-pushup', label: 'Pike şınav', role: 'main',
-        sets: 3, startTarget: 5, rir: 2, unit: 'tekrar',
+        sets: 3, startTarget: 5, rir: 2, unit: 'tekrar', track: 'hspu',
         why: 'Haftanın ikinci HSPU dozu. Pazartesiden az, teknik odaklı.',
       },
       {
         movementId: 'negative-pullup', label: 'Negatif barfiks', role: 'main',
         sets: 3, startTarget: 5, rir: 2, unit: 'tekrar', needsBar: true,
         altMovementId: 'australian-row', altLabel: 'Masa kenarı row',
+        track: 'bar-muscle-up',
       },
       SCAP_PULL,
       HOLLOW,
