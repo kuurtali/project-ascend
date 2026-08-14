@@ -15,6 +15,7 @@ import {
   DELOAD_EVERY, isDeloadWeek, promotionsOf, resolveDay, stepsToGoal,
   weekNumber, weeksToDeload,
 } from './session';
+import { coachReport } from './report';
 
 const DB = db as unknown as MovementDatabase;
 const IDX = indexMovements(DB);
@@ -218,5 +219,92 @@ describe('ekipman ve hedef', () => {
     const g = stepsToGoal(DB, IDX, state(), 'hspu');
     expect(g.next).toBeTruthy();
     expect(g.total).toBeGreaterThan(5);
+  });
+});
+
+// ────────────────────────────────────────────────────────── KOÇ RAPORU
+
+describe('koç raporu', () => {
+  it('kayıt yokken çökmez', () => {
+    const r = coachReport(DB, state(), MONDAY);
+    expect(r).toContain('Henüz kayıtlı seans yok');
+  });
+
+  it('son 14 günün seanslarını ve efor bilgisini içerir', () => {
+    const s = state({
+      logs: [
+        { movementId: 'pushup', date: '2026-08-03', values: [12, 11], effort: 'hard' },
+        { movementId: 'pike-pushup', date: '2026-08-03', values: [5, 5] },
+      ],
+    });
+    const r = coachReport(DB, s, new Date('2026-08-06'));
+    expect(r).toContain('2026-08-03');
+    expect(r).toContain('Standard Push-up');
+    expect(r).toContain('zor');
+    expect(r).toContain('12, 11');
+  });
+
+  it('14 günden eski kayıtları listelemez', () => {
+    const s = state({
+      logs: [{ movementId: 'pushup', date: '2026-06-01', values: [12] }],
+    });
+    const r = coachReport(DB, s, new Date('2026-08-06'));
+    expect(r).toContain('(0 seans)');
+    expect(r).not.toContain('2026-06-01');
+  });
+
+  it('iki seans üst üste düşüş uyarı verir — erken sinyal', () => {
+    const s = state({
+      logs: [
+        { movementId: 'pushup', date: '2026-08-01', values: [15] },
+        { movementId: 'pushup', date: '2026-08-03', values: [13] },
+        { movementId: 'pushup', date: '2026-08-05', values: [11] },
+      ],
+    });
+    const r = coachReport(DB, s, new Date('2026-08-06'));
+    expect(r).toContain('15 → 13 → 11');
+    expect(r).toContain('düşüyor');
+  });
+
+  it('yükselen seride uyarı yok', () => {
+    const s = state({
+      logs: [
+        { movementId: 'pushup', date: '2026-08-01', values: [11] },
+        { movementId: 'pushup', date: '2026-08-03', values: [13] },
+        { movementId: 'pushup', date: '2026-08-05', values: [15] },
+      ],
+    });
+    expect(coachReport(DB, s, new Date('2026-08-06'))).not.toContain('düşüyor');
+  });
+
+  it('deload haftasını bildirir', () => {
+    const s = state({ logs: [{ movementId: 'pushup', date: '2026-08-03', values: [12] }] });
+    const dl = new Date('2026-08-03');
+    dl.setDate(dl.getDate() + (DELOAD_EVERY - 1) * 7);
+    expect(coachReport(DB, s, dl)).toContain('DELOAD');
+  });
+
+  it('kişisel veri sızdırmaz — sadece antrenman sayıları', () => {
+    const s = withTier(state({
+      logs: [{ movementId: 'pushup', date: '2026-08-03', values: [30] }],
+    }), 'pushup', 'master');
+    const r = coachReport(DB, s, new Date('2026-08-06')).toLowerCase();
+    for (const leak of ['kilo', 'boy', 'yaş', 'isim', 'e-posta', 'kist', 'platin']) {
+      expect(r).not.toContain(leak);
+    }
+  });
+
+  it('sohbete yapıştırılabilecek kadar kısa kalır', () => {
+    // 6 ay yoğun kayıt simüle et
+    const logs = [];
+    for (let i = 0; i < 400; i++) {
+      const d = new Date('2026-02-01');
+      d.setDate(d.getDate() + Math.floor(i / 4));
+      logs.push({
+        movementId: 'pushup', date: d.toISOString().slice(0, 10), values: [12, 11, 10],
+      });
+    }
+    const r = coachReport(DB, state({ logs }), new Date('2026-08-06'));
+    expect(r.length).toBeLessThan(4000);
   });
 });

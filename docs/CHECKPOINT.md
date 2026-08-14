@@ -165,6 +165,25 @@ FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
 
   Karar kaydi: SECOND_BRAIN D-053.
 
+KOC RAPORU - 2026-08-09 (D-061)
+  src/engine/report.ts + Ayarlar'da "Raporu kopyala" butonu.
+
+  SORUN: uygulama telefonda, kocluk konusmasi bilgisayarda. Kullanici
+  kac tekrar yaptigini anlatiyordu - eksik ve yanlis hatirlanan aktarim.
+  Tam yedek JSON'u binlerce satir, sohbete yapistirilamaz.
+
+  COZUM: tek tusla panoya kopyalanan ~2 KB ozet. Dosya tasima yok.
+  Icerik: son 14 gun seanslari + efor, son 3 seans gidisati, kademeler,
+  hafta no, deload durumu. Iki seans ust uste dususe UYARI isareti.
+
+  Rapor KISISEL VERI ICERMEZ, test bunu doguluyor.
+  Bir test de uzunlugu koruyor (<4000 karakter) - yapistirilabilir
+  olmak bu ozelligin islevsel gereksinimi, sus degil.
+
+  OBSIDIAN NOTU: registry'de baglayici YOK, kullanicida vault da YOK
+  (kurulu ama hic acilmamis). Sifirdan kurmak kazancindan fazla yuk.
+  Zaten dosya erisimi var, araciya gerek yok.
+
 !!! TERFI ARTIK GERCEK + DELOAD - 2026-08-06 (D-060)
   src/engine/session.ts  seans cozucu: sablon + agac durumu -> bugun
 

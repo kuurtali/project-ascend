@@ -10,6 +10,7 @@ import { useRef, useState } from 'react';
 import dbJson from '../data/movements.json';
 import type { MovementDatabase, PlayerState } from '../engine/types';
 import { exportJson, importJson, save } from '../storage';
+import { coachReport } from '../engine/report';
 
 const DB = dbJson as unknown as MovementDatabase;
 
@@ -21,6 +22,7 @@ export function Settings({ state, onState }: {
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [report, setReport] = useState<string | null>(null);
 
   const sessions = new Set(state.logs.map((l) => l.date)).size;
   const lastLog = [...state.logs].sort((a, b) => a.date.localeCompare(b.date)).at(-1);
@@ -43,6 +45,22 @@ export function Settings({ state, onState }: {
     setMsg('Yedek indirildi. Bir yere kopyala — telefon kaybolursa veri de gider.');
   }
 
+  /**
+   * Koç raporunu panoya kopyalar. Telefonda uygulama, bilgisayarda
+   * koçluk konuşması — aradaki boşluğu dosya taşımadan kapatan yol bu.
+   * Panoya yazma izni yoksa metni ekranda gösterip elle seçtiririz.
+   */
+  async function copyReport() {
+    const text = coachReport(DB, state);
+    try {
+      await navigator.clipboard.writeText(text);
+      setMsg('Rapor kopyalandı. Koça yapıştır.');
+    } catch {
+      setReport(text);
+      setMsg('Panoya yazılamadı — aşağıdaki metni seçip kopyala.');
+    }
+  }
+
   function doImport(f: File) {
     const r = new FileReader();
     r.onload = () => {
@@ -57,6 +75,35 @@ export function Settings({ state, onState }: {
   return (
     <div style={{ maxWidth: 440, margin: '0 auto', padding: '12px 14px 40px' }}>
       <h2 style={{ fontSize: 18, fontWeight: 500, margin: '0 0 12px' }}>Ayarlar</h2>
+
+      {/* koça rapor */}
+      <div style={{ ...card, borderColor: '#3a3563', background: '#151426' }}>
+        <div style={{ ...label, color: '#a89ff5' }}>KOÇA RAPOR</div>
+        <p style={{
+          fontSize: 12.5, color: '#c2c8d4', lineHeight: 1.55, margin: '6px 0 10px',
+        }}>
+          Son 14 günün seansları, eğilimler ve kademeler — kısa bir özet.
+          Kopyala, koça yapıştır. Sayıya girmeyen şeyleri (ağrı, uyku,
+          canının istememesi) altına kendin yaz.
+        </p>
+        <button onClick={copyReport} style={{
+          ...btn, background: '#7F77DD', color: '#0b0d12', fontWeight: 600,
+        }}>
+          Raporu kopyala
+        </button>
+        {report && (
+          <textarea
+            readOnly value={report}
+            onFocus={(e) => e.currentTarget.select()}
+            style={{
+              width: '100%', height: 160, marginTop: 8, borderRadius: 8,
+              background: '#0d1016', border: '1px solid var(--line)',
+              color: 'var(--txt)', fontSize: 11, padding: 8,
+              fontFamily: 'ui-monospace, monospace',
+            }}
+          />
+        )}
+      </div>
 
       {/* yedek uyarısı */}
       <div style={{

@@ -4000,6 +4000,39 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-061 · 2026-08-09 · Koç raporu — uygulama ile koçluk arasındaki boşluk**
+Kullanıcı "Claude + Obsidian" fikirlerini sordu. Araştırıldı: registry'de
+Obsidian bağlayıcısı yok, ve kullanıcının makinesinde **vault da yok** —
+Obsidian kurulu ama hiç açılmamış. İnternetteki o fikirlerin çoğu zaten
+Obsidian'da yaşayan insanlar için; sıfırdan kurmak kazancından fazla yük
+olurdu. Üstelik istenen şey (koçun notları okuyup yazması) zaten dosya
+erişimiyle mümkün, aracıya gerek yok.
+
+Ama sorunun ardındaki ihtiyaç gerçekti: **uygulama telefonda, koçluk
+konuşması bilgisayarda.** Aradaki boşluk şimdiye kadar kullanıcının kaç
+tekrar yaptığını anlatmasıyla kapanıyordu — eksik ve yanlış hatırlanan
+bir aktarım. Tam yedek JSON'u ise binlerce satır, sohbete yapıştırılamaz.
+
+Çözüm: `engine/report.ts` → tek tuşla panoya kopyalanan, birkaç yüz
+karakterlik özet. Dosya taşıma yok, senkron yok, ek araç yok.
+
+İçerik seçimi, koçun karar vermek için gerçekten ihtiyaç duyduğu şeyler:
+son 14 günün seansları ve sayıları, efor bilgisi (uyarlama kuralının
+girdisi), son 3 seansın gidişatı, kademeler, hafta numarası ve deload
+durumu. **İki seans üst üste düşen tekrar ayrıca işaretleniyor** — bu
+erken uyarıdır, yorgunluk ya da teknik bozulması demek.
+
+Rapor kişisel veri içermez: isim, ölçü, sağlık bilgisi girmez, sadece
+antrenman sayıları. Test bunu doğruluyor (D-014).
+
+Bir test de uzunluğu koruyor: 6 aylık yoğun kayıt simüle edilip raporun
+4000 karakterin altında kaldığı doğrulanıyor. **Yapıştırılabilir olmak
+bu özelliğin işlevsel gereksinimi**, süs değil — uzarsa kullanılmaz.
+
+Raporun sonunda kullanıcıya sayıya girmeyen şeyleri yazması söyleniyor:
+ağrı, uyku, isteksizlik. Uygulama sayıyı tutuyor, bağlamı tutmuyor; ve
+antrenman kararlarını en çok etkileyen şey çoğu zaman bağlam.
+
 **D-060 · 2026-08-06 · Terfi gerçek oldu, deload sisteme girdi**
 Sistemin en uzun süredir açık duran vaadi kapandı. Terfi bugüne kadar
 yalnızca İlerleme ekranında *duyuruluyordu*; Bugün ekranı sabit şablonu
