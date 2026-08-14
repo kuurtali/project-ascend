@@ -165,6 +165,32 @@ FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
 
   Karar kaydi: SECOND_BRAIN D-053.
 
+!!! DAYANIKLILIK KATMANI - 2026-08-14 (D-062)
+  Dort gozle inceleme: docs/YOL_HARITASI.md (sporcu/gelistirici/
+  elestirici/kullanici + 5 tartisma ve sentezleri).
+
+  ARASTIRMA BULGUSU: fitness uygulamalarinda 30. gun tutunma %3-4,
+  terk sebeplerinin basi ELLE GIRIS. Oyunlastirma basarisizligi
+  gorunur kilinca zararli, toparlanmayi destekleyince faydali.
+
+  ui/ErrorBoundary.tsx  render hatasi -> kurtarma ekrani, veri indir
+  storage.ts            SCHEMA_VERSION + migrate(), goc VERI SILMEZ
+  engine/comeback.ts    10+ gun ara -> hedef duser, geri donus plani
+  ui/Bodyweight.tsx     haftalik tarti (goreli guc sporu)
+  Today                 "hedefi yaptim" hizli giris + form ipuclari
+  program.ts            duvar handstand ISINMANIN ICINE
+
+  !!! IKI MEKANIZMA BIRBIRININ TERSI, KARISTIRMA:
+    DELOAD       SET duser, hedef sabit  -> yorgunluk bosaltir
+    GERI DONUS   HEDEF duser, set sabit  -> seviye yeniden bulunur
+  Test bunu koruyor. Deload testi duzenli kayit ISTER, yoksa geri
+  donus de tetiklenir ve test yaniltir.
+
+  XP BASLIKTAN KALDIRILDI: dissal odul one cikarsa icsel motivasyon
+  zayifliyor (meta-analiz ~ -0.36). Rutbe ve gun kaldi.
+
+  Toplam 128/128 test.
+
 KOC RAPORU - 2026-08-09 (D-061)
   src/engine/report.ts + Ayarlar'da "Raporu kopyala" butonu.
 
@@ -343,7 +369,7 @@ ANTRENMAN DURUMU:
   Ikisi de .gitignore'da ve depoya ASLA girmez. (D-014, D-044, D-058)
 
 --------------------------------------------------------------------------------
-SON GUNCELLEME : 2026-08-02  (depo genellestirildi, README EN+TR)
+SON GUNCELLEME : 2026-08-14  (dort gozle inceleme + dayaniklilik katmani)
 DURUM          : Faz 0 BITTI  (veri temeli, 196 hareket, 0 hata 0 uyari)
                  Faz 0.5 DEVAM (PLAN - v2.0 yazildi, 1 haftalik takvim var)
                  Faz 1 prototipi calisiyor, 61/61 test geciyor

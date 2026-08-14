@@ -23,6 +23,8 @@ import { Today } from './Today';
 import { Tree } from './Tree';
 import { Progress } from './Progress';
 import { Settings } from './Settings';
+import { ErrorBoundary } from './ErrorBoundary';
+import { needsWeighIn, weightTrend } from './Bodyweight';
 
 const DB = dbJson as unknown as MovementDatabase;
 
@@ -217,5 +219,89 @@ describe('veri bütünlüğü', () => {
     for (const m of holds) {
       expect(m.mastery.bronze.target).toBeGreaterThan(0);
     }
+  });
+});
+
+// ────────────────────────────────────── P0/P1 DAYANIKLILIK VE DOĞRULUK
+
+describe('hata sınırı', () => {
+  function Boom(): never { throw new Error('test patlaması'); }
+
+  it('çöken bileşen beyaz ekran değil kurtarma ekranı gösterir', () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    render(<ErrorBoundary><Boom /></ErrorBoundary>);
+    expect(screen.getByText(/Bir şeyler ters gitti/)).toBeTruthy();
+    spy.mockRestore();
+  });
+
+  it('kurtarma ekranında ilk iş veriyi indirmek', () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    render(<ErrorBoundary><Boom /></ErrorBoundary>);
+    expect(screen.getByText(/veriyi kurtar/)).toBeTruthy();
+    // Kullanıcıya tarayıcı verisini silmemesi söylenmeli
+    expect(screen.getByText(/silme/i)).toBeTruthy();
+    spy.mockRestore();
+  });
+
+  it('hata yokken çocukları normal çizer', () => {
+    render(<ErrorBoundary><div>iyi</div></ErrorBoundary>);
+    expect(screen.getByText('iyi')).toBeTruthy();
+  });
+});
+
+describe('hızlı giriş', () => {
+  it('tek dokunuşla setleri hedefle doldurur', () => {
+    render(<TodayHost initial={fresh()} />);
+    const filled = () => Array.from(
+      document.querySelectorAll<HTMLInputElement>('input[type="number"]'),
+    ).filter((i) => i.value !== '').length;
+    const before = filled();
+    expect(before).toBe(0);
+
+    fireEvent.click(screen.getAllByText(/hedefi yaptım/)[0]!);
+
+    expect(filled()).toBeGreaterThan(0);
+  });
+
+  it('doldurulan değerler DEĞİŞTİRİLEBİLİR kalır — kilitlenmez', () => {
+    render(<TodayHost initial={fresh()} />);
+    fireEvent.click(screen.getAllByText(/hedefi yaptım/)[0]!);
+    const input = document.querySelector<HTMLInputElement>('input[type="number"]')!;
+    expect(input.readOnly).toBe(false);
+    fireEvent.change(input, { target: { value: '7' } });
+    expect(input.value).toBe('7');
+  });
+});
+
+describe('haftalık tartı', () => {
+  it('hiç seans yokken sorulmaz', () => {
+    expect(needsWeighIn(fresh(), MONDAY)).toBe(false);
+  });
+
+  it('ilk seanstan sonra sorulur', () => {
+    const s = fresh();
+    s.logs = [{ movementId: 'pushup', date: '2026-08-03', values: [12] }];
+    expect(needsWeighIn(s, MONDAY)).toBe(true);
+  });
+
+  it('aynı hafta ikinci kez sorulmaz', () => {
+    const s = fresh();
+    s.logs = [{ movementId: 'pushup', date: '2026-08-03', values: [12] }];
+    s.bodyweight = [{ date: '2026-08-03', kg: 82 }];
+    expect(needsWeighIn(s, new Date('2026-08-05'))).toBe(false);
+    expect(needsWeighIn(s, new Date('2026-08-11'))).toBe(true);
+  });
+
+  it('kilo eğilimi hesaplanır', () => {
+    const s = fresh();
+    s.bodyweight = [{ date: '2026-08-03', kg: 82 }, { date: '2026-08-10', kg: 83.5 }];
+    expect(weightTrend(s)).toEqual({ kg: 83.5, delta: 1.5 });
+  });
+});
+
+describe('form ipuçları hareketin yanında', () => {
+  it('Bugün ekranında ipucu bölümü var', () => {
+    render(<TodayHost initial={fresh()} />);
+    expect(screen.getAllByText('form ipuçları').length).toBeGreaterThan(0);
   });
 });

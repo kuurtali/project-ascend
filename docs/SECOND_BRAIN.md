@@ -4000,6 +4000,55 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-062 · 2026-08-14 · Dört gözle inceleme; dayanıklılık katmanı**
+Proje dört ayrı bakış açısından incelendi (sporcu, geliştirici, eleştirici,
+yabancı kullanıcı) ve önce alan araştırması yapıldı. Tam metin ve
+tartışmalar: `docs/YOL_HARITASI.md`.
+
+**Araştırmanın iki bulgusu planı gerçekten değiştirdi:**
+
+1. Sağlık/fitness uygulamalarında 30. gün tutunma **%3-4**; kullanıcıların
+   %80'i üç ayda bırakıyor ve terk etme sebeplerinin başında **"zaman alan
+   elle giriş"** var. Bizim uygulama seans başına ~15 sayı istiyordu.
+2. Oyunlaştırma **başarısızlığı görünür kılmak** üzerine kurulduğunda
+   zararlı, **toparlanmayı desteklemek** üzerine kurulduğunda faydalı.
+   Bizde seri haftalıktı (iyi) ama kaçırdıktan sonrası tanımsızdı.
+
+**En verimli tartışma ikinci sentezden çıktı.** Eleştirici "kaçırınca
+hafiflet" dedi; sporcu itiraz etti: hafifletmek şefkat değil fizyoloji,
+ama **neyi** düşürdüğün önemli. Sonuç iki mekanizmanın birbirinin tersi
+olması gerektiği:
+
+- **Deload** SET düşürür, hedef sabit kalır → biriken yorgunluğu boşaltır
+- **Geri dönüş** HEDEF düşürür, set sabit kalır → seviyeyi yeniden bulur
+
+Farklı problemler, ters çözümler, ikisi de doğru. Bir test bunu koruyor.
+
+**Uygulananlar:**
+- `ui/ErrorBoundary.tsx` — render hatası artık beyaz ekran değil kurtarma
+  ekranı; en üstteki düğme ham veriyi indiriyor. Salonda seansın ortasında
+  çöken bir uygulama bir yıllık alışkanlığı kırar.
+- `storage.ts` — `SCHEMA_VERSION` + `migrate()`. Kural: **her göç adımı
+  veri SİLMEZ**, şüphede eski değer korunur. İçe aktarma da aynı yoldan.
+- Hızlı giriş — "hedefi yaptım" alanları hedefle **doldurur, kilitlemez.**
+  Sürtünme 15 girişten 1 dokunuşa indi, veri doğruluğu korundu.
+- `engine/comeback.ts` — 10+ gün ara → hedefler düşer, geri dönüş planı
+  olarak sunulur. Mesajın suçlayıcı olmadığını bir test kontrol ediyor.
+- Duvar handstand **ısınmanın içine** kondu. HSPU'nun denge yarısı
+  programda hiç yoktu; ekstra yük olarak değil, kısa ve sık.
+- `ui/Bodyweight.tsx` — haftalık tartı. Kalistenik göreli güç sporu;
+  kilo değişimi tekrarları değiştirir ve sistem bunu güç değişimi sanar.
+  Haftada bir sorulur, atlanabilir — günlük sormak tartı takıntısı besler.
+- Form ipuçları Bugün ekranına taşındı. Veride vardı ama sadece Ağaç'ta
+  görünüyordu; "dirsek öne" cümlesi hareketi yaparken lazım.
+- **XP başlıktan kaldırıldı.** Dışsal ödül öne çıkarsa içsel motivasyonu
+  zayıflatıyor (meta-analiz, etki ~ −0.36). Rütbe ve gün kaldı; XP
+  İlerleme ekranında duruyor.
+
+Genel ders: **bir sistemi tek gözle incelemek onu iyileştirmez.** Dört
+bakış ayrı ayrı listeler üretti ama gerçek içgörü çarpıştıkları yerde
+çıktı — sentezler, tekil önerilerin hepsinden iyiydi.
+
 **D-061 · 2026-08-09 · Koç raporu — uygulama ile koçluk arasındaki boşluk**
 Kullanıcı "Claude + Obsidian" fikirlerini sordu. Araştırıldı: registry'de
 Obsidian bağlayıcısı yok, ve kullanıcının makinesinde **vault da yok** —

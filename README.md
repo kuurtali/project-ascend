@@ -123,13 +123,24 @@ resolved from the tree at runtime, so promotion actually changes tomorrow's
 session rather than just being announced. Both the Today and Progress
 screens call the same resolver, so they can't disagree.
 
-### Deload
+### Deload and comeback — opposite operations
 
 Every sixth week the set count halves, target reps stay the same, and the
 test day is dropped. Reps stay because dropping them makes the movement
 easier and removes the stimulus entirely — the point isn't to rest, it's
 to shed accumulated fatigue. The week counter follows the **user's**
 weeks, counted from their first logged session, not the calendar.
+
+Coming back after a break does the **opposite**: targets drop, set count
+stays. These solve different problems. A deload sheds fatigue from someone
+who has been training; a comeback re-finds the level of someone who
+hasn't. Getting this backwards would make both useless.
+
+Research on gamified fitness apps is blunt about why this matters:
+mechanics built around *making failure visible* increase discomfort, while
+mechanics built around *supporting recovery* reduce it. So the app drops
+the targets itself and presents it as a plan, not a penalty — a test
+asserts the message contains no blaming language.
 
 ---
 
@@ -215,10 +226,10 @@ committed — if the generation chain breaks, the build fails.
 25 figure poses  ·  total earnable XP 525,335
 ```
 
-**96 tests** — 78 engine tests (unlocking, mastery, adaptation, planner,
-session resolution, deload, game systems, program structure) and 18
-end-to-end flow tests (calibration → session → celebration → every screen,
-running the real React components inside jsdom).
+**128 tests** — 100 engine tests (unlocking, mastery, adaptation, planner,
+session resolution, deload, comeback, game systems, program structure) and
+28 end-to-end flow tests (calibration → session → celebration → every
+screen, running the real React components inside jsdom).
 
 The program tests protect the structure: two hard days can't land
 back-to-back, light days must keep RIR ≥ 3, exactly one test day per week,

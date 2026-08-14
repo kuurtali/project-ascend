@@ -21,6 +21,7 @@ import { rankOf, streakOf } from '../engine/game';
 import { Celebrate, type CelebrationItem } from './Celebrate';
 import { Figure } from './figure/Figure';
 import { HoldTimer, RestTimer } from './Timer';
+import { WeighIn } from './Bodyweight';
 
 const DB = dbJson as unknown as MovementDatabase;
 const IDX = indexMovements(DB);
@@ -157,7 +158,7 @@ export function Today({ state, onState }: Props) {
   // ─────────────────────────────────────────── dinlenme günü
   if (day.kind === 'rest') {
     return (
-      <Shell level={level} xp={state.xp} day={day.name} kind={day.kind}
+      <Shell level={level} day={day.name} kind={day.kind}
         rank={rank.label} streakWeeks={streak.weeks}>
         <p style={{ color: 'var(--dim)', lineHeight: 1.6 }}>
           Bugün dinlenme. {day.focusNote}
@@ -184,7 +185,7 @@ export function Today({ state, onState }: Props) {
   // ─────────────────────────────────────────── seans bitti
   if (done) {
     return (
-      <Shell level={level} xp={state.xp} day={day.name} kind={day.kind}
+      <Shell level={level} day={day.name} kind={day.kind}
         rank={rank.label} streakWeeks={streak.weeks}>
         <h2 style={{ fontSize: 20, fontWeight: 500, margin: '0 0 4px' }}>
           Seans kaydedildi
@@ -222,8 +223,10 @@ export function Today({ state, onState }: Props) {
 
   // ─────────────────────────────────────────── seans ekranı
   return (
-    <Shell level={level} xp={state.xp} day={day.name} kind={day.kind}
+    <Shell level={level} day={day.name} kind={day.kind}
         rank={rank.label} streakWeeks={streak.weeks}>
+      <WeighIn state={state} onState={(s) => { save(s); onState(s); }} today={today} />
+
       {resolved.comeback.level !== 'none' && (
         <div style={{
           ...card, borderColor: '#7F77DD', background: '#1a1533', marginBottom: 10,
@@ -307,6 +310,26 @@ export function Today({ state, onState }: Props) {
                     fontSize: 11.5, color: 'var(--dim2)', marginTop: 4,
                     borderLeft: '2px solid #2b323f', paddingLeft: 7, lineHeight: 1.45,
                   }}>{ex.why}</div>
+                )}
+
+                {/* Form ipuçları BURADA olmalı — veride vardı ama sadece
+                    Ağaç ekranında görünüyordu. "Dirsek öne, dışa açma"
+                    cümlesi hareketi yaparken lazım, ağaçta gezerken değil. */}
+                {mv && (mv.tips.length > 0 || mv.commonMistakes.length > 0) && (
+                  <details style={{ marginTop: 6 }}>
+                    <summary style={{
+                      fontSize: 11.5, color: '#7dd3fc', cursor: 'pointer',
+                    }}>form ipuçları</summary>
+                    <ul style={{
+                      margin: '5px 0 0', paddingLeft: 15, fontSize: 11.5,
+                      color: '#c2c8d4', lineHeight: 1.5,
+                    }}>
+                      {mv.tips.slice(0, 3).map((t, i) => <li key={`t${i}`}>{t}</li>)}
+                      {mv.commonMistakes.slice(0, 2).map((t, i) => (
+                        <li key={`m${i}`} style={{ color: '#fbbf24' }}>✕ {t}</li>
+                      ))}
+                    </ul>
+                  </details>
                 )}
               </div>
             </div>
@@ -422,8 +445,8 @@ export function Today({ state, onState }: Props) {
 
 // ───────────────────────────────────────────────── kabuk ve stiller
 
-function Shell({ children, level, xp, day, kind, rank, streakWeeks }: {
-  children: React.ReactNode; level: number; xp: number; day: string;
+function Shell({ children, level, day, kind, rank, streakWeeks }: {
+  children: React.ReactNode; level: number; day: string;
   kind: string; rank?: string; streakWeeks?: number;
 }) {
   return (
@@ -439,10 +462,12 @@ function Shell({ children, level, xp, day, kind, rank, streakWeeks }: {
         }}>{level}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 17, fontWeight: 500 }}>{day}</div>
+          {/* XP bilerek arkaya alındı. Dışsal ödül (puan) öne çıkarsa
+              içsel motivasyonu zayıflatıyor; yetenek göstergesi
+              (rütbe, gün) öne alındı. XP Ayarlar ve İlerleme'de duruyor. */}
           <div style={{ fontSize: 11.5, color: 'var(--dim)' }}>
             {rank ? `${rank} · ` : ''}
             {kind === 'heavy' ? 'ağır gün' : kind === 'light' ? 'hafif gün' : 'dinlenme'}
-            {' · '}{xp.toLocaleString('tr')} XP
           </div>
         </div>
         {streakWeeks !== undefined && streakWeeks > 0 && (
