@@ -108,6 +108,15 @@ export interface PlayerState {
   testDayOfWeek: number; // 0=Pazar
   /** Başlangıç ölçümü yapıldı mı — ilk açılışta kalibrasyon ekranı */
   calibrated?: boolean;
+  /**
+   * Kayıt şeması sürümü. Göç yolunu bu belirler (storage.migrate).
+   * Yoksa 1 varsayılır — sürüm alanından önceki kayıtlar.
+   */
+  schemaVersion?: number;
+  /** Son dışa aktarma tarihi (ISO). Yedek hatırlatması bunu kullanır. */
+  lastExport?: string;
+  /** Haftalık vücut ağırlığı — göreli güç sporunda ölçümü etkiler */
+  bodyweight?: { date: string; kg: number }[];
 }
 
 // ─────────────────────────────────────────────── ÇIKTILAR

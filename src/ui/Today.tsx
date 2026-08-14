@@ -94,6 +94,14 @@ export function Today({ state, onState }: Props) {
     });
   }
 
+  /** Tüm setleri hedefle doldur — sonra istenirse elle düzeltilir */
+  function fillWithTarget(id: string, sets: number, target: number) {
+    const values: (number | '')[] = Array.from({ length: 4 }, (_, i) =>
+      i < sets ? target : '');
+    setEntries((prev) => ({ ...prev, [id]: { ...prev[id], values } }));
+    try { navigator.vibrate?.(20); } catch { /* geç */ }
+  }
+
   function setEffort(id: string, effort: 'easy' | 'ok' | 'hard') {
     setEntries((prev) => ({ ...prev, [id]: { values: prev[id]?.values ?? [], effort } }));
   }
@@ -216,6 +224,17 @@ export function Today({ state, onState }: Props) {
   return (
     <Shell level={level} xp={state.xp} day={day.name} kind={day.kind}
         rank={rank.label} streakWeeks={streak.weeks}>
+      {resolved.comeback.level !== 'none' && (
+        <div style={{
+          ...card, borderColor: '#7F77DD', background: '#1a1533', marginBottom: 10,
+        }}>
+          <div style={{ ...label, color: '#a89ff5' }}>↩ GERİ DÖNÜŞ</div>
+          <div style={{ fontSize: 12.5, color: '#c2c8d4', marginTop: 4, lineHeight: 1.55 }}>
+            {resolved.comeback.message}
+          </div>
+        </div>
+      )}
+
       {resolved.deload && (
         <div style={{
           ...card, borderColor: '#1D9E75', background: '#0d2019', marginBottom: 10,
@@ -315,6 +334,20 @@ export function Today({ state, onState }: Props) {
                 />
               ))}
             </div>
+
+            {/* Hızlı giriş. Terk etme sebeplerinin başında "zaman alan elle
+                giriş" geliyor; seans başına 15 sayı yazmak fazla. Bu düğüm
+                alanları hedefle DOLDURUR, kilitlemez — farklı çıktıysa
+                üstüne yazarsın. Sürtünme düşer, veri doğruluğu kalır. */}
+            <button
+              onClick={() => fillWithTarget(ex.movementId, ex.sets, target)}
+              style={{
+                ...chip, width: '100%', marginTop: 6, padding: '9px 0',
+                borderColor: '#1D9E75', color: '#5DCAA5',
+              }}
+            >
+              ✓ hedefi yaptım — {ex.sets} × {target}
+            </button>
 
             {/* Saniyeyle ölçülen hareketlerde kronometre: ölçülen süre
                 doğrudan ilk boş sete yazılır, elle sayma yok. */}

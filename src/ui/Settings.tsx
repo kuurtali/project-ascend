@@ -9,7 +9,7 @@
 import { useRef, useState } from 'react';
 import dbJson from '../data/movements.json';
 import type { MovementDatabase, PlayerState } from '../engine/types';
-import { exportJson, importJson, save } from '../storage';
+import { exportJson, importJson, markExported, save } from '../storage';
 import { coachReport } from '../engine/report';
 
 const DB = dbJson as unknown as MovementDatabase;
@@ -42,6 +42,7 @@ export function Settings({ state, onState }: {
     a.href = URL.createObjectURL(blob);
     a.download = `ascend-yedek-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
+    onState(markExported(state));
     setMsg('Yedek indirildi. Bir yere kopyala — telefon kaybolursa veri de gider.');
   }
 

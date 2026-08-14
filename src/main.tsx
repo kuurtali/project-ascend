@@ -5,6 +5,7 @@ import { Tree } from './ui/Tree';
 import { Progress } from './ui/Progress';
 import { Settings } from './ui/Settings';
 import { Calibrate } from './ui/Calibrate';
+import { ErrorBoundary } from './ui/ErrorBoundary';
 import { load, save } from './storage';
 import type { PlayerState } from './engine/types';
 
@@ -53,7 +54,19 @@ function App() {
   );
 }
 
-createRoot(document.getElementById('root')!).render(<App />);
+createRoot(document.getElementById('root')!).render(
+  <ErrorBoundary><App /></ErrorBoundary>,
+);
+
+// Hata sınırı yalnızca RENDER hatalarını yakalar. Olay işleyicilerindeki
+// ve async koddaki hatalar oraya düşmez — en azından konsola bassınlar
+// ki masaüstünde hata ayıklanabilsin.
+window.addEventListener('error', (e) => {
+  console.error('[ASCEND] yakalanmamış hata:', e.error ?? e.message);
+});
+window.addEventListener('unhandledrejection', (e) => {
+  console.error('[ASCEND] yakalanmamış promise reddi:', e.reason);
+});
 
 // Çevrimdışı çalışma — parkta / salonda internet olmayabilir
 //

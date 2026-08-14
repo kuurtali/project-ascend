@@ -15,6 +15,18 @@ import { tierForValue } from './engine/mastery';
 
 const KEY = 'ascend.state.v1';
 
+/**
+ * Güncel şema sürümü. Şema değiştiğinde BURAYI ARTIR ve `migrate`
+ * içine bir adım ekle.
+ *
+ * Neden gerekli: veri localStorage'da duruyor ve bir yıl boyunca
+ * birikecek. Bir alan eklendiğinde ya da anlamı değiştiğinde eski
+ * kayıt sessizce bozulur — kullanıcı bunu ancak sayıları yanlış
+ * gördüğünde fark eder, o da genelde çok geçtir. Sürüm alanı,
+ * "ne zaman ne yapılacağını" belirsizlikten çıkarır.
+ */
+export const SCHEMA_VERSION = 2;
+
 export const DEFAULT_STATE: PlayerState = {
   xp: 0,
   // Yaygın ev kurulumu. Kullanıcı Ayarlar'dan değiştirir; ekipman
@@ -38,15 +50,51 @@ export const DEFAULT_STATE: PlayerState = {
   testDayOfWeek: 1,   // Pazartesi
 };
 
+/**
+ * Eski kayıtları güncel şemaya taşır.
+ *
+ * Kural: her adım KENDİ İÇİNDE güvenli olmalı ve veri SİLMEMELİ.
+ * Şüpheye düşülen yerde eski değer korunur — eksik alan eklemek
+ * ucuz, kaybolan kaydı geri getirmek imkânsız.
+ */
+export function migrate(raw: Partial<PlayerState>): PlayerState {
+  const from = raw.schemaVersion ?? 1;
+  let s: Partial<PlayerState> = { ...raw };
+
+  // v1 → v2: sürüm alanı, yedek tarihi ve kilo geçmişi eklendi.
+  // Eski kayıtlarda bunlar yok; boş başlatılır, hiçbir şey silinmez.
+  if (from < 2) {
+    s = { ...s, bodyweight: s.bodyweight ?? [], lastExport: s.lastExport };
+  }
+
+  return {
+    ...structuredClone(DEFAULT_STATE),
+    ...s,
+    schemaVersion: SCHEMA_VERSION,
+  };
+}
+
 export function load(): PlayerState {
   try {
     const raw = localStorage.getItem(KEY);
-    if (!raw) return structuredClone(DEFAULT_STATE);
+    if (!raw) return { ...structuredClone(DEFAULT_STATE), schemaVersion: SCHEMA_VERSION };
     const parsed = JSON.parse(raw) as Partial<PlayerState>;
-    return { ...structuredClone(DEFAULT_STATE), ...parsed };
+    const migrated = migrate(parsed);
+    // Göç olduysa hemen yaz — bir sonraki açılışta tekrar göç etmesin
+    if ((parsed.schemaVersion ?? 1) !== SCHEMA_VERSION) save(migrated);
+    return migrated;
   } catch {
-    return structuredClone(DEFAULT_STATE);
+    return { ...structuredClone(DEFAULT_STATE), schemaVersion: SCHEMA_VERSION };
   }
+}
+
+/** Son yedekten bu yana kaç gün geçti. Hiç yedek yoksa Infinity. */
+export function daysSinceExport(state: PlayerState, today = new Date()): number {
+  if (!state.lastExport) return Infinity;
+  const d = Math.floor(
+    (today.getTime() - new Date(state.lastExport).getTime()) / 86_400_000,
+  );
+  return Math.max(0, d);
 }
 
 export function save(state: PlayerState): void {
@@ -120,14 +168,25 @@ export function recordSession(
 
 /** Dışa aktarma — veri kilitleme yok. (M-6) */
 export function exportJson(state: PlayerState): string {
-  return JSON.stringify({ v: 1, exportedAt: new Date().toISOString(), state }, null, 1);
+  return JSON.stringify(
+    { v: SCHEMA_VERSION, exportedAt: new Date().toISOString(), state },
+    null, 1,
+  );
+}
+
+/** Yedek alındığını işaretler — hatırlatma bunu okur */
+export function markExported(state: PlayerState, today = new Date()): PlayerState {
+  const next = { ...state, lastExport: today.toISOString() };
+  save(next);
+  return next;
 }
 
 export function importJson(text: string): PlayerState | null {
   try {
-    const o = JSON.parse(text) as { state?: PlayerState };
+    const o = JSON.parse(text) as { state?: Partial<PlayerState> };
     if (!o.state) return null;
-    return { ...structuredClone(DEFAULT_STATE), ...o.state };
+    // İçe aktarılan kayıt eski sürüm olabilir — aynı göç yolundan geçir
+    return migrate(o.state);
   } catch {
     return null;
   }

@@ -95,6 +95,26 @@ const WRIST: ProgramExercise = {
   why: 'Handstand yolunun ön koşulu. Bilekte sorun geçmişi varsa atlanmaz.',
 };
 
+/**
+ * DUVAR HANDSTAND — HSPU'nun eksik yarısı.
+ *
+ * Pike şınav itme GÜCÜNÜ çalıştırıyor. Ama handstand bir BECERİ:
+ * denge, el altı kontrolü, baş aşağı yönelim ayrı bir öğrenme süreci
+ * ve programda hiç yoktu. Alan bilgisi net — handstand kısa ve SIK
+ * pratikle öğreniliyor; günde 10 odaklı dakika, seyrek uzun
+ * seanslardan iyi. Duvar handstand'i 2-4 haftada geliyor.
+ *
+ * Isınmanın içine konuldu, ayrı bir yük olarak değil: 2-3 dakika,
+ * yorucu değil, ve zaten omuzu/bileği seansa hazırlıyor. Böylece
+ * program uzamadan sıklık kazanılıyor.
+ */
+const HANDSTAND_WALL: ProgramExercise = {
+  movementId: 'wall-handstand', label: 'Duvar handstand', role: 'technique',
+  sets: 3, startTarget: 20, rir: 0, unit: 'saniye',
+  why: 'HSPU’nun denge yarısı. Güç değil beceri — kısa ve sık yapılır, '
+     + 'yorulmadan. Isınmanın parçası.',
+};
+
 const SCAP_PULL: ProgramExercise = {
   movementId: 'scapular-pullup', label: 'Skapular çekiş', role: 'technique',
   sets: 3, startTarget: 8, rir: 3, unit: 'tekrar', needsBar: true,
@@ -126,6 +146,7 @@ export const WEEK: ProgramDay[] = [
     ropeMinutes: 5,
     exercises: [
       WRIST,
+      HANDSTAND_WALL,
       {
         movementId: 'pike-pushup', label: 'Pike şınav', role: 'main',
         sets: 3, startTarget: 5, rir: 2, unit: 'tekrar', track: 'hspu',
@@ -148,6 +169,7 @@ export const WEEK: ProgramDay[] = [
     ropeMinutes: 8,
     exercises: [
       WRIST,
+      HANDSTAND_WALL,
       {
         movementId: 'pushup', label: 'Şınav', role: 'secondary',
         sets: 3, startTarget: 15, rir: 4, unit: 'tekrar',
@@ -168,6 +190,7 @@ export const WEEK: ProgramDay[] = [
     ropeMinutes: 5,
     exercises: [
       WRIST,
+      HANDSTAND_WALL,
       {
         movementId: 'parallel-bar-dip', label: 'Dips', role: 'main',
         sets: 3, startTarget: 6, rir: 2, unit: 'tekrar', needsBar: true,
@@ -201,6 +224,7 @@ export const WEEK: ProgramDay[] = [
     ropeMinutes: 5,
     exercises: [
       WRIST,
+      HANDSTAND_WALL,
       {
         movementId: 'pike-pushup', label: 'Pike şınav', role: 'main',
         sets: 3, startTarget: 5, rir: 2, unit: 'tekrar', track: 'hspu',
@@ -222,6 +246,7 @@ export const WEEK: ProgramDay[] = [
     ropeMinutes: 12,
     exercises: [
       WRIST,
+      HANDSTAND_WALL,
       {
         movementId: 'decline-pushup', label: 'Ayak yukarı şınav', role: 'technique',
         sets: 3, startTarget: 8, rir: 4, unit: 'tekrar',

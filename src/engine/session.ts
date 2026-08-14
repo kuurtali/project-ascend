@@ -27,6 +27,7 @@ import type {
 } from './types';
 import { isTrainable, tierOf } from './mastery';
 import { findMain, pathTo, shouldPromote } from './planner';
+import { applyComeback, comebackOf, type Comeback } from './comeback';
 import type { ProgramDay, ProgramExercise } from '../program';
 
 /** Kaç haftada bir hafif hafta */
@@ -48,6 +49,8 @@ export interface ResolvedDay {
   weekNo: number;
   /** Deload haftasında ölçüm yapılmaz */
   isTestDay: boolean;
+  /** Ara verip dönüldüyse hafifletme bilgisi */
+  comeback: Comeback;
 }
 
 // ─────────────────────────────────────────────────────────── HAFTA SAYACI
@@ -143,6 +146,7 @@ export function resolveDay(
   today = new Date(),
 ): ResolvedDay {
   const deload = isDeloadWeek(state, today);
+  const comeback = comebackOf(state, today);
 
   const exercises = day.exercises.map((ex): ResolvedExercise => {
     let out: ResolvedExercise = { ...ex };
@@ -182,6 +186,14 @@ export function resolveDay(
       out = { ...out, sets: Math.max(1, Math.round(out.sets / 2)) };
     }
 
+    // 4) Geri dönüş: burada tam TERSİ yapılır — set sayısı korunur,
+    //    HEDEF düşer. Ara verdikten sonra sorun hacim değil, tek
+    //    sette çıkarabildiğin sayı. Deload'da yorgunluk boşaltılır,
+    //    geri dönüşte seviye yeniden bulunur; iki farklı problem.
+    if (comeback.level !== 'none') {
+      out = { ...out, startTarget: applyComeback(out.startTarget, comeback) };
+    }
+
     return out;
   });
 
@@ -190,8 +202,9 @@ export function resolveDay(
     exercises,
     deload,
     weekNo: weekNumber(state, today),
-    // Deload haftasında maksimum denemesi yapılmaz
-    isTestDay: !!day.isTestDay && !deload,
+    // Deload haftasında ve geri dönüşte maksimum denenmez
+    isTestDay: !!day.isTestDay && !deload && comeback.level === 'none',
+    comeback,
   };
 }
 

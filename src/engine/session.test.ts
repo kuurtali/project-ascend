@@ -16,6 +16,8 @@ import {
   weekNumber, weeksToDeload,
 } from './session';
 import { coachReport } from './report';
+import { applyComeback, comebackOf, COMEBACK_AFTER_DAYS } from './comeback';
+import { daysSinceExport, migrate, SCHEMA_VERSION } from '../storage';
 
 const DB = db as unknown as MovementDatabase;
 const IDX = indexMovements(DB);
@@ -127,8 +129,7 @@ function stepsToGoalIds(goal: string): string[] {
 
 // ───────────────────────────────────────────────────────────── DELOAD
 
-describe('deload', () => {
-  const logsFrom = (start: string, weeks: number) => {
+const logsFrom = (start: string, weeks: number) => {
     const out = [];
     const d = new Date(start);
     for (let i = 0; i < weeks * 3; i++) {
@@ -138,9 +139,10 @@ describe('deload', () => {
         values: [12],
       });
     }
-    return out;
-  };
+  return out;
+};
 
+describe('deload', () => {
   it('kayıt yoksa hafta 0, deload yok', () => {
     expect(weekNumber(state(), MONDAY)).toBe(0);
     expect(isDeloadWeek(state(), MONDAY)).toBe(false);
@@ -161,13 +163,17 @@ describe('deload', () => {
   });
 
   it('deload haftasında set sayısı yarıya iner, hedef tekrar aynı kalır', () => {
-    const s = state({ logs: [{ movementId: 'pushup', date: '2026-08-03', values: [12] }] });
-    const normal = resolveDay(DB, IDX, s, heavyDay, true, new Date('2026-08-10'));
+    // DÜZENLİ antrenman şart: aksi hâlde geri dönüş modu da tetiklenir
+    // ve hedefler düşer. İki mekanizma farklı problemleri çözüyor;
+    // deload'u sınamak için ara verilmemiş bir geçmiş gerekiyor.
+    const s = state({ logs: logsFrom('2026-08-03', DELOAD_EVERY) });
     const dl = new Date('2026-08-03');
     dl.setDate(dl.getDate() + (DELOAD_EVERY - 1) * 7);
+    const normal = resolveDay(DB, IDX, s, heavyDay, true, new Date('2026-08-10'));
     const light = resolveDay(DB, IDX, s, heavyDay, true, dl);
 
     expect(light.deload).toBe(true);
+    expect(light.comeback.level).toBe('none');
     for (let i = 0; i < normal.exercises.length; i++) {
       expect(light.exercises[i]!.sets).toBeLessThanOrEqual(normal.exercises[i]!.sets);
       expect(light.exercises[i]!.startTarget).toBe(normal.exercises[i]!.startTarget);
@@ -306,5 +312,124 @@ describe('koç raporu', () => {
     }
     const r = coachReport(DB, state({ logs }), new Date('2026-08-06'));
     expect(r.length).toBeLessThan(4000);
+  });
+});
+
+// ──────────────────────────────────────────────────────── GERİ DÖNÜŞ
+
+describe('geri dönüş modu', () => {
+  const on = (days: number[]) => days.map((d) => {
+    const x = new Date('2026-08-03');
+    x.setDate(x.getDate() + d);
+    return { movementId: 'pushup', date: x.toISOString().slice(0, 10), values: [12] };
+  });
+  const at = (d: number) => {
+    const x = new Date('2026-08-03');
+    x.setDate(x.getDate() + d);
+    return x;
+  };
+
+  it('düzenli antrenmanda devreye girmez', () => {
+    const s = state({ logs: on([0, 2, 4, 6, 8]) });
+    expect(comebackOf(s, at(9)).level).toBe('none');
+  });
+
+  it('kayıt yokken devreye girmez — yeni kullanıcı ceza almaz', () => {
+    expect(comebackOf(state(), at(30)).level).toBe('none');
+  });
+
+  it(`${COMEBACK_AFTER_DAYS} günden az ara sorun değil`, () => {
+    const s = state({ logs: on([0, 2]) });
+    expect(comebackOf(s, at(2 + COMEBACK_AFTER_DAYS - 1)).level).toBe('none');
+  });
+
+  it('10-24 gün ara → hafif dönüş, hedefler biraz düşer', () => {
+    const s = state({ logs: on([0]) });
+    const cb = comebackOf(s, at(14));
+    expect(cb.level).toBe('light');
+    expect(cb.factor).toBeGreaterThan(0.8);
+    expect(cb.factor).toBeLessThan(1);
+  });
+
+  it('25+ gün ara → sıfırlama, daha çok düşer', () => {
+    const s = state({ logs: on([0]) });
+    const cb = comebackOf(s, at(40));
+    expect(cb.level).toBe('reset');
+    expect(cb.factor).toBeLessThan(comebackOf(s, at(14)).factor);
+  });
+
+  it('mesaj suçlayıcı değil — "kaçırdın" demez', () => {
+    const msg = comebackOf(state({ logs: on([0]) }), at(30)).message.toLowerCase();
+    for (const blame of ['kaçırdın', 'başarısız', 'ihmal', 'tembel', 'kaybettin']) {
+      expect(msg).not.toContain(blame);
+    }
+    expect(msg.length).toBeGreaterThan(20);
+  });
+
+  it('dönüşten sonra birkaç seans hafif devam eder, sonra normale döner', () => {
+    // 20 gün ara, sonra 1 seans → hâlâ hafif
+    const few = state({ logs: on([0, 20]) });
+    expect(comebackOf(few, at(21)).level).toBe('light');
+    // 20 gün ara, sonra 4 seans → normal
+    const many = state({ logs: on([0, 20, 22, 24, 26]) });
+    expect(comebackOf(many, at(27)).level).toBe('none');
+  });
+
+  it('hedefler düşer ama asla sıfır olmaz', () => {
+    const cb = comebackOf(state({ logs: on([0]) }), at(40));
+    expect(applyComeback(1, cb)).toBeGreaterThanOrEqual(1);
+    expect(applyComeback(10, cb)).toBeLessThan(10);
+  });
+
+  it('geri dönüşte ölçüm günü yok — dönüşte maksimum denenmez', () => {
+    const testDay = WEEK.find((d) => d.isTestDay)!;
+    const s = state({ logs: on([0]) });
+    expect(resolveDay(DB, IDX, s, testDay, true, at(20)).isTestDay).toBe(false);
+  });
+
+  it('geri dönüş SET değil HEDEF düşürür — deload’un tersi', () => {
+    const s = state({ logs: on([0]) });
+    const normal = resolveDay(DB, IDX, state({ logs: on([0, 2]) }), heavyDay, true, at(3));
+    const back = resolveDay(DB, IDX, s, heavyDay, true, at(20));
+    expect(back.comeback.level).not.toBe('none');
+    for (let i = 0; i < normal.exercises.length; i++) {
+      expect(back.exercises[i]!.sets).toBe(normal.exercises[i]!.sets);
+      expect(back.exercises[i]!.startTarget)
+        .toBeLessThanOrEqual(normal.exercises[i]!.startTarget);
+    }
+  });
+});
+
+// ─────────────────────────────────────────────────── VERİ DAYANIKLILIĞI
+
+describe('veri göçü', () => {
+  it('sürümsüz eski kayıt bozulmadan taşınır', () => {
+    const old = {
+      xp: 500, equipment: ['floor'], constraints: [], mastery: {},
+      logs: [{ movementId: 'pushup', date: '2026-08-03', values: [12] }],
+      weeklyTarget: 5, testDayOfWeek: 1,
+    };
+    const m = migrate(old as never);
+    expect(m.xp).toBe(500);
+    expect(m.logs.length).toBe(1);
+    expect(m.schemaVersion).toBe(SCHEMA_VERSION);
+  });
+
+  it('göç veri SİLMEZ — bilinmeyen alanlar bile korunur', () => {
+    const old = { xp: 900, logs: [], mastery: { pushup: { movementId: 'pushup', tier: 'gold', best: 20, verifiedSessions: [] } } };
+    const m = migrate(old as never);
+    expect(m.xp).toBe(900);
+    expect(m.mastery['pushup']?.tier).toBe('gold');
+  });
+
+  it('boş kayıt varsayılana düşer, çökmez', () => {
+    expect(migrate({} as never).schemaVersion).toBe(SCHEMA_VERSION);
+  });
+
+  it('yedek tarihi takip edilir', () => {
+    const s = state();
+    expect(daysSinceExport(s, MONDAY)).toBe(Infinity);
+    const marked = { ...s, lastExport: '2026-08-01T00:00:00.000Z' };
+    expect(daysSinceExport(marked, new Date('2026-08-11'))).toBe(10);
   });
 });
