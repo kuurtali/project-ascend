@@ -265,35 +265,37 @@ Sistemin tasarımı iyi. **Kullanım yüzeyi zayıf.**
 |---|---|---|---|
 | 1 | **Hata sınırı** | Bir hata bir yıllık alışkanlığı kırmasın | ✅ |
 | 2 | **Veri sürümleme + göç** | Şema değişince eski kayıt bozulmasın | ✅ |
-| 3 | **Yedek tarihi takibi** | Elle yedek alınmıyor, alınmayacak | ✅ |
+| 3 | **Yedek hatırlatması** | Elle yedek alınmıyor, alınmayacak | ✅ |
 | 4 | **Hızlı giriş** | Terk etme sebeplerinin başı elle giriş | ✅ |
 | 5 | **Geri dönüş modu** | Kaçırınca uçurum değil rampa olsun | ✅ |
 | 6 | **Duvar handstand (ısınmada)** | HSPU'nun denge yarısı yoktu | ✅ |
+| 7 | **Servis worker ön-önbellek** | Güncelleme sonrası çevrimdışı açılmıyordu | ✅ |
 
-### P1 — Antrenman doğruluğu  ·  *sporcunun itirazları*
+### P1 — Antrenman doğruluğu  ·  *sporcunun itirazları*  ·  **✅ YAPILDI**
 
-| # | İş | Neden |
-|---|---|---|
-| 7 | **Vücut ağırlığı takibi** | Göreli güç sporu; kilo değişimi ölçümü bozar |
-| 8 | **Bugün ekranında form ipuçları** | Bilgi kullanıldığı yerde olmalı |
-| 9 | **XP'yi arkaya, yakınlığı öne al** | Dışsal ödülü geri plana çek (Tartışma 3) |
+| # | İş | Neden | Durum |
+|---|---|---|---|
+| 8 | **Vücut ağırlığı takibi** | Göreli güç sporu; kilo değişimi ölçümü bozar | ✅ |
+| 9 | **Bugün ekranında form ipuçları** | Bilgi kullanıldığı yerde olmalı | ✅ |
+| 10 | **XP'yi arkaya al** | Dışsal ödülü geri plana çek (Tartışma 3) | ✅ |
 
 ### P2 — Yaygınlaşabilirlik  ·  *yabancı kullanıcı*
 
 | # | İş | Neden |
 |---|---|---|
-| 10 | **Program günleri seçilebilir** | Herkesin haftası aynı değil |
-| 11 | **Hedef seçimi** | Herkes HSPU istemiyor |
-| 12 | **İngilizce arayüz** | Şu an Türkçe bilmeyen kullanamaz |
+| 11 | **Program günleri seçilebilir** | Herkesin haftası aynı değil |
+| 12 | **Hedef seçimi** | Herkes HSPU istemiyor |
 | 13 | **"Nasıl çalışır" ekranı** | Uygulama kendini anlatmıyor |
+| 14 | **İngilizce arayüz** | *Bilinçli ertelendi — Tartışma 5* |
 
 ### P3 — Görünürlük  ·  *portfolyo*
 
 | # | İş | Neden |
 |---|---|---|
-| 14 | **İlerleme geçmişi ve grafik** | Projenin kendi tezi; hâlâ yok |
-| 15 | **Ekran görüntüleri** | İşe alımcı ortalama 15 saniye bakıyor |
-| 16 | **Depo açıklaması, konu etiketleri, pin** | Aynı 15 saniye |
+| 15 | **İlerleme geçmişi ve grafik** | Projenin kendi tezi; hâlâ yok |
+| 16 | **Ekran görüntüleri** | İşe alımcı ortalama 15 saniye bakıyor — *sende* |
+| 17 | **Depo açıklaması, etiketler, pin** | Aynı 15 saniye — *sende* |
+| 18 | **Görsel regresyon testi** | Testler çökmediğini kanıtlıyor, güzel göründüğünü değil |
 
 ---
 

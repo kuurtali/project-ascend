@@ -12,11 +12,29 @@
 //
 // Kural: adı değişmeyen bir dosyayı cache-first servis etme.
 
-const CACHE = 'ascend-v2';
+const CACHE = 'ascend-v3';
 
+/**
+ * Kurulumda yalnızca kabuk değil, index.html'in İŞARET ETTİĞİ varlıklar
+ * da önbelleğe alınır.
+ *
+ * Önceki hâlde sadece './' ve './index.html' alınıyordu; JS paketi ancak
+ * ilk getirmede önbelleğe giriyordu. Güncellemeden hemen sonra çevrimdışı
+ * kalınırsa uygulama açılmıyordu — tam da salonda olabilecek bir durum.
+ */
 self.addEventListener('install', (e) => {
   self.skipWaiting();
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', './index.html'])));
+  e.waitUntil((async () => {
+    const c = await caches.open(CACHE);
+    await c.addAll(['./', './index.html']);
+    try {
+      const html = await (await fetch('./index.html', { cache: 'reload' })).text();
+      const assets = [...html.matchAll(/(?:src|href)="([^"]*assets\/[^"]+)"/g)]
+        .map((m) => m[1]);
+      // Tek tek: biri düşerse kurulum tamamen çökmesin
+      await Promise.allSettled(assets.map((u) => c.add(u)));
+    } catch { /* çevrimdışı kurulum — fetch handler yine de toparlar */ }
+  })());
 });
 
 self.addEventListener('activate', (e) => {

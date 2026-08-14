@@ -22,7 +22,7 @@ import { Calibrate } from './Calibrate';
 import { Today } from './Today';
 import { Tree } from './Tree';
 import { Progress } from './Progress';
-import { Settings } from './Settings';
+import { needsBackupReminder, Settings } from './Settings';
 import { ErrorBoundary } from './ErrorBoundary';
 import { needsWeighIn, weightTrend } from './Bodyweight';
 
@@ -303,5 +303,36 @@ describe('form ipuçları hareketin yanında', () => {
   it('Bugün ekranında ipucu bölümü var', () => {
     render(<TodayHost initial={fresh()} />);
     expect(screen.getAllByText('form ipuçları').length).toBeGreaterThan(0);
+  });
+});
+
+describe('yedek hatırlatması', () => {
+  const withSessions = (n: number, lastExport?: string) => {
+    const s = fresh();
+    s.logs = Array.from({ length: n }, (_, i) => ({
+      movementId: 'pushup',
+      date: `2026-08-${String(i + 1).padStart(2, '0')}`,
+      values: [12],
+    }));
+    if (lastExport) s.lastExport = lastExport;
+    return s;
+  };
+
+  it('yeni kullanıcıyı rahatsız etmez', () => {
+    expect(needsBackupReminder(withSessions(1), MONDAY)).toBe(false);
+  });
+
+  it('hiç yedek alınmadıysa birkaç seans sonra uyarır', () => {
+    expect(needsBackupReminder(withSessions(5), new Date('2026-08-20'))).toBe(true);
+  });
+
+  it('yeni yedek alındıysa susar', () => {
+    const s = withSessions(5, '2026-08-19T00:00:00.000Z');
+    expect(needsBackupReminder(s, new Date('2026-08-20'))).toBe(false);
+  });
+
+  it('yedek eskiyince tekrar uyarır', () => {
+    const s = withSessions(5, '2026-08-01T00:00:00.000Z');
+    expect(needsBackupReminder(s, new Date('2026-08-20'))).toBe(true);
   });
 });

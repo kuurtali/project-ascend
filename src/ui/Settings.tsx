@@ -9,7 +9,7 @@
 import { useRef, useState } from 'react';
 import dbJson from '../data/movements.json';
 import type { MovementDatabase, PlayerState } from '../engine/types';
-import { exportJson, importJson, markExported, save } from '../storage';
+import { daysSinceExport, exportJson, importJson, markExported, save } from '../storage';
 import { coachReport } from '../engine/report';
 
 const DB = dbJson as unknown as MovementDatabase;
@@ -214,12 +214,21 @@ function Row({ k, v }: { k: string; v: string }) {
   );
 }
 
-export function needsBackupReminder(state: PlayerState): boolean {
-  if (state.logs.length < 5) return false;
-  const last = [...state.logs].sort((a, b) => a.date.localeCompare(b.date)).at(-1);
-  if (!last) return false;
-  const days = (Date.now() - new Date(last.date).getTime()) / 86_400_000;
-  return days < BACKUP_REMINDER_DAYS && state.logs.length % 20 === 0;
+/**
+ * Yedek hatırlatması gerekiyor mu.
+ *
+ * Eski hâli `logs.length % 20` idi — yani kayıt sayısı 20'nin katıysa.
+ * Hem keyfi hem kırılgan: aynı gün iki hareket girilince atlayabiliyor,
+ * ve son yedeğin ne zaman alındığıyla hiç ilgisi yok. Doğru ölçüt
+ * SON YEDEKTEN BU YANA GEÇEN SÜRE.
+ *
+ * Yerel-öncelikli mimarinin bedeli bu: tarayıcı verisi silinirse her şey
+ * gider ve kimse kendiliğinden yedek almaz. Hatırlatmak zorundayız.
+ */
+export function needsBackupReminder(state: PlayerState, today = new Date()): boolean {
+  // Kaydı olmayan kullanıcıyı rahatsız etme
+  if (new Set(state.logs.map((l) => l.date)).size < 3) return false;
+  return daysSinceExport(state, today) >= BACKUP_REMINDER_DAYS;
 }
 
 const card: React.CSSProperties = {

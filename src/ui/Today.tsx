@@ -22,6 +22,7 @@ import { Celebrate, type CelebrationItem } from './Celebrate';
 import { Figure } from './figure/Figure';
 import { HoldTimer, RestTimer } from './Timer';
 import { WeighIn } from './Bodyweight';
+import { needsBackupReminder } from './Settings';
 
 const DB = dbJson as unknown as MovementDatabase;
 const IDX = indexMovements(DB);
@@ -225,6 +226,19 @@ export function Today({ state, onState }: Props) {
   return (
     <Shell level={level} day={day.name} kind={day.kind}
         rank={rank.label} streakWeeks={streak.weeks}>
+      {needsBackupReminder(state, today) && (
+        <div style={{
+          ...card, borderColor: '#4a3d10', background: '#2a220c', marginBottom: 10,
+        }}>
+          <div style={{ ...label, color: '#f5c542' }}>⚠ YEDEK ZAMANI</div>
+          <div style={{ fontSize: 12.5, color: '#e6e8ee', marginTop: 4, lineHeight: 1.55 }}>
+            İki haftadır yedek almadın. Veri sadece bu cihazda —
+            tarayıcı verisi silinirse kayıtların geri gelmez.
+            Ayarlar → Yedeği indir.
+          </div>
+        </div>
+      )}
+
       <WeighIn state={state} onState={(s) => { save(s); onState(s); }} today={today} />
 
       {resolved.comeback.level !== 'none' && (
