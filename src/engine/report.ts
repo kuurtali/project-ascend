@@ -25,6 +25,7 @@ import type { MovementDatabase, PlayerState } from './types';
 import { indexMovements, levelOf } from './mastery';
 import { rankOf, streakOf } from './game';
 import { isDeloadWeek, weekNumber, weeksToDeload } from './session';
+import { heavyBefore, LOAD_LABEL, OUTSIDE_KINDS, outsideIn } from './outside';
 
 const EFFORT_TR: Record<string, string> = {
   easy: 'kolay', ok: 'normal', hard: 'zor',
@@ -99,7 +100,10 @@ export function coachReport(
     L.push('Bu aralıkta kayıt yok.');
   }
   for (const [date, logs] of recent) {
-    L.push(`**${date}**`);
+    // Seansın hangi koşulda yapıldığı sayının kendisi kadar önemli.
+    // Bu işaret olmadan koç düşen bir sayıyı gerileme sanar.
+    const tired = heavyBefore(state.outside, date);
+    L.push(`**${date}**${tired ? '  _(dış yükün ardından)_' : ''}`);
     for (const l of logs) {
       const eff = l.effort ? `  (${EFFORT_TR[l.effort]})` : '';
       const note = l.note ? `  — ${l.note}` : '';
@@ -107,6 +111,19 @@ export function coachReport(
     }
   }
   L.push('');
+
+  // ── Program dışı: salon, aile seansı, maç, koşu
+  const outside = outsideIn(state, 14, today);
+  if (outside.length > 0) {
+    L.push(`### Program dışı (${outside.length} seans)`);
+    for (const o of outside) {
+      L.push(`- ${o.date}: ${OUTSIDE_KINDS[o.kind].label.toLowerCase()}`
+        + ` · ${LOAD_LABEL[o.load]}`
+        + (o.plyo ? ' · sıçrama' : '')
+        + (o.note ? ` — ${o.note}` : ''));
+    }
+    L.push('');
+  }
 
   // ── Eğilimler: yalnız son 14 günde çalışılan hareketler
   const touched = [...new Set(recent.flatMap(([, ls]) => ls.map((l) => l.movementId)))];

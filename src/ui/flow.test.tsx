@@ -336,3 +336,53 @@ describe('yedek hatırlatması', () => {
     expect(needsBackupReminder(s, new Date('2026-08-20'))).toBe(true);
   });
 });
+
+// ─────────────────────────────────────────── PROGRAM DIŞI ANTRENMAN
+
+describe('program dışı antrenman kaydı', () => {
+  it('kart kapalı başlar — ekranı doldurmaz', () => {
+    render(<TodayHost initial={fresh()} />);
+    expect(screen.getByText(/program dışı bir şey yaptım/)).toBeTruthy();
+    expect(screen.queryByText('PROGRAM DIŞI ANTRENMAN')).toBeNull();
+  });
+
+  it('iki dokunuşta kaydedilir ve kayıt listede görünür', () => {
+    render(<TodayHost initial={fresh()} />);
+    fireEvent.click(screen.getByText(/program dışı bir şey yaptım/));
+    fireEvent.click(screen.getByText('Bacak'));
+    fireEvent.click(screen.getByText('Kaydet'));
+
+    // Kart kapanır, onay görünür, kayıt listesine düşer
+    expect(screen.getByText(/kaydedildi — Bacak/)).toBeTruthy();
+    expect(screen.getByText(/bacak · orta/)).toBeTruthy();
+  });
+
+  it('tür seçilmeden kaydedilmez', () => {
+    render(<TodayHost initial={fresh()} />);
+    fireEvent.click(screen.getByText(/program dışı bir şey yaptım/));
+    fireEvent.click(screen.getByText('Kaydet'));
+    expect(screen.queryByText(/kaydedildi —/)).toBeNull();
+  });
+
+  it('dinlenme gününde de kayıt yapılabilir — salon genelde o güne düşer', () => {
+    vi.setSystemTime(new Date('2026-08-06T09:00:00'));   // Perşembe, dinlenme
+    render(<TodayHost initial={fresh()} />);
+    expect(screen.getByText(/Bugün dinlenme/)).toBeTruthy();
+    expect(screen.getByText(/program dışı bir şey yaptım/)).toBeTruthy();
+  });
+
+  it('aynı dokuya binen dış yük seans listesinin ÜSTÜNDE uyarı verir', () => {
+    const s = fresh();
+    s.outside = [{ date: '2026-08-02', kind: 'push', load: 3 }];
+    render(<TodayHost initial={s} />);
+    const warn = screen.getByText(/⚠ DIŞ YÜK/);
+    const finish = screen.getByText('Seansı bitir');
+    expect(warn.compareDocumentPosition(finish)
+      & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('dış kayıt yokken hiçbir uyarı bandı çizilmez', () => {
+    render(<TodayHost initial={fresh()} />);
+    expect(screen.queryByText(/DIŞ YÜK/)).toBeNull();
+  });
+});

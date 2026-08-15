@@ -165,6 +165,35 @@ FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
 
   Karar kaydi: SECOND_BRAIN D-053.
 
+!!! PROGRAM DISI YUK - 2026-08-15 (D-063)
+  engine/outside.ts   tur/siddet/sicrama kaydi, cakisma uyarilari
+  ui/Outside.tsx      kayit karti (2 dokunus) + uyari bandi
+  adaptation.ts       fatigued -> "3+ altinda %20 dus" kurali ASKIYA ALINIR
+  storage.ts          SCHEMA_VERSION 3, migrate v2->v3 (bos liste)
+  report.ts           "Program disi" bolumu + yorgun gun isareti
+
+  SORUN: README ilk gunden "baska antrenmanin yaninda calisir" diyordu
+  ama uygulamanin bunu OGRENECEK yolu yoktu. Varsayim belgedeydi,
+  veride degil. Dun 150 squat yapan biri bugun planktan 10sn az tutar;
+  sistem bunu GERILEME sanip hedefi kalici dusururdu. Kilo takibiyle
+  (D-062 §1.2) tamamen ayni sinifta sessiz olcum hatasi.
+
+  !!! ISTISNANIN SINIRI VAR: bir kere affeder, iki kere affetmez.
+  Onceki seansta da 3+ acik varsa hedef duser. Sinir olmasaydi surekli
+  dis antrenman yapan biri ulasilamaz hedefe kilitlenirdi.
+  DIKKAT: plato kurali bunu YAKALAMIYOR — plato "hedefi tam tutturma"
+  halinde tetikleniyor, "tutturamama" halinde degil. Ilk tasarim
+  sonsuz dongu uretiyordu, testte yakalandi.
+
+  KASTEN YAPILMAYAN: dis antrenman seriye/XP'ye/kademeye GIRMEZ.
+  Uygulama beceri agacini takip ediyor; oraya squat girerse kademeler
+  yanlis oynar. Dis yuk BAGLAM'dir, ilerleme degil.
+
+  Sicrama ayri sayiliyor: plyometrik yuk tendona biner, tendon kastan
+  yavas toparlar. 7 gunde 3+ sicrama seansi -> uyari.
+
+  Toplam 166/166 test. sw.js CACHE v4.
+
 !!! DAYANIKLILIK KATMANI - 2026-08-14 (D-062)
   Dort gozle inceleme: docs/YOL_HARITASI.md (sporcu/gelistirici/
   elestirici/kullanici + 5 tartisma ve sentezleri).

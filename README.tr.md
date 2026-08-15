@@ -101,6 +101,39 @@ değil beceri** olarak kuruldu — az set, düşük tekrar, yüksek kalite.
 Bacak işi de minimumda: ağırlık antrenmanı bacağı kalistenikten iyi
 karşılıyor, ağacın bacak kolu menüde duruyor.
 
+### Program dışı antrenman — sistem artık haberdar
+
+Yukarıdaki paragraf uzun süre uygulamanın doğrulayamadığı bir iddiaydı.
+Şablon başka antrenmanın varlığını varsayıyordu ama onu kaydeden hiçbir
+yer yoktu.
+
+Bu boşluk sessiz bir ölçüm hatası üretiyordu — kilo takibiyle aynı
+sınıftan. Cuma 150 squat yap, cumartesi plankta on saniye az tut:
+uyarlama kuralı bunu **gerileme** okur ve hedefi kalıcı düşürür.
+Yanlış yapılan bir şey yoktur, sistem yanlış okumuştur. Hata da
+görünmez; ekranda sadece daha küçük bir sayı belirir.
+
+Bu yüzden dış seanslar kaydediliyor: tür, şiddet, sıçrama var mı,
+isteğe bağlı not. Yaygın durumda iki dokunuş. Sistem üç yerde
+kullanıyor:
+
+| | |
+|---|---|
+| **Doku çakışması** | Her tür ağaç kategorilerine bağlı; "dün itiş çalıştın, bugünkü ana iş aynı dokuya biniyor" diyebiliyor — hem de listenin *üstünde*, çünkü sayı girildikten sonra söylemenin değeri yok |
+| **Yorgunluk istisnası** | Son iki günde ağır dış yük varsa "3+ altında → %20 düş" kuralı askıya alınır. Yorgun bir günün ölçüsü kimsenin seviyesi değildir |
+| **Sıçrama sayacı** | Sıçrama kastan çok tendona biner, tendon daha yavaş toparlanır. 7 günde 3+ sıçrama seansı uyarı üretir |
+
+İstisna **bir kere affeder, iki kere affetmez.** Önceki seansta da 3+
+açık varsa hedef yine de düşer — o artık tek bir kötü gün değildir.
+Bu sınır olmasa sürekli dışarıda antrenman yapan biri ulaşamayacağı bir
+hedefe kilitlenirdi. (Plato kuralı bunu yakalamıyor: hedefi tutturmakta
+ısrar edince tetikleniyor, tutturamayınca değil.)
+
+Bilerek dışarıda bırakılan: dış seanslar seriye, XP'ye ve kademelere
+girmiyor. Uygulama beceri ağacını takip ediyor; oraya squat girerse
+kademeler yanlış oynar ve sistem yanlış hedef verir. Dış yük
+**bağlamdır, ilerleme değil.**
+
 ### Skill Slot — hareketler rol değiştirir
 
 Dört slot, dört farklı nitelik: **Main** (yoğunluk), **Secondary** (hacim),
@@ -202,8 +235,9 @@ zinciri bozulursa derleme kırılır.
 25 figür pozu ·   toplam kazanılabilir XP 525.335
 ```
 
-**96 test** — 78 motor testi (kilit, mastery, uyarlama, planner, seans
-çözümleme, deload, oyun sistemleri, program yapısı) ve 18 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
+**166 test** — 128 motor testi (kilit, mastery, uyarlama, planner, seans
+çözümleme, deload, geri dönüş, dış yük, oyun sistemleri, program yapısı)
+ve 38 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
 ekranlar; gerçek React bileşenleri jsdom içinde çalışıyor).
 
 Program testleri yapıyı koruyor: iki sert gün arka arkaya gelemez, hafif

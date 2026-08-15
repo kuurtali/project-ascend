@@ -4000,6 +4000,59 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-063 · 2026-08-15 · Program dışı yük kaydı — sistemin son körlüğü**
+
+README ilk günden beri şunu iddia ediyordu: bu sistem "başka antrenmanın
+yanında yaşamak üzere" tasarlandı. Haftalık şablonun 3 sert / 2 hafif /
+2 boş olmasının sebebi bu (D-057). Ama uygulamanın bunu **öğrenecek
+hiçbir yolu yoktu.** Varsayım belgelerdeydi, veride değil.
+
+Bunun bedeli sessiz bir ölçüm hatası ve tam olarak kilo takibiyle aynı
+sınıftan (D-062, §1.2): dün 150 squat yapmış biri bugün planktan 10
+saniye az tutar, uyarlama kuralı bunu **gerileme** diye okur ve hedefi
+kalıcı olarak %20 düşürür. Kullanıcı hiçbir şey yanlış yapmamıştır,
+sistem yanlış okumuştur. Hata görünmez: ekranda sadece daha küçük bir
+sayı belirir.
+
+**Kayıt:** tarih · tür (bacak/üst itiş/üst çekiş/kondisyon/spor/yürüyüş/
+diğer) · şiddet (hafif/orta/ağır) · sıçrama var mı · isteğe bağlı not.
+Varsayılan şiddet "orta", yani yaygın durum **iki dokunuş** — bağlam
+kaydı için üç ekran doldurtulursa kimse ikinci kez yapmaz (D-062, §3.1).
+
+**Sistem üç yerde kullanıyor:**
+
+1. **Seans öncesi çakışma uyarısı.** Tür ile ağaç kategorisi arasında
+   `conflicts` köprüsü var; "dün üst itiş çalışmışsın, bugünkü ana iş
+   aynı dokuya biniyor" diyebilmesi bunu gerektiriyor. Uyarı listenin
+   **üstünde** — sayı girildikten sonra söylemenin değeri yok.
+2. **Uyarlama kuralında yorgunluk istisnası.** Son 2 günde ağır dış yük
+   varsa "3+ altında → %20 düş" kararı **"aynı kalsın"a** iner. Yorgun
+   bir günün ölçüsü kişinin seviyesi değildir.
+3. **Koç raporu.** Dış seanslar ayrı bölümde; yorgunluk altında yapılan
+   antrenman günleri işaretli.
+
+**Bir kere affeder, iki kere affetmez.** İstisnanın sınırı olmasa
+sürekli dış antrenman yapan biri asla ulaşamayacağı bir hedefe
+kilitlenirdi — bir önceki seansta da 3+ açık varsa bu artık tek bir
+kötü gün değil, gerçek bir seviye farkıdır ve hedef düşer. Sınırı
+tasarlarken plato kuralının bu durumu yakalamadığı fark edildi: plato
+"hedefi tam tutturma" halinde tetikleniyor, "tutturamama" halinde
+değil. Yani ilk tasarım sonsuz döngü üretirdi.
+
+**Kasten yapılmayan:** dış antrenman seriye, XP'ye ve kademelere
+girmiyor. Uygulama beceri ağacını takip ediyor; oraya squat girerse
+kademeler yanlış oynar ve sistem yanlış hedef verir. Dış yük
+**bağlamdır, ilerleme değil.** Bu ayrım kaybolursa uygulama "her şeyi
+sayan" bir günlüğe dönüşür — açıkça reddedilen şey (M-1).
+
+Sıçrama ayrı takip ediliyor çünkü plyometrik yük kastan çok tendona
+biner ve tendon daha yavaş toparlanır. 7 günde 3+ sıçrama seansı uyarı
+üretiyor. Şema v3'e çıktı; göç yolu boş liste ekliyor — geçmişe dönük
+doldurmak veriyi kirletirdi.
+
+Yeni: `src/engine/outside.ts`, `src/ui/Outside.tsx`, 34 test.
+Toplam 166 test.
+
 **D-062 · 2026-08-14 · Dört gözle inceleme; dayanıklılık katmanı**
 Proje dört ayrı bakış açısından incelendi (sporcu, geliştirici, eleştirici,
 yabancı kullanıcı) ve önce alan araştırması yapıldı. Tam metin ve
@@ -4628,4 +4681,4 @@ Bunlar değişirse proje başka bir proje olur, gelişmiş bir versiyonu olmaz.
 değerini kaybeder. Her oturum `_CHECKPOINT.txt` güncellemesiyle biter;
 her kalıcı karar `29_DecisionHistory`'ye girer.*
 
-**Son güncelleme: 2026-07-25**
+**Son güncelleme: 2026-08-15**

@@ -96,6 +96,27 @@ export interface UserConstraint {
   clearedByProfessional: boolean;
 }
 
+/** Program dışı antrenman türü — hangi dokuya bindiği önemli */
+export type OutsideKind =
+  | 'legs' | 'push' | 'pull' | 'conditioning' | 'sport' | 'walk' | 'other';
+
+/** 1 hafif · 2 orta · 3 ağır */
+export type OutsideLoad = 1 | 2 | 3;
+
+/**
+ * Programın dışında yapılan bir antrenman. Kademelere ve XP'ye
+ * girmez — bu bir ilerleme kaydı değil, BAĞLAM kaydıdır. (D-063)
+ */
+export interface OutsideLog {
+  /** ISO tarih, YYYY-MM-DD */
+  date: string;
+  kind: OutsideKind;
+  load: OutsideLoad;
+  /** Sıçrama/plyometrik içerdi mi — tendon yükü ayrı sayılır */
+  plyo?: boolean;
+  note?: string;
+}
+
 export interface PlayerState {
   xp: number;
   equipment: string[];
@@ -117,6 +138,8 @@ export interface PlayerState {
   lastExport?: string;
   /** Haftalık vücut ağırlığı — göreli güç sporunda ölçümü etkiler */
   bodyweight?: { date: string; kg: number }[];
+  /** Program dışı antrenmanlar — salon, aile seansı, maç, koşu */
+  outside?: OutsideLog[];
 }
 
 // ─────────────────────────────────────────────── ÇIKTILAR

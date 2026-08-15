@@ -16,12 +16,14 @@ import { indexMovements, levelOf, proximity } from '../engine/mastery';
 import { buildInput, nextTarget } from '../engine/adaptation';
 import { dayFor, MENU, type ProgramExercise } from '../program';
 import { resolveDay, weeksToDeload, type ResolvedExercise } from '../engine/session';
+import { heavyBefore } from '../engine/outside';
 import { hasBar, recordSession, save } from '../storage';
 import { rankOf, streakOf } from '../engine/game';
 import { Celebrate, type CelebrationItem } from './Celebrate';
 import { Figure } from './figure/Figure';
 import { HoldTimer, RestTimer } from './Timer';
 import { WeighIn } from './Bodyweight';
+import { LoadBanner, OutsideCard } from './Outside';
 import { needsBackupReminder } from './Settings';
 
 const DB = dbJson as unknown as MovementDatabase;
@@ -69,11 +71,15 @@ export function Today({ state, onState }: Props) {
 
   const all: ResolvedExercise[] = [...exercises, ...extras];
 
-  /** Hedef: kayıt varsa uyarlamadan, yoksa program başlangıcından. */
+  /** Hedef: kayıt varsa uyarlamadan, yoksa program başlangıcından.
+   *  Dış yük geçmişi de verilir — yorgun bir günde alınan düşük ölçü
+   *  kalıcı hedef düşüşüne dönüşmesin. */
   function targetFor(ex: ProgramExercise): number {
     const logs = state.logs.filter((l) => l.movementId === ex.movementId);
     if (logs.length === 0) return ex.startTarget;
-    return nextTarget(buildInput(ex.movementId, state.logs, lastTarget(ex)));
+    return nextTarget(
+      buildInput(ex.movementId, state.logs, lastTarget(ex), state.outside),
+    );
   }
 
   function lastTarget(ex: ProgramExercise): number {
@@ -138,6 +144,12 @@ export function Today({ state, onState }: Props) {
       });
     }
 
+    // Bugünün seansı da dış yükün altında yapılmış olabilir; önizlenen
+    // hedef, yarın hesaplanacak olanla aynı kuraldan geçmeli.
+    const tiredToday = heavyBefore(
+      state.outside, today.toISOString().slice(0, 10),
+    ) != null;
+
     const nexts = payload.map((p) => {
       const ex = all.find((x) => x.movementId === p.movementId)!;
       const from = targetFor(ex);
@@ -145,6 +157,7 @@ export function Today({ state, onState }: Props) {
         targetReps: from,
         achieved: p.values,
         effort: p.effort,
+        fatigued: tiredToday,
       });
       return { label: ex.label, from, to };
     });
@@ -168,6 +181,10 @@ export function Today({ state, onState }: Props) {
           Bir gün kaçarsa telafi etme, sıradaki güne geç. 5 gün tutmak
           7 gün sıkıştırmaktan değerlidir.
         </p>
+        {/* Dinlenme gününde de lazım — hatta en çok burada. Salon,
+            aile seansı ve maç genelde program dışı günlere düşer. */}
+        <OutsideCard state={state} onState={(s) => { save(s); onState(s); }}
+          today={today} />
       </Shell>
     );
   }
@@ -266,6 +283,15 @@ export function Today({ state, onState }: Props) {
           </div>
         </div>
       )}
+
+      {/* Dış yük uyarısı seans listesinin ÜSTÜNDE olmalı: sayıyı
+          girdikten sonra "bu arada dün ağır çalışmıştın" demenin
+          hiçbir değeri yok. */}
+      <LoadBanner
+        state={state} today={today}
+        categories={all.map((e) => IDX.get(e.movementId)?.category)
+          .filter((c): c is NonNullable<typeof c> => c != null)}
+      />
 
       <p style={{ color: 'var(--dim)', fontSize: 13, margin: '0 0 12px' }}>
         {day.focusNote}
@@ -441,6 +467,9 @@ export function Today({ state, onState }: Props) {
           </div>
         </details>
       )}
+
+      <OutsideCard state={state} onState={(s) => { save(s); onState(s); }}
+        today={today} />
 
       <div style={{ ...card, marginTop: 10 }}>
         <RestTimer />

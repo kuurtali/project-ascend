@@ -10,7 +10,8 @@
  * bağımlı kalmaması için. (D-050)
  */
 
-import type { AdaptationVerdict, SetLog } from './types';
+import type { AdaptationVerdict, OutsideLog, SetLog } from './types';
+import { heavyBefore } from './outside';
 
 export interface AdaptationInput {
   /** Bu seansın hedefi */
@@ -21,6 +22,11 @@ export interface AdaptationInput {
   effort?: 'easy' | 'ok' | 'hard';
   /** Aynı hareketteki önceki seansların hedefleri — plato tespiti için */
   previousTargets?: number[];
+  /**
+   * O seans, program dışı ağır bir yükün hemen ardından mı yapıldı.
+   * Doğruysa düşük sayı bir gerileme değil, yorgunluk ölçümüdür.
+   */
+  fatigued?: boolean;
 }
 
 /** Kaç seans üst üste aynı hedefte kalındıysa eksen değiştirilir. */
@@ -34,9 +40,17 @@ export const PLATEAU_SESSIONS = 3;
  *  1-2 altında            → aynı sayı  (kalibrasyon, başarısızlık değil)
  *  3+ altında             → %20 düş
  *  3 seans aynı sayıda    → sayıyı bırak, YOĞUNLUK eksenini değiştir
+ *
+ * Tek istisna: 3+ altında kalınmış AMA seans program dışı ağır bir
+ * yükün ardından yapılmışsa hedef düşmez, aynı kalır. Yorgun bir
+ * günün ölçüsü kişinin seviyesi değildir; onu kalıcı hedefe çevirmek
+ * kilo değişimini güç değişimi sanmakla aynı hata. (D-063)
+ *
+ * Bu istisna sonsuza kadar sürükleyemez: sürekli tutturulamayan bir
+ * hedefte plato kuralı devreye girer ve ekseni değiştirir.
  */
 export function adapt(input: AdaptationInput): AdaptationVerdict {
-  const { targetReps, achieved, effort, previousTargets = [] } = input;
+  const { targetReps, achieved, effort, previousTargets = [], fatigued } = input;
 
   if (achieved.length === 0) {
     return { kind: 'hold', message: 'Kayıt yok, hedef aynı kalıyor.' };
@@ -85,6 +99,27 @@ export function adapt(input: AdaptationInput): AdaptationVerdict {
     };
   }
 
+  // Yorgunluk istisnası — bir kere affeder, iki kere affetmez.
+  //
+  // `previousTargets` son seansların minimum setlerini taşıyor
+  // (buildInput'a bak); sondaki bu seansın kendisi, sondan bir
+  // önceki bir önceki seans. Orada da 3+ açık varsa bu artık tek
+  // bir kötü gün değil, gerçek bir seviye farkı — dış yükü bahane
+  // etmeyi bırakıp hedefi düşürüyoruz. Aksi hâlde sürekli
+  // antrenman yapan biri asla ulaşamayacağı bir hedefe kilitlenirdi.
+  const prior = previousTargets.at(-2);
+  const missedBefore = prior != null && targetReps - prior >= 3;
+
+  if (fatigued && !missedBefore) {
+    return {
+      kind: 'hold',
+      message:
+        `Hedefin ${gap} altında kaldın ama son 2 günde program dışı ağır ` +
+        `bir seans var. Hedef ${targetReps} olarak kalıyor — yorgun bir ` +
+        'günün ölçüsü senin seviyen değil.',
+    };
+  }
+
   const reduced = Math.max(1, Math.round(targetReps * 0.8));
   return {
     kind: 'reduce',
@@ -112,6 +147,7 @@ export function buildInput(
   movementId: string,
   logs: SetLog[],
   currentTarget: number,
+  outside?: OutsideLog[],
 ): AdaptationInput {
   const own = logs
     .filter((l) => l.movementId === movementId)
@@ -122,6 +158,9 @@ export function buildInput(
     targetReps: currentTarget,
     achieved: last?.values ?? [],
     effort: last?.effort,
+    // Bugün değil, O SEANSIN gününe bakılır: yorumlanan şey geçmiş
+    // bir seansın sonucu, bugünkü his değil.
+    fatigued: last ? heavyBefore(outside, last.date) != null : false,
     // Hedef geçmişini kayıtlardan çıkaramıyoruz; en iyi yaklaşım
     // her seansın minimum setini hedef sayımı olarak kullanmak.
     previousTargets: own.slice(-PLATEAU_SESSIONS).map((l) => Math.min(...l.values)),

@@ -108,6 +108,38 @@ not volume**: few sets, low reps, high quality. Leg work is minimal for
 the same reason; barbell training covers legs far better, so that branch
 of the tree sits in the optional menu.
 
+### Outside training — the system can be told about it
+
+For a long time the paragraph above was a claim the app had no way to
+verify. The template assumed other training existed; nothing recorded it.
+
+That gap produced a silent measurement error, the same class as
+bodyweight. Do 150 squats on Friday, hold ten seconds less on Saturday's
+plank, and the adaptation rule reads it as **regression** and permanently
+lowers the target. Nothing was done wrong; the system read it wrong. And
+the error is invisible — a slightly smaller number appears, that's all.
+
+So outside sessions get logged: type, intensity, whether it involved
+jumping, an optional note. Two taps in the common case. Three things
+happen with it:
+
+| | |
+|---|---|
+| **Tissue clash** | Each type maps to tree categories, so the app can say "you pressed yesterday, today's main is the same tissue" — *above* the session list, since saying it after the numbers are entered is worthless |
+| **Fatigue exception** | Heavy outside load in the last two days suspends the "missed by 3+ → drop 20%" rule. A tired day's measurement isn't someone's level |
+| **Plyometric count** | Jumps load tendon more than muscle, and tendon recovers slower. Three or more jump sessions in seven days raises a flag |
+
+The exception **forgives once, not twice.** If the previous session also
+missed by 3+, the target drops anyway — that's no longer one bad day.
+Without that bound, someone who always trains outside would be locked to
+an unreachable target forever. (The plateau rule doesn't catch this: it
+fires on *hitting* a target repeatedly, not on missing it.)
+
+Deliberately excluded: outside sessions don't feed streaks, XP or tiers.
+The app tracks a skill tree; squats entering it would move tiers wrongly
+and the system would then prescribe the wrong thing. Outside load is
+**context, not progress.**
+
 ### Skill slots — movements change role
 
 Four slots, four qualities: **Main** (intensity), **Secondary** (volume),
@@ -191,6 +223,8 @@ src/engine/            pure TypeScript, never touches the DOM, needs no LLM
   mastery.ts           unlocking, tiers, verification, proximity, balance score
   adaptation.ts        the adaptation rule
   planner.ts           slot templates, pathfinding, promotion
+  session.ts           resolves the week's template into today's session
+  outside.ts           training done outside the program — context, not progress
   game.ts              rank, streak, boss HP, titles, ascension
 
 src/ui/                React 19, mobile-first
@@ -226,10 +260,11 @@ committed — if the generation chain breaks, the build fails.
 25 figure poses  ·  total earnable XP 525,335
 ```
 
-**128 tests** — 100 engine tests (unlocking, mastery, adaptation, planner,
-session resolution, deload, comeback, game systems, program structure) and
-28 end-to-end flow tests (calibration → session → celebration → every
-screen, running the real React components inside jsdom).
+**166 tests** — 128 engine tests (unlocking, mastery, adaptation, planner,
+session resolution, deload, comeback, outside load, game systems, program
+structure) and 38 end-to-end flow tests (calibration → session →
+celebration → every screen, running the real React components inside
+jsdom).
 
 The program tests protect the structure: two hard days can't land
 back-to-back, light days must keep RIR ≥ 3, exactly one test day per week,

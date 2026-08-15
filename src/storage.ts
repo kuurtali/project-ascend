@@ -25,7 +25,7 @@ const KEY = 'ascend.state.v1';
  * gördüğünde fark eder, o da genelde çok geçtir. Sürüm alanı,
  * "ne zaman ne yapılacağını" belirsizlikten çıkarır.
  */
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export const DEFAULT_STATE: PlayerState = {
   xp: 0,
@@ -65,6 +65,13 @@ export function migrate(raw: Partial<PlayerState>): PlayerState {
   // Eski kayıtlarda bunlar yok; boş başlatılır, hiçbir şey silinmez.
   if (from < 2) {
     s = { ...s, bodyweight: s.bodyweight ?? [], lastExport: s.lastExport };
+  }
+
+  // v2 → v3: program dışı antrenman kaydı eklendi. Geçmişe dönük
+  // doldurulamaz — kullanıcı geçen ayki salon günlerini hatırlamıyor
+  // ve tahmin etmek veriyi kirletir. Boş başlar, bugünden dolar.
+  if (from < 3) {
+    s = { ...s, outside: s.outside ?? [] };
   }
 
   return {
