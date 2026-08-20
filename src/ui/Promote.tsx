@@ -53,8 +53,10 @@ export function Promote({ state, onState, today = new Date() }: {
           </div>
 
           <div style={{ fontSize: 12.5, color: '#c2c8d4', lineHeight: 1.55 }}>
-            {o.from.name} altın kademede ve toplam <b>{o.done}</b> tekrar
-            birikti ({o.gate} yeterliydi). Doku da hazır sayılır.
+            {o.from.name} hareketinden toplam <b>{o.done}</b> tekrar birikti
+            ({o.gate} yeterliydi).
+            {o.goldOk && ' Altın kademe de doğrulandı.'}
+            {' '}Hazırsan geçelim; değilsen burada kalmak da bir karar.
           </div>
 
           <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
@@ -94,9 +96,9 @@ export function PromotionProgress({ state, today = new Date() }: {
       <div style={{
         fontSize: 11.5, color: 'var(--dim2)', margin: '4px 0 9px', lineHeight: 1.5,
       }}>
-        Kapı iki koşullu: altın kademe <i>ve</i> {VOLUME_SESSIONS} seanslık
-        birikmiş hacim. Kas kademeyi erken geçer, tendon geriden gelir —
-        hacim o farkı kapatıyor.
+        Kapı tek sayıya bakıyor: o hareketten kaç tekrar biriktiğine
+        ({VOLUME_SESSIONS} seanslık karşılığı). Kas haftalar içinde
+        güçlenir, tendon geriden gelir — biriken tekrar o farkı kapatıyor.
       </div>
 
       {offers.map((o) => {
@@ -118,9 +120,8 @@ export function PromotionProgress({ state, today = new Date() }: {
               }} />
             </div>
             <div style={{ fontSize: 11, color: 'var(--dim2)', marginTop: 4 }}>
-              {o.goldOk
-                ? `altın kademe tamam · ${Math.max(0, o.gate - o.done)} tekrar kaldı`
-                : `hacim %${pct} · altın kademe henüz doğrulanmadı`}
+              {Math.max(0, o.gate - o.done)} tekrar kaldı
+              {o.goldOk && ' · altın kademe tamam'}
               {' · sonraki: '}{o.to.name}
             </div>
           </div>

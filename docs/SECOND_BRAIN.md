@@ -4000,6 +4000,35 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-065 · 2026-08-20 · Kapı tek sayıya indi; depo sunuma hazırlandı**
+
+D-064'te kurulan kapı üç koşulluydu: doğrulanmış altın kademe + hacim
+eşiği + onay. Kademe koşulu **aynı gün kaldırıldı.**
+
+Gerekçe kullanıcıdan geldi ve doğruydu: ekranda kapının neden açılmadığı
+görünmüyordu. "Altın kademe henüz doğrulanmadı" cümlesi, kademenin ne
+olduğunu, nasıl doğrulandığını ve neden 14 gün/2 seans gerektiğini
+bilmeyen biri için bilgi taşımıyor — sadece kapalı bir kapı. Ölçü doğru
+olabilir; **anlaşılmayan bir koruma korumuyor.**
+
+Kalan tek koşul: kaç tekrar birikti. Tek sayı, ekranda sürekli görünür,
+mesafesi okunabilir. `goldOk` hesaplanmaya devam ediyor ve karta bilgi
+olarak yazılıyor, sadece `ready` hesabından çıktı.
+
+Kaybedilen koruma tamamen kaybolmadı: hacim eşiğinin kendisi zaten
+kademeden türüyor (`altın hedef × altın set × 8`), yani zor bir hareketin
+kapısı otomatik olarak daha yüksek.
+
+**Depo sunumu.** Aynı oturumda README'ler elden geçti: rozetler, üstte
+"teknik olarak ne var" kutusu, Mermaid mimari diyagramı, güncel sayılar
+(196 test, 65 karar), yeni sistemlerin anlatımı, İngilizce `CHANGELOG.md`.
+Türkçe README aylardır geride kalmıştı (96 test yazıyordu), senkronlandı.
+
+Açık kalan ve **yalnızca kullanıcının yapabileceği**: telefondan uygulama
+ekran görüntüleri. Depoda ağaç diyagramı ve figür animasyonu var ama
+arayüzden tek kare yok — depoya giren biri "bu neye benziyor" sorusunun
+cevabını bulamıyor. Bir de depo açıklaması ve topics.
+
 **D-064 · 2026-08-20 · Karar kullanıcının: terfi kapısı, süreklilik katmanı, kalibrasyon hatası**
 
 Üç ayrı şikâyet, tek bir kök sebep: **sistem kullanıcı adına karar

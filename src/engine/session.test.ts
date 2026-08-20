@@ -162,10 +162,9 @@ describe('hacim kapısı', () => {
       .toBe(PIKE.mastery.gold.target * PIKE.mastery.gold.sets * VOLUME_SESSIONS);
   });
 
-  it('altın kademe var ama hacim yoksa kapı kapalı', () => {
+  it('kademe iyi ama hacim yoksa kapı kapalı', () => {
     const s = trained(PIKE.mastery.gold.target, 2);
     const o = offerFor(DB, IDX, s, 'hspu', 'pike-pushup', MONDAY)!;
-    expect(o.goldOk).toBe(true);
     expect(o.done).toBeLessThan(o.gate);
     expect(o.ready).toBe(false);
   });
@@ -175,6 +174,23 @@ describe('hacim kapısı', () => {
     const o = offerFor(DB, IDX, s, 'hspu', 'pike-pushup', MONDAY)!;
     expect(o.done).toBeGreaterThanOrEqual(o.gate);
     expect(o.ready).toBe(true);
+  });
+
+  it('kapı TEK sayıya bakar — kademe kilitlemez', () => {
+    // Düşük tekrarlı ama çok sayıda seansla toplanan hacim de açar.
+    // Bilinçli karar: anlaşılmayan bir koruma korumuyor. (D-065)
+    const gate = volumeGate(PIKE);
+    const s = state({
+      logs: Array.from({ length: gate }, (_, i) => ({
+        movementId: 'pike-pushup',
+        date: new Date(MONDAY.getTime() - (i % 30) * 86_400_000)
+          .toISOString().slice(0, 10),
+        values: [1],
+      })),
+    });
+    const o = offerFor(DB, IDX, s, 'hspu', 'pike-pushup', MONDAY)!;
+    expect(o.goldOk).toBe(false);      // kademe yok
+    expect(o.ready).toBe(true);        // ama kapı açık
   });
 
   it('kalibrasyon kaydı hacme sayılmaz — bedava ilerleme yok', () => {

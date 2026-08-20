@@ -315,3 +315,103 @@ Sistemin tasarımı iyi. **Kullanım yüzeyi zayıf.**
 - Portfolyo ve GitHub değerlendirme ölçütleri —
   [SOLTECH: what hiring managers look for](https://soltech.net/what-do-hiring-managers-actually-look-for-in-a-github-portfolio/),
   [Junior developer portfolio guide 2025](https://www.webportfolios.dev/blog/junior-developer-portfolio-guide-2025)
+
+---
+---
+
+# SÜRÜM 2 — 2026-08-20
+
+> Kullanıcı programı gerçekten kullanmaya başladı ve ilk temas beş ayrı
+> kusur çıkardı. Hepsi kullanılmadan görünmezdi. Aşağısı, o temastan
+> sonraki plan.
+
+## Nerede duruyoruz
+
+**Seans şu an 4 dallı.** Her gün: denge + çekiş + gövde + itme
+ailelerinden biri.
+
+```
+Pazartesi  sert    denge · çekiş · gövde · dikey itme
+Salı       hafif   denge · çekiş · gövde · itme
+Çarşamba   sert    denge · çekiş · gövde · dips
+Perşembe   boş
+Cuma       sert    denge · çekiş · gövde · dikey itme
+Cumartesi  hafif   denge · çekiş · gövde · itme
+Pazar      boş
+```
+
+Isınma (bilek, duvar handstand) dal sayılmıyor — yorucu değil.
+
+**Neden 6'ya çıkarılmadı:** aynı gün süreklilik katmanı (D-064) geldi ve
+şınav · dips · squat oraya taşındı. Programa da konsaydı aynı iş iki
+yerde sayılacaktı. Ama şeritteki işaret ikili — orada ilerleme
+ölçülmüyor. Karar noktası tam olarak burası: **hangi hareket ölçülmeli,
+hangisi sadece yapılmalı.**
+
+## Plan
+
+### A · Seans 5 dala çıksın · en yüksek öncelik
+
+Dikey itme · çekiş · **dips** · gövde · denge.
+
+Düz şınav programdan çıkar, şeritte kalır: 30 tekrar çekebilen biri için
+orada ölçülecek bir şey yok, o bir hacim işi. Dips ise programa girer —
+Korean dip yolunda duruyor ve ölçülmesi gerekiyor. Şu an haftada yalnız
+bir gün görünüyor, bu bir dalın ilerlemesi için az.
+
+Yük kontrolü: günün **ana dalı 3 set**, diğerleri 2 set. Böylece dal
+sayısı artarken seans 20 dakikanın altında kalır. Beş dal × ortalama
+2.2 set ≈ bugünkü toplam sete yakın.
+
+### B · Hedefi elle değiştirebilme
+
+"Geri kalan her şeyi ben ayarlarım" denildi ama şu an hedefe dokunmanın
+yolu yok. Sistem önerir, kullanıcı üstüne yazar, yazdığı kalıcı olur ve
+uyarlama kuralı oradan devam eder.
+
+Bu, uyarlama kuralını iptal etmiyor — **önerinin statüsünü** değiştiriyor.
+Kural hâlâ hesaplıyor, ama son söz kullanıcının.
+
+### C · Kalibrasyon özet ekranı
+
+Ölçüm bitince sessizce Bugün ekranına atıyor. "Değerleri girince de bir
+şey olmamış" izlenimi büyük ölçüde buradan geliyordu — D-064 ölçümün
+*etkisini* düzeltti, *görünürlüğünü* düzeltmedi.
+
+Gösterilecek: kaç düğüm açıldı, rütbe nereye oturdu, ilk seansın
+hedefleri ne oldu.
+
+### D · İlerleme grafiği
+
+"Gelişiyor mu anlamadım" sorusunun tek gerçek cevabı. README'nin kendi
+kabul ettiği eksik ve projenin var oluş sebeplerinden biri: *"sekiz
+hafta şınavı 12'den 16'ya çıkardı ama bunu kimse kaydetmedi."*
+
+Hareket başına haftalık en iyi + biriken hacim eğrisi. Hacim eğrisi
+ayrıca terfi kapısının da göstergesi.
+
+### E · Eşikler veriden üretilsin
+
+Şu an kademe eşikleri **elle yazılmış** sayılar. Hacim kapısı formülden
+çıkıyor (D-064) ama kademe eşikleri hâlâ yargı.
+
+Öneri: her harekete **vücut ağırlığının yüzdesi** olarak bir yük katsayısı
+(şınav ~%64, pike ~%73, duvar HSPU ~%92, serbest HSPU ~%100). Kademe
+eşikleri bu katsayıdan ve tekrar-yük ilişkisinden türetilsin. Aynı model
+"bir sonraki hareketi 5 tekrar yapabilecek misin" sorusunu da cevaplar.
+
+Portfolyo değeri en yüksek madde bu: 197 hareketin eşiği elle atılmış
+sayı olmaktan çıkıp üretilmiş veriye dönüşür ve `build_db.py` doğrular.
+
+### F · Yabancı kullanıcı · ertelendi
+
+Gün seçimi, hedef seçimi, "nasıl çalışıyor" ekranı, İngilizce arayüz.
+Bilinçli olarak sonda: uygulama önce **bir** kişide çalışsın.
+
+## Sıra
+
+```
+Bu hafta    A · B · C
+Sonra       D · E
+Sonra       F
+```

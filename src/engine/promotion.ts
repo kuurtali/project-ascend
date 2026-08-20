@@ -15,14 +15,20 @@
  * sistem bunu bilemez. Ekranda bir sabah yeni bir hareket belirmesi
  * ilerleme gibi değil, kontrolü kaybetmek gibi geliyor.
  *
- * Yeni kapıda üç koşul var ve üçü de gerekli:
+ * Yeni kapıda iki koşul var:
  *
- *   1. **Doğrulanmış altın kademe** — 14 gün içinde iki ayrı seansta.
- *      Şanslı tek gün kapıyı açmaz.
- *   2. **Hacim eşiği** — o hareketten toplamda yeterince yapılmış olmak.
- *      Kalite tek başına yetmiyor; tekrar sayısı dokunun gerçekten
- *      maruz kaldığını gösteriyor.
- *   3. **Kullanıcının onayı** — sistem önerir, kişi karar verir.
+ *   1. **Hacim eşiği** — o hareketten toplamda yeterince yapılmış olmak.
+ *      Tek bir iyi gün değil, biriken tekrar. Dokunun gerçekten maruz
+ *      kaldığını gösteren şey bu.
+ *   2. **Kullanıcının onayı** — sistem önerir, kişi karar verir.
+ *
+ * Kademe şartı bilerek kaldırıldı (2026-08-20). "Doğrulanmış altın
+ * kademe" doğru bir ölçüydü ama anlaşılmıyordu: kullanıcı ekranda
+ * neden geçemediğini göremiyordu ve kapı keyfi hissettiriyordu.
+ * Anlaşılmayan bir koruma, korumuyor. Tek sayı kaldı: **kaç tekrar.**
+ *
+ * Kademe bilgisi kaybolmadı — `goldOk` hâlâ hesaplanıyor ve ekranda
+ * bilgi olarak duruyor, sadece kapıyı kilitlemiyor.
  *
  * Kullanıcının ağaçtaki yeri artık bir çıkarım değil, kayıtlı bir
  * gerçek: `state.trackAt`. Sistem oraya kendiliğinden dokunmaz. (D-064)
@@ -117,8 +123,9 @@ export interface PromotionOffer {
   to: Movement;
   done: number;
   gate: number;
+  /** Bilgi amaçlı — kapıyı KİLİTLEMEZ, sadece ekranda gösterilir */
   goldOk: boolean;
-  /** Üç koşul da tamam mı */
+  /** Hacim eşiği doldu mu. Kalan tek koşul kullanıcının onayı. */
   ready: boolean;
 }
 
@@ -142,7 +149,7 @@ export function offerFor(
   const gate = volumeGate(from);
   const goldOk = goldVerified(from, state, today);
 
-  return { track, from, to, done, gate, goldOk, ready: goldOk && done >= gate };
+  return { track, from, to, done, gate, goldOk, ready: done >= gate };
 }
 
 /** Kullanıcı "geçelim" dedi — dalın konumunu ilerlet. */
