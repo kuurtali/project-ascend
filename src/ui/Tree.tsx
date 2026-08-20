@@ -1,11 +1,17 @@
 /**
- * AĞAÇ EKRANI — 197 düğümün tamamı
+ * AĞAÇ EKRANI — 197 düğümün tamamı, ve artık çalışılabilir yüzey
  *
- * Ana görünüm. Soldan sağa = ağaç derinliği, yukarıdan aşağı = kategori
- * bandı. Dokunmatikte tek parmak sürükle = gez, iki parmak = yakınlaş.
+ * Soldan sağa = ağaç derinliği, yukarıdan aşağı = kategori bandı.
+ * Dokunmatikte tek parmak sürükle = gez, iki parmak = yakınlaş.
  *
- * Ağaç haftalık yönelim aracıdır; günlük motor Bugün ekranındaki
- * yakınlık göstergesi. (SECOND_BRAIN D-049)
+ * !!! ROL DEĞİŞTİ (D-066). Ağaç uzun süre salt okunur bir haritaydı:
+ * bakıyordun, kapatıyordun, iş Bugün ekranında oluyordu. Ama sistemin
+ * ana mantığı ağaç — "şu hareketten şu kadar yaptım, sıradakine
+ * geçebilir miyim" sorusu burada sorulup burada cevaplanmalı.
+ *
+ * Artık her düğümden doğrudan tekrar girilebiliyor ve her düğüm o
+ * hareketten ne kadar biriktiğini gösteriyor. Program şablonu tek
+ * giriş yolu olmaktan çıktı; ağaçtan çalışmak da bir yol.
  */
 
 import { useMemo, useRef, useState } from 'react';
@@ -15,6 +21,8 @@ import type { MovementDatabase, PlayerState } from '../engine/types';
 import { MASTERY_TIERS } from '../engine/types';
 import { equipmentOk, indexMovements, isExcluded, isOpen, proximity } from '../engine/mastery';
 import { bossStates } from '../engine/game';
+import { volumeGate } from '../engine/promotion';
+import { recordSession } from '../storage';
 import { Figure } from './figure/Figure';
 
 const DB = dbJson as unknown as MovementDatabase;
@@ -37,11 +45,47 @@ const TIER_LABEL: Record<string, string> = {
 
 type Filter = 'all' | 'open' | 'next' | 'boss';
 
-export function Tree({ state }: { state: PlayerState }) {
+export function Tree({ state, onState }: {
+  state: PlayerState;
+  onState?: (s: PlayerState) => void;
+}) {
   const [sel, setSel] = useState<string | null>(null);
   const [gps, setGps] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>('all');
   const [q, setQ] = useState('');
+  const [reps, setReps] = useState('');
+  const [flash, setFlash] = useState<string | null>(null);
+
+  /**
+   * Hareket başına biriken hacim, tek geçişte.
+   *
+   * Düğüm başına hesaplamak 197 × kayıt sayısı demek olurdu ve her
+   * kaydırmada yeniden koşardı. Kalibrasyon kaydı sayılmaz — o tek
+   * setlik bir ölçüm, biriken çalışma değil.
+   */
+  const volumes = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const l of state.logs) {
+      if (l.kind === 'calibration') continue;
+      m.set(l.movementId,
+        (m.get(l.movementId) ?? 0) + l.values.reduce((a, b) => a + b, 0));
+    }
+    return m;
+  }, [state.logs]);
+
+  /** Düğümden doğrudan kayıt — ağaçtan çalışmanın tek adımı */
+  function logHere(id: string) {
+    const n = Number(reps);
+    if (!onState || !Number.isFinite(n) || n <= 0) return;
+    const res = recordSession(DB, IDX as never, state, [{ movementId: id, values: [n] }]);
+    onState(res.state);
+    setReps('');
+    setFlash(res.tierUps.length > 0
+      ? `+${n} · ${TIER_LABEL[res.tierUps.at(-1)!.tier]} kademe!`
+      : `+${n} kaydedildi`);
+    try { navigator.vibrate?.(res.tierUps.length ? 40 : 15); } catch { /* geç */ }
+    setTimeout(() => setFlash(null), 2600);
+  }
 
   const [view, setView] = useState({ x: 8, y: 8, k: 0.35 });
   const drag = useRef<{ x: number; y: number; vx: number; vy: number } | null>(null);
@@ -232,6 +276,8 @@ export function Tree({ state }: { state: PlayerState }) {
                 ? ['#2a1d10', '#232732', '#33290c', '#2a1740'][MASTERY_TIERS.indexOf(tier)]!
                 : open ? '#151a24' : '#13161d';
               const label = mv.name.length > 24 ? mv.name.slice(0, 23) + '…' : mv.name;
+              const vol = volumes.get(mv.id) ?? 0;
+              const gate = volumeGate(mv);
               // "sırada": açık, henüz kademe yok — hedeflenecek düğüm
               const upNext = open && !tier && usable;
               const aura = mv.isBoss
@@ -265,6 +311,18 @@ export function Tree({ state }: { state: PlayerState }) {
                         fill={tier ? TIER_COLOR[tier]! : '#8b93a5'} textAnchor="end">
                     {tier ? '●'.repeat(MASTERY_TIERS.indexOf(tier) + 1) : `T${mv.tier}`}
                   </text>
+                  {/* Hacim çubuğu — çalışılmış her düğümde. Ağacın
+                      "ne kadar yaptım" sorusunu uzaktan bakınca da
+                      cevaplaması için; detay panelini açmak gerekmesin. */}
+                  {vol > 0 && (
+                    <>
+                      <rect x={p[0] - 85} y={p[1] + 11} width={170} height={3}
+                            rx={2} fill="#20252f" />
+                      <rect x={p[0] - 85} y={p[1] + 11} height={3} rx={2}
+                            width={170 * Math.min(1, vol / gate)}
+                            fill={vol >= gate ? '#1D9E75' : '#22d3ee'} />
+                    </>
+                  )}
                 </g>
               );
             })}
@@ -340,6 +398,99 @@ export function Tree({ state }: { state: PlayerState }) {
                     transition: 'width .6s ease',
                   }} />
                 </div>
+              </div>
+            );
+          })()}
+
+          {/* ─────────────────────────── ÇALIŞ
+              Ağacın asıl işi burada: "şu hareketten şu kadar yaptım."
+              Kayıt buradan da girilebiliyor, program şablonundan da —
+              ikisi de aynı kayda yazıyor, aynı kademeyi besliyor. */}
+          {onState && (() => {
+            const vol = volumes.get(selMv.id) ?? 0;
+            const gate = volumeGate(selMv);
+            const pct = Math.min(100, Math.round((vol / gate) * 100));
+            const full = vol >= gate;
+            const ready = selMv.unlocks.filter((u) => {
+              const n = IDX.get(u);
+              return n && equipmentOk(state, n) && !isExcluded(state, u);
+            });
+
+            return (
+              <div style={{
+                border: `1px solid ${full ? '#1D9E75' : 'var(--line)'}`,
+                background: full ? '#0d2019' : '#12151c',
+                borderRadius: 10, padding: '9px 11px', margin: '4px 0 10px',
+              }}>
+                <div style={{
+                  display: 'flex', justifyContent: 'space-between',
+                  fontSize: 11.5, color: 'var(--dim)',
+                }}>
+                  <span>BİRİKEN {selMv.measure.unit.toUpperCase()}</span>
+                  <span style={{ color: full ? '#5DCAA5' : '#22d3ee' }}>
+                    <b>{vol}</b> / {gate}
+                  </span>
+                </div>
+                <div style={{
+                  height: 6, background: '#20252f', borderRadius: 99,
+                  marginTop: 5, overflow: 'hidden',
+                }}>
+                  <div style={{
+                    height: '100%', width: `${pct}%`, borderRadius: 99,
+                    background: full ? '#1D9E75' : '#22d3ee',
+                    transition: 'width .5s ease',
+                  }} />
+                </div>
+
+                <div style={{ display: 'flex', gap: 6, marginTop: 9 }}>
+                  <input
+                    type="number" inputMode="numeric" value={reps}
+                    onChange={(e) => setReps(e.target.value)}
+                    placeholder={`kaç ${selMv.measure.unit}?`}
+                    style={{
+                      flex: 1, minWidth: 0, height: 42, borderRadius: 9,
+                      textAlign: 'center', fontSize: 16, background: '#0d1016',
+                      border: '1px solid var(--line)', color: 'var(--txt)',
+                    }}
+                  />
+                  <button onClick={() => logHere(selMv.id)} style={{
+                    padding: '0 18px', height: 42, borderRadius: 9, border: 'none',
+                    background: reps ? '#f5c542' : '#232732',
+                    color: reps ? '#0b0d12' : '#5b6376',
+                    fontWeight: 600, fontSize: 14, cursor: reps ? 'pointer' : 'default',
+                  }}>Yaptım</button>
+                </div>
+
+                {flash && (
+                  <div style={{ fontSize: 12, color: '#5DCAA5', marginTop: 7 }}>
+                    ✓ {flash}
+                  </div>
+                )}
+
+                {full ? (
+                  <div style={{
+                    fontSize: 12.5, color: '#c2c8d4', marginTop: 9, lineHeight: 1.55,
+                  }}>
+                    <b style={{ color: '#5DCAA5' }}>Eşik doldu.</b>{' '}
+                    {ready.length > 0
+                      ? 'Sıradakine geçebilirsin:'
+                      : 'Bu bir yaprak düğüm — buradan devam eden yol yok.'}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 7 }}>
+                      {ready.map((u) => (
+                        <button key={u} onClick={() => { setSel(u); setReps(''); }}
+                          style={{
+                            ...chip, borderColor: '#1D9E75', color: '#5DCAA5',
+                          }}>→ {IDX.get(u)?.name}</button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 11.5, color: 'var(--dim2)', marginTop: 8, lineHeight: 1.5 }}>
+                    {gate - vol} {selMv.measure.unit} daha birikince sıradaki
+                    hareketi öneriyorum. Eşik hareketin kendi zorluğundan
+                    çıkıyor — altın hedef × set × 8 seans.
+                  </div>
+                )}
               </div>
             );
           })()}

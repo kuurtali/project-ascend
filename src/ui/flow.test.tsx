@@ -422,3 +422,61 @@ describe('terfi kapısı ekranda', () => {
     expect(screen.queryByText(/GEÇELİM Mİ/)).toBeNull();
   });
 });
+
+// ─────────────────────────────────────────── AĞAÇTAN ÇALIŞMA
+
+describe('ağaç çalışılabilir bir yüzey', () => {
+  function TreeHost({ initial }: { initial: PlayerState }) {
+    const [state, setState] = useState(initial);
+    return <Tree state={state} onState={setState} />;
+  }
+
+  /** İlk düğümü seç ve detay panelini aç */
+  function openFirstNode() {
+    const { container } = render(<TreeHost initial={fresh()} />);
+    const nodes = container.querySelectorAll('g[style*="cursor"]');
+    fireEvent.click(nodes[0]!);
+    return container;
+  }
+
+  it('düğüm açılınca biriken hacim görünür', () => {
+    openFirstNode();
+    expect(screen.getByText(/BİRİKEN/)).toBeTruthy();
+    expect(screen.getByText('Yaptım')).toBeTruthy();
+  });
+
+  it('salt okunur kullanımda çalışma bloğu çıkmaz', () => {
+    const { container } = render(<Tree state={fresh()} />);
+    fireEvent.click(container.querySelectorAll('g[style*="cursor"]')[0]!);
+    expect(screen.queryByText('Yaptım')).toBeNull();
+  });
+
+  it('tekrar girilip kaydedilir, onay görünür', () => {
+    openFirstNode();
+    fireEvent.change(screen.getByPlaceholderText(/kaç /), { target: { value: '12' } });
+    fireEvent.click(screen.getByText('Yaptım'));
+    expect(screen.getByText(/kaydedildi|kademe/)).toBeTruthy();
+  });
+
+  it('boş giriş kaydedilmez', () => {
+    openFirstNode();
+    fireEvent.click(screen.getByText('Yaptım'));
+    expect(screen.queryByText(/kaydedildi/)).toBeNull();
+  });
+
+  it('eşik dolunca sıradaki hareket önerilir', () => {
+    const s = fresh();
+    // Şınavın hacim eşiğini fazlasıyla dolduracak bir geçmiş
+    s.logs = Array.from({ length: 60 }, (_, i) => ({
+      movementId: 'pushup',
+      date: `2026-07-${String((i % 28) + 1).padStart(2, '0')}`,
+      values: [30],
+    }));
+    const { container } = render(<Tree state={s} onState={() => {}} />);
+    const nodes = Array.from(container.querySelectorAll(String.raw`g[style*="cursor"]`));
+    // pushup düğümünü metninden bul
+    const node = nodes.find((n) => n.textContent?.includes('Standard Push-up'));
+    fireEvent.click(node!);
+    expect(screen.getByText(/Eşik doldu/)).toBeTruthy();
+  });
+});

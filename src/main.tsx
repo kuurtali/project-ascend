@@ -32,7 +32,9 @@ function App() {
   return (
     <div style={{ minHeight: '100dvh', paddingBottom: 62 }}>
       {tab === 'today' && <Today state={state} onState={setState} />}
-      {tab === 'tree' && <Tree state={state} />}
+      {tab === 'tree' && (
+        <Tree state={state} onState={(s) => { save(s); setState(s); }} />
+      )}
       {tab === 'progress' && <Progress state={state} />}
       {tab === 'settings' && <Settings state={state} onState={setState} />}
 
