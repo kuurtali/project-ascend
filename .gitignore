@@ -57,3 +57,15 @@ UYGULAMAYI AC.html
 # Uygulama build ciktisi ve bagimliliklar
 node_modules/
 dist/
+
+# Klasore sonradan konulan kisisel dosyalar. Depo KALISTENIK, baska
+# hicbir sey degil (D-058). Ders notlari, finans dosyalari, kisisel
+# belgeler bu klasorde durabilir ama depoya GIRMEZ.
+#
+# 2026-08-20: Fin/ klasoru "git add -A" ile sahnelenmis halde
+# yakalandi - 6 dosya, public depoya gidiyordu. Sinir kuralini
+# hatirlamak yetmiyor, .gitignore'a yazmak gerekiyor.
+Fin/
+*.pdf
+Ders/
+Okul/

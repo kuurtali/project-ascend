@@ -15,6 +15,7 @@ import { MASTERY_TIERS } from '../engine/types';
 import { balanceScore, indexMovements, isOpen, levelOf, proximity } from '../engine/mastery';
 import { pathTo } from '../engine/planner';
 import { promotionsOf, weeksToDeload, weekNumber } from '../engine/session';
+import { PromotionProgress } from './Promote';
 import { ascensionOf, bossStates, rankOf, streakOf, titlesOf } from '../engine/game';
 import { WEEK } from '../program';
 import { Avatar } from './Avatar';
@@ -129,6 +130,9 @@ export function Progress({ state }: { state: PlayerState }) {
           Seri haftalık sayılır — dinlenme günü seriyi kırmaz.
         </div>
       </div>
+
+      {/* KAPIYA KALAN — hazır olmayan terfiler burada mesafe gösterir */}
+      <PromotionProgress state={state} />
 
       {/* TERFİ */}
       {promotions.map((p) => (

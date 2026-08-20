@@ -140,8 +140,34 @@ export function nextTarget(input: AdaptationInput): number {
 }
 
 /**
+ * ÖLÇÜMDEN ÇALIŞMA HEDEFİ — kalibrasyon bir seans değildir
+ *
+ * Bu fonksiyon olmadan sistem şunu yapıyordu: kullanıcı başlangıç
+ * ölçümünde 30 şınav giriyor, uyarlama kuralı bunu "hedefi tuttu"
+ * diye okuyor ve ertesi günün hedefini **31** yapıyordu. Yani tek
+ * sette çıkardığı maksimumun üstüne üç set. İmkânsız, ve ilk seansı
+ * baştan başarısızlığa yazıyor.
+ *
+ * Karışan iki şey var: ölçüm **tek sette, RIR 0** yapılır; reçete ise
+ * **birkaç sette, RIR 2-4**. İkincisi birincisinin epey altında olmak
+ * zorunda.
+ *
+ * Çarpanlar RIR'a göre: rezerv ne kadar çoksa hedef o kadar aşağıda.
+ * Aşağı yanılmak bir hafta kaybettirir; yukarı yanılmak tutturulamayan
+ * bir seans, ardından %20 düşüş ve moral kaybı demek. O yüzden
+ * bilinçli olarak muhafazakâr.
+ */
+export function targetFromMax(maxValue: number, rir: number): number {
+  const f = rir >= 4 ? 0.5 : rir >= 3 ? 0.55 : rir >= 1 ? 0.65 : 0.7;
+  return Math.max(1, Math.round(maxValue * f));
+}
+
+/**
  * Bir hareketin geçmiş kayıtlarından uyarlama girdisi üretir.
  * Böylece UI sadece "sonraki hedef ne" diye sorar.
+ *
+ * Kalibrasyon kayıtları geçmişe dâhil edilmez — çağıran taraf onları
+ * `targetFromMax` ile ayrı değerlendirir.
  */
 export function buildInput(
   movementId: string,

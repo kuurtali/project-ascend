@@ -4000,6 +4000,65 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-064 · 2026-08-20 · Karar kullanıcının: terfi kapısı, süreklilik katmanı, kalibrasyon hatası**
+
+Üç ayrı şikâyet, tek bir kök sebep: **sistem kullanıcı adına karar
+veriyordu ve kararlarının dayanağı zayıftı.**
+
+**1 · Terfi kapısı iki koşullu oldu ve artık soruyor.**
+
+Eskiden bir hareket altın kademeye ulaşınca slot sessizce bir üst
+düğüme kayıyordu. Kullanıcının itirazı yerindeydi: pike şınavda 12
+tekrarı iki kez yapan biri bir üst harekete geçiyordu. Bir hareketi
+*yapabilmek* ile o hareketin dokusunu oturtmak aynı şey değil — kas
+haftalar içinde uyum sağlar, tendon ve bağ dokusu daha yavaş. Erken
+geçiş kalistenikte sakatlığın en yaygın sebebi.
+
+Yeni kapı: **doğrulanmış altın kademe + hacim eşiği + kullanıcı onayı.**
+Hacim eşiği `altın hedef × altın set × 8 seans` — pike şınav için 288
+tekrar. Formül hareketin kendi zorluğundan türüyor, sabit sayı değil.
+
+Kullanıcının ağaçtaki yeri artık çıkarım değil kayıt: `state.trackAt`.
+Sistem oraya kendiliğinden dokunmaz. Geri almak da serbest — "erken
+geçmişim" diyebilmek, geçememekten önemli.
+
+**2 · Süreklilik katmanı — sayının değil gitmenin takibi.**
+
+Ağaç "ne kadar güçlüsün"ü ölçüyor. Bir yılın sonucunu belirleyen soru
+ise "kaç gün ortaya çıktın". İkisi farklı arayüz istiyor: beceri işi
+sayı ister, temel hareketler **yapıldı/yapılmadı** ister. "Bugün şınav
+çektim" için üç set kutusu doldurmak, yapılmama sebebidir.
+
+Gösterilen şey **gün cinsinden zincir**, işaret sayısı değil — farklı
+aralıklı alışkanlıklar ancak öyle karşılaştırılabiliyor. Aralık
+kullanıcının: "2 günde bir" diyorsa ikinci gün geciktirme değil,
+planın kendisi. Günlük seri bilerek yok; dinlenmeyi cezalandırır.
+
+Kademeye ve XP'ye girmez — işaretlemek tekrar üretmez, ağaç yalan
+söylemesin. Dış yük kaydıyla (D-063) aynı ilke: bağlam, ilerleme değil.
+
+**3 · Kalibrasyon hatası: ölçüm bir seans değildir.**
+
+Kullanıcı "değerleri girince de bir şey olmamış" dedi. İki ayrı kusur
+çıktı ve ikisi de gerçekti.
+
+*Ölçtüğü şeyle yaptırdığı şey örtüşmüyordu.* Kalibrasyon şınav, squat,
+plank, sandalye dip ve ip soruyordu; program pike şınav, masa row,
+skapular şınav ve duvar handstand veriyordu. Ortak hareket yalnızca
+hollow hold'du — yani girilen sayı Bugün ekranındaki hedeflerin hemen
+hepsini etkilemiyordu. Programın kendi hareketleri ölçüme eklendi.
+
+*Ve daha kötüsü:* ölçüm uyarlama kuralına normal seans gibi giriyordu.
+30 şınav giren biri ertesi gün **3 × 31** hedefi görüyordu. Ölçüm tek
+sette RIR 0'dır, reçete birkaç sette RIR 2-4 — ikisi aynı sayı olamaz.
+`SetLog.kind = 'calibration'` ve `targetFromMax()` eklendi; çarpanlar
+RIR'a göre (0.5-0.7) ve bilinçli olarak muhafazakâr: aşağı yanılmak bir
+hafta kaybettirir, yukarı yanılmak tutturulamayan bir seans ve %20
+düşüş demek.
+
+Yeni: `engine/promotion.ts`, `engine/habits.ts`, `ui/Promote.tsx`,
+`ui/Habits.tsx`. Şema v4. 195 test.
+
 **D-063 · 2026-08-15 · Program dışı yük kaydı — sistemin son körlüğü**
 
 README ilk günden beri şunu iddia ediyordu: bu sistem "başka antrenmanın

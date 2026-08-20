@@ -386,3 +386,39 @@ describe('program dışı antrenman kaydı', () => {
     expect(screen.queryByText(/DIŞ YÜK/)).toBeNull();
   });
 });
+
+// ─────────────────────────────────────────── TEMEL HAREKET SÜREKLİLİĞİ
+
+describe('temel hareketler şeridi', () => {
+  it('Bugün ekranında görünür ve tek dokunuşla işaretlenir', () => {
+    render(<TodayHost initial={fresh()} />);
+    expect(screen.getByText('TEMEL HAREKETLER')).toBeTruthy();
+
+    const before = screen.getAllByText('0').length;
+    fireEvent.click(screen.getByText('Şınav'));
+    // Zincir 0'dan 1'e çıkmalı — yani bir tane daha az "0" kalır
+    expect(screen.getAllByText('0').length).toBe(before - 1);
+  });
+
+  it('dinlenme gününde de işaretlenebilir', () => {
+    vi.setSystemTime(new Date('2026-08-06T09:00:00'));   // Perşembe
+    render(<TodayHost initial={fresh()} />);
+    expect(screen.getByText(/Bugün dinlenme/)).toBeTruthy();
+    expect(screen.getByText('TEMEL HAREKETLER')).toBeTruthy();
+  });
+
+  it('işaret kademe ve XP üretmez — ağaç yalan söylemez', () => {
+    const s = fresh();
+    render(<TodayHost initial={s} />);
+    fireEvent.click(screen.getByText('Squat'));
+    expect(s.xp).toBe(0);
+    expect(Object.keys(s.mastery)).toHaveLength(0);
+  });
+});
+
+describe('terfi kapısı ekranda', () => {
+  it('kapı hazır değilken "geçelim mi" sorulmaz', () => {
+    render(<TodayHost initial={fresh()} />);
+    expect(screen.queryByText(/GEÇELİM Mİ/)).toBeNull();
+  });
+});

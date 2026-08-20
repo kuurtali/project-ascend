@@ -26,8 +26,9 @@ import type {
   Movement, MovementDatabase, PlayerState, SlotRole,
 } from './types';
 import { isTrainable, tierOf } from './mastery';
-import { findMain, pathTo, shouldPromote } from './planner';
+import { pathTo } from './planner';
 import { applyComeback, comebackOf, type Comeback } from './comeback';
+import { offerFor, type PromotionOffer } from './promotion';
 import type { ProgramDay, ProgramExercise } from '../program';
 
 /** Kaç haftada bir hafif hafta */
@@ -99,35 +100,23 @@ export function weeksToDeload(state: PlayerState, today = new Date()): number {
  * slot bir üste kayıyor. Terfi tam olarak bu.
  */
 function trackedMovement(
-  db: MovementDatabase,
+  _db: MovementDatabase,
   idx: Map<string, Movement>,
   state: PlayerState,
   ex: ProgramExercise,
 ): Movement | null {
   if (!ex.track) return null;
 
-  // Slot YALNIZCA mevcut hareket altın kademedeyken ilerler.
-  // Bu kontrol olmadan, kademe kazanılmamış bir slot findMain'in
-  // döndürdüğü en alttaki düğüme "terfi" ediyordu — yani sistem
-  // kullanıcıyı geriye götürüp buna terfi diyordu.
-  if (!shouldPromote(state, ex.movementId)) return null;
-
-  // Terfi İLERİ bakar. Yol topolojik sırada geldiği için, mevcut
-  // hareketin bulunduğu noktadan SONRASINI ararız. Tüm yolu aramak
-  // yanlıştı: aşağıda kademe kazanılmamış eski bir düğüm varsa slot
-  // oraya "terfi" ediyordu, yani kullanıcıyı geriye götürüyordu.
-  const path = pathTo(db, idx, ex.track);
-  const at = path.findIndex((m) => m.id === ex.movementId);
-  const ahead = at >= 0 ? path.slice(at + 1) : path;
-
-  const next = findMain(state, ahead);
-  if (!next) return null;
-
-  // İkinci güvenlik ağı: tier yol boyunca kesin artan değil.
-  const cur = idx.get(ex.movementId);
-  if (cur && next.tier < cur.tier) return null;
-
-  return next;
+  // Artık ÇIKARIM YOK. Kullanıcının o daldaki yeri kayıtlı bir gerçek;
+  // sistem oraya kendiliğinden dokunmaz, sadece önerir. (D-064)
+  //
+  // Eskiden burası "altın kademeye ulaşıldıysa bir üste kay" diyordu
+  // ve slot bir sabah kendiliğinden değişiyordu. İki sorunu vardı:
+  // kapı tek bir sayıya bakıyordu (dokunun uyumu için yetersiz), ve
+  // karar kullanıcının değildi.
+  const at = state.trackAt?.[ex.track];
+  if (!at || at === ex.movementId) return null;
+  return idx.get(at) ?? null;
 }
 
 /**
@@ -239,6 +228,33 @@ export function promotionsOf(
       if (from && to && to.id !== from.id) {
         out.push({ from, to, role: ex.role });
       }
+    }
+  }
+  return out;
+}
+
+/**
+ * Haftadaki hedefe bağlı slotların terfi durumu.
+ *
+ * Hazır olmayanlar da döner — "ne kadar kaldı" göstergesi motivasyonun
+ * asıl kaynağı, ve kapıyı görünmez tutmak onu keyfi hissettirir.
+ */
+export function offersOf(
+  db: MovementDatabase,
+  idx: Map<string, Movement>,
+  state: PlayerState,
+  week: readonly ProgramDay[],
+  today = new Date(),
+): PromotionOffer[] {
+  const seen = new Set<string>();
+  const out: PromotionOffer[] = [];
+
+  for (const day of week) {
+    for (const ex of day.exercises) {
+      if (!ex.track || seen.has(ex.track)) continue;
+      seen.add(ex.track);
+      const o = offerFor(db, idx, state, ex.track, ex.movementId, today);
+      if (o) out.push(o);
     }
   }
   return out;

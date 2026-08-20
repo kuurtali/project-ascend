@@ -74,6 +74,14 @@ export interface SetLog {
   /** Kullanıcının hissi — uyarlama kuralı bunu kullanır */
   effort?: 'easy' | 'ok' | 'hard';
   note?: string;
+  /**
+   * Kaydın türü. `calibration` = başlangıç ölçümü, yani TEK SETLİK
+   * maksimum (RIR 0). Normal seans kaydı değil ve uyarlama kuralına
+   * normal seans gibi verilemez — "hedefi tuttun, +1" çıkarır ve
+   * kullanıcı ertesi gün maksimumunun üstüne 3 set yapmaya
+   * çalışır. (D-064)
+   */
+  kind?: 'calibration';
 }
 
 export interface MasteryState {
@@ -117,6 +125,17 @@ export interface OutsideLog {
   note?: string;
 }
 
+/**
+ * Temel hareket alışkanlığı. Sayı tutmaz, gün tutar. Ağaç "ne kadar
+ * güçlüsün"ü ölçüyor; bu "kaç gün ortaya çıktın"ı. (D-064)
+ */
+export interface HabitDef {
+  id: string;
+  label: string;
+  /** Kaç günde bir yapılması planlanıyor */
+  everyDays: number;
+}
+
 export interface PlayerState {
   xp: number;
   equipment: string[];
@@ -140,6 +159,17 @@ export interface PlayerState {
   bodyweight?: { date: string; kg: number }[];
   /** Program dışı antrenmanlar — salon, aile seansı, maç, koşu */
   outside?: OutsideLog[];
+  /**
+   * Her dalda hangi hareketteyim. Anahtar hedef düğüm id'si
+   * (`hspu`, `bar-muscle-up`...), değer o an çalışılan hareket.
+   *
+   * Bu bir ÇIKARIM DEĞİL, kullanıcının kararı. Sistem terfi önerir,
+   * buraya yazan kullanıcıdır. Geri almak da serbest. (D-064)
+   */
+  trackAt?: Record<string, string>;
+  /** Temel hareket alışkanlıkları — tanım ve işaretler */
+  habits?: HabitDef[];
+  habitLog?: { date: string; habitId: string }[];
 }
 
 // ─────────────────────────────────────────────── ÇIKTILAR

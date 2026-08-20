@@ -165,6 +165,36 @@ FIGUR MOTORU + KALIBRASYON BITTI - 2026-08-01:
 
   Karar kaydi: SECOND_BRAIN D-053.
 
+!!! KARAR KULLANICININ - 2026-08-20 (D-064)
+  engine/promotion.ts  hacim kapisi + trackAt (kullanicinin daldaki yeri)
+  engine/habits.ts     temel hareket sürekliligi (gun sayar, tekrar degil)
+  ui/Promote.tsx       "gecelim mi?" karti + kapiya kalan mesafe
+  ui/Habits.tsx        tek dokunusluk seri seridi
+  adaptation.ts        targetFromMax() - olcum bir seans DEGILDIR
+  Calibrate.tsx        programin kendi hareketleri olcume eklendi
+
+  !!! TERFI ARTIK OTOMATIK DEGIL. D-060'ta kurdugumuz otomatik terfi
+  KALDIRILDI. Kapi: dogrulanmis altin + hacim esigi + KULLANICI ONAYI.
+  Hacim esigi = altin hedef x altin set x 8 seans (pike icin 288).
+  state.trackAt kullanicinin karari; sistem oraya dokunmaz.
+
+  !!! KALIBRASYON HATASI (kullanici buldu):
+  "degerleri girince de olmamis" - iki ayri kusur vardi.
+   1. Olcum sinav/squat/plank soruyordu, program pike/row/handstand
+      veriyordu. Ortak hareket sadece hollow hold. Yani girilen sayi
+      Bugun ekranini neredeyse hic etkilemiyordu.
+   2. Olcum uyarlama kuralina SEANS gibi giriyordu: 30 sinav giren
+      ertesi gun "3 x 31" goruyordu. Olcum tek sette RIR 0, recete
+      birkac sette RIR 2-4. SetLog.kind='calibration' + targetFromMax.
+
+  Habits/outside/tree ayrimi: isaretlemek tekrar URETMEZ. Agac yalan
+  soylemesin. Dis yuk ve aliskanlik BAGLAM, ilerleme degil.
+
+  Toplam 195/195 test. sw.js CACHE v5. Sema v4.
+
+  ACIK KALAN: 6 dalli seans yapisi (itme/dikey itme/cekis/dips/govde/
+  denge) henuz yapilmadi - program.ts hala eski 5-6 hareketli sablon.
+
 !!! PROGRAM DISI YUK - 2026-08-15 (D-063)
   engine/outside.ts   tur/siddet/sicrama kaydi, cakisma uyarilari
   ui/Outside.tsx      kayit karti (2 dokunus) + uyari bandi

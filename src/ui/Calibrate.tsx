@@ -24,15 +24,30 @@ import { Figure } from './figure/Figure';
 const DB = dbJson as unknown as MovementDatabase;
 const IDX = indexMovements(DB);
 
-/** Ölçüm noktaları: her biri ağacın ayrı bir kolunu açar. */
+/**
+ * Ölçüm noktaları.
+ *
+ * İki iş birden yapıyorlar ve ikisi de gerekli:
+ *   1. Ağacın kollarını açmak (şınav, squat, plank, barfiks, ip)
+ *   2. **Programın gerçekten verdiği hareketlerin hedefini belirlemek**
+ *
+ * İkincisi uzun süre eksikti: ölçüm şınav/squat/plank soruyordu ama
+ * program pike şınav, masa row ve duvar handstand veriyordu. Ortak
+ * hareket yalnızca hollow hold'du — yani kullanıcı 30 da yazsa 3 de
+ * yazsa Bugün ekranındaki hedefler değişmiyordu. "Kalibrasyon bir işe
+ * yaramıyor" izlenimi buradan geliyordu ve haklıydı. (D-064)
+ */
 const PROBES: { id: string; hint: string; needsBar?: boolean }[] = [
   { id: 'pushup', hint: 'Tek sette, düzgün formda kaç tane?' },
+  { id: 'pike-pushup', hint: 'Kalça havada, baş yere doğru — kaç tane? Bilmiyorsan boş bırak.' },
   { id: 'bodyweight-squat', hint: 'Tek sette kaç tane?' },
   { id: 'plank', hint: 'Kaç saniye tutabiliyorsun?' },
   { id: 'hollow-hold', hint: 'Bel yerden kalkmadan kaç saniye?' },
+  { id: 'australian-row', hint: 'Masa/alçak bar altında yatay çekiş, kaç tane?' },
   { id: 'pull-up', hint: 'Tam barfiks, kaç tane?', needsBar: true },
   { id: 'passive-hang', hint: 'Bardan kaç saniye asılı kalabiliyorsun?', needsBar: true },
   { id: 'bench-dip', hint: 'Sandalye/sehpa kenarında kaç tane?' },
+  { id: 'wall-handstand', hint: 'Duvara karşı baş aşağı, kaç saniye? Denemediysen boş bırak.' },
   { id: 'jump-rope-basic', hint: 'Takılmadan kaç atlayış?' },
 ];
 
@@ -66,7 +81,10 @@ export function Calibrate({ state, onDone }: {
 
     if (entries.length === 0) { onDone({ ...state, calibrated: true }); return; }
 
-    const res = recordSession(DB, IDX as never, state, entries, new Date());
+    // 'calibration' işareti şart: bu tek setlik bir MAKSİMUM, tamamlanmış
+    // bir seans değil. İşaretlenmezse uyarlama kuralı "hedefi tuttu, +1"
+    // diyor ve ertesi günün hedefi maksimumun üstüne çıkıyor.
+    const res = recordSession(DB, IDX as never, state, entries, new Date(), 'calibration');
     onDone({ ...res.state, calibrated: true });
   }
 

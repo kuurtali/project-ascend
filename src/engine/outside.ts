@@ -93,7 +93,15 @@ export const HEAVY: OutsideLoad = 3;
 /** Ağır yükün uyarlama kuralını etkilediği pencere (gün) */
 export const FATIGUE_WINDOW_DAYS = 2;
 
-/** Son 7 günde bu kadar sıçrama seansı olursa uyarı verilir */
+/**
+ * Son 7 günde bu kadar sıçrama seansı olursa uyarı verilir.
+ *
+ * Burada kastedilen YÜKSEK GENLİKLİ sıçrama: squat jump, box jump,
+ * sekme, derinlik sıçraması. İp atlama sayılmaz — tekrar başına
+ * temas kuvveti çok daha düşük, hareket ayak bileği baskın ve zaten
+ * haftalık şablonun kendi içinde (5-12 dk). İp de sayılsaydı uyarı
+ * her hafta yanardı ve uyarı her zaman yanıyorsa hiç yanmıyordur.
+ */
 export const PLYO_WARN_PER_WEEK = 3;
 
 function isoOf(d: Date): string {

@@ -11,9 +11,9 @@
 
 import { useMemo, useState } from 'react';
 import dbJson from '../data/movements.json';
-import type { MovementDatabase, PlayerState } from '../engine/types';
+import type { MovementDatabase, PlayerState, SetLog } from '../engine/types';
 import { indexMovements, levelOf, proximity } from '../engine/mastery';
-import { buildInput, nextTarget } from '../engine/adaptation';
+import { buildInput, nextTarget, targetFromMax } from '../engine/adaptation';
 import { dayFor, MENU, type ProgramExercise } from '../program';
 import { resolveDay, weeksToDeload, type ResolvedExercise } from '../engine/session';
 import { heavyBefore } from '../engine/outside';
@@ -24,6 +24,8 @@ import { Figure } from './figure/Figure';
 import { HoldTimer, RestTimer } from './Timer';
 import { WeighIn } from './Bodyweight';
 import { LoadBanner, OutsideCard } from './Outside';
+import { Habits } from './Habits';
+import { Promote } from './Promote';
 import { needsBackupReminder } from './Settings';
 
 const DB = dbJson as unknown as MovementDatabase;
@@ -71,21 +73,36 @@ export function Today({ state, onState }: Props) {
 
   const all: ResolvedExercise[] = [...exercises, ...extras];
 
-  /** Hedef: kayıt varsa uyarlamadan, yoksa program başlangıcından.
-   *  Dış yük geçmişi de verilir — yorgun bir günde alınan düşük ölçü
-   *  kalıcı hedef düşüşüne dönüşmesin. */
+  /** Gerçek seans kayıtları — kalibrasyon ayrı değerlendirilir */
+  function realLogs(id: string): SetLog[] {
+    return state.logs
+      .filter((l) => l.movementId === id && l.kind !== 'calibration')
+      .sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  /**
+   * Hedef sırası: gerçek seans varsa uyarlama kuralı → yoksa başlangıç
+   * ölçümünden türetme → o da yoksa şablon.
+   *
+   * Ölçümü uyarlama kuralına vermek eskiden şu hataya yol açıyordu:
+   * 30 şınav giren biri ertesi gün "3 × 31" görüyordu. Ölçüm tek sette
+   * RIR 0'dır, reçete ise birkaç sette RIR 2-4 — ikisi aynı sayı olamaz.
+   */
   function targetFor(ex: ProgramExercise): number {
-    const logs = state.logs.filter((l) => l.movementId === ex.movementId);
-    if (logs.length === 0) return ex.startTarget;
+    const real = realLogs(ex.movementId);
+    if (real.length === 0) {
+      const cal = state.logs.find(
+        (l) => l.movementId === ex.movementId && l.kind === 'calibration',
+      );
+      if (cal) return targetFromMax(Math.max(...cal.values), ex.rir);
+      return ex.startTarget;
+    }
     return nextTarget(
-      buildInput(ex.movementId, state.logs, lastTarget(ex), state.outside),
+      buildInput(ex.movementId, real, lastTarget(ex, real), state.outside),
     );
   }
 
-  function lastTarget(ex: ProgramExercise): number {
-    const own = state.logs
-      .filter((l) => l.movementId === ex.movementId)
-      .sort((a, b) => a.date.localeCompare(b.date));
+  function lastTarget(ex: ProgramExercise, own: SetLog[]): number {
     const last = own.at(-1);
     if (!last) return ex.startTarget;
     return Math.max(ex.startTarget, Math.max(...last.values));
@@ -181,6 +198,12 @@ export function Today({ state, onState }: Props) {
           Bir gün kaçarsa telafi etme, sıradaki güne geç. 5 gün tutmak
           7 gün sıkıştırmaktan değerlidir.
         </p>
+        {/* Temel hareketler dinlenme gününde de işaretlenir: "2 günde
+            bir" aralığı programın sert/hafif ritminden bağımsız. */}
+        <div style={{ marginTop: 14 }}>
+          <Habits state={state} onState={(s) => { save(s); onState(s); }}
+            today={today} />
+        </div>
         {/* Dinlenme gününde de lazım — hatta en çok burada. Salon,
             aile seansı ve maç genelde program dışı günlere düşer. */}
         <OutsideCard state={state} onState={(s) => { save(s); onState(s); }}
@@ -255,6 +278,12 @@ export function Today({ state, onState }: Props) {
           </div>
         </div>
       )}
+
+      {/* Terfi önerisi en üstte: seansa başlamadan önce hangi hareketi
+          yapacağını bilmen lazım, ortasında değil. */}
+      <Promote state={state} onState={(s) => { save(s); onState(s); }} today={today} />
+
+      <Habits state={state} onState={(s) => { save(s); onState(s); }} today={today} />
 
       <WeighIn state={state} onState={(s) => { save(s); onState(s); }} today={today} />
 

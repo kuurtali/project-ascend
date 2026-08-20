@@ -9,13 +9,18 @@
 import { describe, expect, it } from 'vitest';
 import db from '../data/movements.json';
 import type { MasteryTier, MovementDatabase, PlayerState } from './types';
-import { indexMovements } from './mastery';
+import { indexMovements, isTrainable } from './mastery';
 import { WEEK } from '../program';
 import {
-  DELOAD_EVERY, isDeloadWeek, promotionsOf, resolveDay, stepsToGoal,
+  DELOAD_EVERY, isDeloadWeek, offersOf, resolveDay, stepsToGoal,
   weekNumber, weeksToDeload,
 } from './session';
+import {
+  acceptPromotion, nextOnTrack, offerFor, volumeDone, volumeGate,
+  VOLUME_SESSIONS,
+} from './promotion';
 import { coachReport } from './report';
+import { targetFromMax } from './adaptation';
 import { applyComeback, comebackOf, COMEBACK_AFTER_DAYS } from './comeback';
 import { daysSinceExport, migrate, SCHEMA_VERSION } from '../storage';
 
@@ -63,54 +68,133 @@ describe('terfi gerçekten oluyor', () => {
     }
   });
 
-  it('altın kademede slot bir üst düğüme geçer', () => {
+  // !!! DAVRANIŞ BİLEREK DEĞİŞTİ (D-064)
+  //
+  // Eskiden altın kademe TEK BAŞINA slotu ilerletiyordu ve bu bir
+  // sabah kendiliğinden oluyordu. Artık kapı iki koşullu (altın +
+  // hacim) ve KARAR KULLANICININ. Aşağıdaki testler yeni sözleşmeyi
+  // koruyor — özellikle "sistem kendiliğinden ilerletmez" olanını.
+  it('altın kademe TEK BAŞINA slotu ilerletmez', () => {
     const s = withTier(state(), 'pike-pushup', 'gold');
+    const r = resolveDay(DB, IDX, s, heavyDay, true, MONDAY);
+    expect(r.exercises.map((e) => e.movementId)).toContain('pike-pushup');
+  });
+
+  it('kullanıcı onaylayınca slot gerçekten ilerler', () => {
+    const base = withTier(state(), 'pike-pushup', 'gold');
+    const next = nextOnTrack(DB, IDX, base, 'hspu', 'pike-pushup')!;
+    expect(next).toBeTruthy();
+
+    const s = acceptPromotion(base, 'hspu', next.id);
     const r = resolveDay(DB, IDX, s, heavyDay, true, MONDAY);
     const ids = r.exercises.map((e) => e.movementId);
     expect(ids).not.toContain('pike-pushup');
-    // terfi eden slot eskisini işaret eder
+    expect(ids).toContain(next.id);
+
     const promoted = r.exercises.find((e) => e.promotedFrom === 'pike-pushup');
     expect(promoted).toBeTruthy();
-    expect(promoted!.movementId).not.toBe('pike-pushup');
   });
 
-  it('terfi eden hareket gerçekten HSPU yolunda', () => {
+  it('önerilen hareket HSPU yolunda ve kilitli değil', () => {
     const s = withTier(state(), 'pike-pushup', 'gold');
-    const r = resolveDay(DB, IDX, s, heavyDay, true, MONDAY);
-    const promoted = r.exercises.find((e) => e.promotedFrom === 'pike-pushup')!;
-    const path = new Set(
-      stepsToGoalIds('hspu'),
-    );
-    expect(path.has(promoted.movementId)).toBe(true);
+    const next = nextOnTrack(DB, IDX, s, 'hspu', 'pike-pushup')!;
+    expect(new Set(stepsToGoalIds('hspu')).has(next.id)).toBe(true);
+    expect(isTrainable(s, next)).toBe(true);
   });
 
-  it('terfi eden hareket kilitli olamaz — ön koşulları tamam', () => {
-    const s = withTier(state(), 'pike-pushup', 'gold');
-    const r = resolveDay(DB, IDX, s, heavyDay, true, MONDAY);
-    for (const ex of r.exercises) {
-      const mv = IDX.get(ex.movementId)!;
-      for (const p of mv.prerequisites) {
-        // ya kademe kazanılmış ya da hareketin kendisi zaten açık sayılıyor
-        const ok = s.mastery[p]?.tier != null || mv.prerequisites.length === 0;
-        expect(typeof ok).toBe('boolean');
-      }
+  it('kullanıcı geri de alabilir — kapı tek yönlü değil', () => {
+    const base = withTier(state(), 'pike-pushup', 'gold');
+    const next = nextOnTrack(DB, IDX, base, 'hspu', 'pike-pushup')!;
+    const forward = acceptPromotion(base, 'hspu', next.id);
+    const back = acceptPromotion(forward, 'hspu', 'pike-pushup');
+    const r = resolveDay(DB, IDX, back, heavyDay, true, MONDAY);
+    expect(r.exercises.map((e) => e.movementId)).toContain('pike-pushup');
+  });
+});
+
+// ────────────────────────────────────────────── KALİBRASYON HEDEFİ
+
+describe('ölçüm bir seans değildir', () => {
+  it('çalışma hedefi maksimumun ALTINDA olur', () => {
+    // Eski hata: 30 şınav giren biri ertesi gün "3 × 31" görüyordu
+    for (const rir of [0, 2, 3, 4]) {
+      expect(targetFromMax(30, rir)).toBeLessThan(30);
     }
   });
 
-  it('İlerleme ekranıyla Bugün ekranı aynı sonucu verir', () => {
-    // İkisi de aynı çözücüyü kullanmalı; yoksa biri terfi der öbürü demez
-    const s = withTier(state(), 'pike-pushup', 'gold');
-    const proms = promotionsOf(DB, IDX, s, WEEK);
-    expect(proms.length).toBeGreaterThan(0);
-
-    const r = resolveDay(DB, IDX, s, heavyDay, true, MONDAY);
-    const shown = r.exercises.find((e) => e.promotedFrom === 'pike-pushup')!;
-    const claimed = proms.find((p) => p.from.id === 'pike-pushup')!;
-    expect(shown.movementId).toBe(claimed.to.id);
+  it('rezerv arttıkça hedef düşer', () => {
+    expect(targetFromMax(30, 4)).toBeLessThan(targetFromMax(30, 2));
+    expect(targetFromMax(30, 2)).toBeLessThan(targetFromMax(30, 0));
   });
 
-  it('hiçbir terfi yokken İlerleme ekranı terfi iddia etmez', () => {
-    expect(promotionsOf(DB, IDX, state(), WEEK).length).toBe(0);
+  it('çok küçük ölçümde bile en az 1 kalır', () => {
+    expect(targetFromMax(1, 4)).toBe(1);
+  });
+
+  it('ölçüm uyarlama kuralına seans gibi girmez', () => {
+    const logs = [{
+      movementId: 'pushup', date: '2026-08-03',
+      values: [30], kind: 'calibration' as const,
+    }];
+    // Gerçek seans yok: geçmiş boş kalmalı
+    const real = logs.filter((l) => l.kind !== 'calibration');
+    expect(real).toHaveLength(0);
+  });
+});
+
+// ─────────────────────────────────────────────────────── HACİM KAPISI
+
+describe('hacim kapısı', () => {
+  const PIKE = DB.movements.find((m) => m.id === 'pike-pushup')!;
+
+  /** n seans × 3 set × hedef — hepsi 14 gün içinde */
+  function trained(target: number, sessions: number): PlayerState {
+    const logs = Array.from({ length: sessions }, (_, i) => ({
+      movementId: 'pike-pushup',
+      date: new Date(MONDAY.getTime() - i * 86_400_000).toISOString().slice(0, 10),
+      values: [target, target, target],
+    }));
+    return withTier(state({ logs }), 'pike-pushup', 'gold');
+  }
+
+  it('eşik hareketin kendi zorluğundan türer', () => {
+    expect(volumeGate(PIKE))
+      .toBe(PIKE.mastery.gold.target * PIKE.mastery.gold.sets * VOLUME_SESSIONS);
+  });
+
+  it('altın kademe var ama hacim yoksa kapı kapalı', () => {
+    const s = trained(PIKE.mastery.gold.target, 2);
+    const o = offerFor(DB, IDX, s, 'hspu', 'pike-pushup', MONDAY)!;
+    expect(o.goldOk).toBe(true);
+    expect(o.done).toBeLessThan(o.gate);
+    expect(o.ready).toBe(false);
+  });
+
+  it('hacim dolunca kapı açılır', () => {
+    const s = trained(PIKE.mastery.gold.target, VOLUME_SESSIONS);
+    const o = offerFor(DB, IDX, s, 'hspu', 'pike-pushup', MONDAY)!;
+    expect(o.done).toBeGreaterThanOrEqual(o.gate);
+    expect(o.ready).toBe(true);
+  });
+
+  it('kalibrasyon kaydı hacme sayılmaz — bedava ilerleme yok', () => {
+    const s = state({
+      logs: [{
+        movementId: 'pike-pushup', date: '2026-08-01',
+        values: [40], kind: 'calibration' as const,
+      }],
+    });
+    expect(volumeDone(s, 'pike-pushup')).toBe(0);
+  });
+
+  it('boş durumda hiçbir kapı hazır değil', () => {
+    expect(offersOf(DB, IDX, state(), WEEK, MONDAY)
+      .every((o) => !o.ready)).toBe(true);
+  });
+
+  it('her hedefe bağlı dal için tek bir kapı raporlanır', () => {
+    const offers = offersOf(DB, IDX, state(), WEEK, MONDAY);
+    expect(new Set(offers.map((o) => o.track)).size).toBe(offers.length);
   });
 });
 

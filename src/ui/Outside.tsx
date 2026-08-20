@@ -107,13 +107,19 @@ export function OutsideCard({ state, onState, today = new Date() }: {
           </div>
 
           {kind && PLYO_KINDS.includes(kind) && (
-            <button onClick={() => setPlyo((p) => !p)} style={{
-              ...chip, width: '100%', marginTop: 7, padding: '7px 0',
-              borderColor: plyo ? '#fbbf24' : 'var(--line)',
-              color: plyo ? '#fbbf24' : 'var(--dim2)',
-            }}>
-              {plyo ? '✓ ' : ''}sıçrama vardı (zıplama, sekme, atlama)
-            </button>
+            <>
+              <button onClick={() => setPlyo((p) => !p)} style={{
+                ...chip, width: '100%', marginTop: 7, padding: '7px 0',
+                borderColor: plyo ? '#fbbf24' : 'var(--line)',
+                color: plyo ? '#fbbf24' : 'var(--dim2)',
+              }}>
+                {plyo ? '✓ ' : ''}sıçrama vardı — squat jump, box jump, sekme
+              </button>
+              <div style={{ fontSize: 11, color: 'var(--dim2)', marginTop: 4 }}>
+                İp atlama buraya girmez; o düşük genlikli ve zaten
+                programın içinde.
+              </div>
+            </>
           )}
 
           <input

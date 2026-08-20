@@ -25,7 +25,7 @@ const KEY = 'ascend.state.v1';
  * gördüğünde fark eder, o da genelde çok geçtir. Sürüm alanı,
  * "ne zaman ne yapılacağını" belirsizlikten çıkarır.
  */
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 export const DEFAULT_STATE: PlayerState = {
   xp: 0,
@@ -72,6 +72,13 @@ export function migrate(raw: Partial<PlayerState>): PlayerState {
   // ve tahmin etmek veriyi kirletir. Boş başlar, bugünden dolar.
   if (from < 3) {
     s = { ...s, outside: s.outside ?? [] };
+  }
+
+  // v3 → v4: ağaçtaki konum artık çıkarım değil kayıt. Boş bırakılır;
+  // boşken şablonun kendi hareketi geçerli olur, yani eski kullanıcı
+  // hiçbir şey kaybetmez ve ilk terfi önerisinde konumu oluşur.
+  if (from < 4) {
+    s = { ...s, trackAt: s.trackAt ?? {}, habitLog: s.habitLog ?? [] };
   }
 
   return {
@@ -126,6 +133,7 @@ export function recordSession(
   state: PlayerState,
   entries: { movementId: string; values: number[]; effort?: 'easy' | 'ok' | 'hard' }[],
   date = new Date(),
+  kind?: SetLog['kind'],
 ): { state: PlayerState; gainedXp: number; tierUps: { movementId: string; tier: MasteryTier }[] } {
   const iso = date.toISOString().slice(0, 10);
   const next: PlayerState = structuredClone(state);
@@ -138,6 +146,7 @@ export function recordSession(
 
     const log: SetLog = {
       movementId: e.movementId, date: iso, values: clean, effort: e.effort,
+      ...(kind ? { kind } : {}),
     };
     next.logs.push(log);
 
