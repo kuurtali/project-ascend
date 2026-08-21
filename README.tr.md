@@ -403,6 +403,8 @@ yazılı. Sıralı plan `docs/YOL_HARITASI.md` içinde.
   öyle olduğu burada; projeye sonradan bakan biri bağlamı buradan kurar.
 - **[docs/CHECKPOINT.md](docs/CHECKPOINT.md)** — nerede kalındı, sıradaki iş,
   bilinen tuzaklar.
+- **[docs/SON_PLAN.md](docs/SON_PLAN.md)** — sırayla ne kaldı, ve
+  değişmeyecek şeylerin kısa listesi.
 - **[docs/YOL_HARITASI.md](docs/YOL_HARITASI.md)** — proje dört ayrı gözle
   incelendi (sporcu, geliştirici, eleştirici, yabancı kullanıcı),
   tartışmaları ve çıkan sıralı plan.

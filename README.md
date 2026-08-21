@@ -33,7 +33,7 @@ offline.
 [Architecture](#architecture) ·
 [Decisions](docs/SECOND_BRAIN.md) ·
 [Changelog](CHANGELOG.md) ·
-[Roadmap](docs/YOL_HARITASI.md) ·
+[Roadmap](docs/SON_PLAN.md) ·
 [Türkçe](README.tr.md)
 
 </div>
@@ -512,6 +512,8 @@ fixed. `docs/YOL_HARITASI.md` has the ordered plan.
   anyone picking the project up later can rebuild the context.
 - **[docs/CHECKPOINT.md](docs/CHECKPOINT.md)** — where things stand, what's
   next, and the traps worth knowing about.
+- **[docs/SON_PLAN.md](docs/SON_PLAN.md)** — what's left, in order,
+  and the short list of things that will not change.
 - **[docs/YOL_HARITASI.md](docs/YOL_HARITASI.md)** — the project reviewed
   from four perspectives (athlete, developer, critic, foreign user), the
   arguments between them, and the ordered plan that came out of it.
