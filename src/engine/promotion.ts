@@ -92,6 +92,47 @@ export function goldVerified(
   return MASTERY_TIERS.indexOf(tier) >= MASTERY_TIERS.indexOf('gold');
 }
 
+export interface Blocker {
+  id: string;
+  name: string;
+  done: number;
+  gate: number;
+}
+
+/**
+ * Bir düğüm çalışmaya açık mı — yani ÖN KOŞULLARININ hacim eşiği dolmuş mu.
+ *
+ * Bu, sistemin en temel sağlık kuralı. Onsuz kullanıcı ağaçta istediği
+ * düğüme dokunup "tek elle şınav, 400 tekrar" yazabiliyordu. Sayı
+ * kaydedilirdi, kademe verilirdi, ve sistem o kişinin tek elle şınav
+ * yapabildiğine inanırdı — hiçbiri doğru olmadan.
+ *
+ * Kilidi açan şey kademe değil **hacim**: bir önceki hareketin hedefini
+ * bitirmeden sonrakine geçilmez. Kalistenikte sakatlığın kaynağı da tam
+ * olarak bu sıranın atlanması. (D-067)
+ *
+ * Dönen liste boşsa düğüm açık; doluysa önce onların bitmesi gerekiyor.
+ * Sadece DOĞRUDAN ön koşullar bakılır — tüm ata zinciri değil. Zaten
+ * onlar da kendi ön koşullarıyla kilitli, ve kullanıcıya gösterilecek
+ * şey "sıradaki iş", tüm ağaç değil.
+ */
+export function volumeBlockers(
+  idx: Map<string, Movement>,
+  state: PlayerState,
+  mv: Movement,
+): Blocker[] {
+  const out: Blocker[] = [];
+  for (const p of mv.prerequisites) {
+    const pm = idx.get(p);
+    if (!pm) continue;
+    const done = volumeDone(state, p);
+    const gate = volumeGate(pm);
+    if (done < gate) out.push({ id: p, name: pm.name, done, gate });
+  }
+  // En yakın bitene göre sırala — "az kaldı" olan önce görünsün
+  return out.sort((a, b) => (b.done / b.gate) - (a.done / a.gate));
+}
+
 /** Kullanıcının bu dalda bulunduğu hareket. Kayıt yoksa şablonunki. */
 export function currentOf(
   state: PlayerState, track: string, fallbackId: string,

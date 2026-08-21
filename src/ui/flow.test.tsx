@@ -569,3 +569,58 @@ describe('görev satırı', () => {
     expect(screen.getByText(/bugün \+25/)).toBeTruthy();
   });
 });
+
+describe('sıra atlanamaz — ön koşul kilidi', () => {
+  function TreeHost({ initial }: { initial: PlayerState }) {
+    const [state, setState] = useState(initial);
+    return <Tree state={state} onState={setState} />;
+  }
+
+  /** Etiketi kısaltılmadan görünen, ön koşulu olan bir hareket */
+  const locked = DB.movements.find(
+    (m) => m.prerequisites.length > 0 && m.name.length <= 24,
+  )!;
+
+  function openLocked(s: PlayerState) {
+    const { container } = render(<TreeHost initial={s} />);
+    const nodes = Array.from(container.querySelectorAll(String.raw`g[style*="cursor"]`));
+    fireEvent.click(nodes.find((n) => n.textContent?.includes(locked.name))!);
+  }
+
+  it('ön koşulu bitmemiş düğüme sayı girilemez', () => {
+    openLocked(fresh());
+    expect(screen.getByText(/Önce bir önceki hedefi bitir/)).toBeTruthy();
+    expect(screen.queryByText('Yaptım')).toBeNull();
+  });
+
+  it('engelleyen hareket ve kalan miktarı gösterilir', () => {
+    openLocked(fresh());
+    const prereq = DB.movements.find((m) => m.id === locked.prerequisites[0])!;
+    expect(screen.getAllByText(prereq.name).length).toBeGreaterThan(0);
+  });
+
+  it('kullanıcı ısrar ederse geçebilir — sistem hapsetmez', () => {
+    openLocked(fresh());
+    fireEvent.click(screen.getByText('yine de gireceğim'));
+    expect(screen.getByText('Yaptım')).toBeTruthy();
+    expect(screen.getByText(/Ön koşul tamamlanmadı/)).toBeTruthy();
+  });
+
+  it('ön koşulun hedefi dolunca kilit kalkar', () => {
+    const s = fresh();
+    const prereq = DB.movements.find((m) => m.id === locked.prerequisites[0])!;
+    const gate = prereq.mastery.gold.target * prereq.mastery.gold.sets * 8;
+    s.logs = locked.prerequisites.map((p) => {
+      const pm = DB.movements.find((m) => m.id === p)!;
+      return {
+        movementId: p,
+        date: '2026-08-01',
+        values: [pm.mastery.gold.target * pm.mastery.gold.sets * 8],
+      };
+    });
+    expect(gate).toBeGreaterThan(0);
+    openLocked(s);
+    expect(screen.queryByText(/Önce bir önceki hedefi bitir/)).toBeNull();
+    expect(screen.getByText('Yaptım')).toBeTruthy();
+  });
+});

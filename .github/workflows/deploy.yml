@@ -38,13 +38,21 @@ jobs:
           python3 make_layout.py
 
       - name: Üretilen veri commit edilenle aynı mı
+        # İKİ KOPYA DA KONTROL EDİLİR.
+        #
+        # data/ arşiv kopyası, src/data/ ise uygulamanın import ettiği.
+        # Önceden yalnızca data/ karşılaştırılıyordu: biri güncellenip
+        # öbürü unutulsa CI yeşil kalır ve uygulama ESKİ VERİYLE
+        # yayınlanırdı. Sessiz ve fark edilmesi zor bir hata sınıfı.
         run: |
-          if ! diff -q tools/movements.json data/movements.json > /dev/null; then
-            echo "HATA: data/movements.json güncel değil."
-            echo "tools/build_db.py çalıştırıp sonucu data/ altına kopyala."
-            exit 1
-          fi
-          echo "Veri güncel."
+          for hedef in data/movements.json src/data/movements.json; do
+            if ! diff -q tools/movements.json "$hedef" > /dev/null; then
+              echo "HATA: $hedef güncel değil."
+              echo "tools/build_db.py çalıştır, çıktıyı data/ VE src/data/ altına kopyala."
+              exit 1
+            fi
+          done
+          echo "Veri güncel (data/ ve src/data/ aynı)."
 
       - uses: actions/setup-node@v5
         with: { node-version: '22', cache: npm }

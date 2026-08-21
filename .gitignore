@@ -50,9 +50,19 @@ ANTRENMAN_KAYDI_YEREL.md
 _SILINEBILIR_yedekler/
 _SIL*/
 
-# Yerel kisayollar - kullaniciya ozel, depoda isi yok
+# TEK YEREL KLASOR.
+#
+# Kisisel olan her sey burada toplanir: profil, plan, antrenman kaydi,
+# kisayollar, gonderim betikleri. Kok dizinde ne varsa DEPOYA AITTIR —
+# boylece "bu dosya gider mi gitmez mi" sorusu her seferinde yeniden
+# sorulmaz. (D-058, D-067)
+_yerel/
+
+# Eski konumlar - geriye donuk guvenlik agi
 UYGULAMAYI AC.html
+*_YEREL.md
 *.url
+GITHUBA_GONDER.bat
 
 # Uygulama build ciktisi ve bagimliliklar
 node_modules/

@@ -21,7 +21,7 @@ import type { MovementDatabase, PlayerState } from '../engine/types';
 import { MASTERY_TIERS } from '../engine/types';
 import { equipmentOk, indexMovements, isExcluded, isOpen, proximity } from '../engine/mastery';
 import { bossStates } from '../engine/game';
-import { volumeGate } from '../engine/promotion';
+import { volumeBlockers, volumeGate } from '../engine/promotion';
 import { recordSession } from '../storage';
 import { Figure } from './figure/Figure';
 
@@ -55,6 +55,8 @@ export function Tree({ state, onState }: {
   const [q, setQ] = useState('');
   const [reps, setReps] = useState('');
   const [flash, setFlash] = useState<string | null>(null);
+  /** Kilidi elle aşan düğüm. Id tutuluyor ki başka düğüme geçince sıfırlansın. */
+  const [force, setForce] = useState<string | null>(null);
 
   /**
    * Hareket başına biriken hacim, tek geçişte.
@@ -513,6 +515,8 @@ export function Tree({ state, onState }: {
 
             const unit = selMv.measure.unit;
             const nextName = ready.length > 0 ? IDX.get(ready[0]!)?.name : null;
+            const blockers = volumeBlockers(IDX, state, selMv);
+            const forced = force === selMv.id;
             const iso = new Date().toISOString().slice(0, 10);
             const bugun = state.logs
               .filter((l) => l.movementId === selMv.id && l.date === iso
@@ -568,24 +572,73 @@ export function Tree({ state, onState }: {
                   }} />
                 </div>
 
-                <div style={{ display: 'flex', gap: 6, marginTop: 9 }}>
-                  <input
-                    type="number" inputMode="numeric" value={reps}
-                    onChange={(e) => setReps(e.target.value)}
-                    placeholder={`kaç ${selMv.measure.unit}?`}
-                    style={{
-                      flex: 1, minWidth: 0, height: 42, borderRadius: 9,
-                      textAlign: 'center', fontSize: 16, background: '#0d1016',
-                      border: '1px solid var(--line)', color: 'var(--txt)',
-                    }}
-                  />
-                  <button onClick={() => logHere(selMv.id)} style={{
-                    padding: '0 18px', height: 42, borderRadius: 9, border: 'none',
-                    background: reps ? '#f5c542' : '#232732',
-                    color: reps ? '#0b0d12' : '#5b6376',
-                    fontWeight: 600, fontSize: 14, cursor: reps ? 'pointer' : 'default',
-                  }}>Yaptım</button>
-                </div>
+                {/* KİLİT — ön koşulun hedefi bitmeden buraya sayı girilmez.
+                    Bu olmadan kullanıcı "tek elle şınav 400" yazabiliyordu
+                    ve sistem buna inanıyordu. (D-067) */}
+                {blockers.length > 0 && !forced ? (
+                  <div style={{
+                    marginTop: 9, padding: '9px 10px', borderRadius: 9,
+                    background: '#1a1206', border: '1px solid #4a3d10',
+                  }}>
+                    <div style={{ fontSize: 12.5, color: '#f5c542', lineHeight: 1.5 }}>
+                      🔒 Önce bir önceki hedefi bitir
+                    </div>
+                    <div style={{
+                      display: 'flex', flexDirection: 'column', gap: 5, marginTop: 8,
+                    }}>
+                      {blockers.map((b) => (
+                        <button key={b.id} onClick={() => jumpTo(b.id)} style={{
+                          display: 'flex', justifyContent: 'space-between',
+                          alignItems: 'center', gap: 8, width: '100%',
+                          background: '#12151c', border: '1px solid var(--line)',
+                          borderRadius: 8, padding: '7px 9px', cursor: 'pointer',
+                          color: 'inherit', textAlign: 'left', fontSize: 12.5,
+                        }}>
+                          <span style={{
+                            flex: 1, minWidth: 0, overflow: 'hidden',
+                            textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                          }}>{b.name}</span>
+                          <span style={{ color: '#22d3ee', flexShrink: 0 }}>
+                            {b.done} / {b.gate}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                    <button onClick={() => setForce(selMv.id)} style={{
+                      background: 'transparent', border: 'none', cursor: 'pointer',
+                      color: '#5b6376', fontSize: 11.5, marginTop: 8, padding: 0,
+                    }}>
+                      yine de gireceğim
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {blockers.length > 0 && (
+                      <div style={{ fontSize: 11, color: '#f5c542', marginTop: 8 }}>
+                        ⚠ Ön koşul tamamlanmadı — sayı yine de kaydedilecek.
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', gap: 6, marginTop: 9 }}>
+                      <input
+                        type="number" inputMode="numeric" value={reps}
+                        onChange={(e) => setReps(e.target.value)}
+                        placeholder={`kaç ${selMv.measure.unit}?`}
+                        style={{
+                          flex: 1, minWidth: 0, height: 42, borderRadius: 9,
+                          textAlign: 'center', fontSize: 16, background: '#0d1016',
+                          border: '1px solid var(--line)', color: 'var(--txt)',
+                        }}
+                      />
+                      <button onClick={() => logHere(selMv.id)} style={{
+                        padding: '0 18px', height: 42, borderRadius: 9, border: 'none',
+                        background: reps ? '#f5c542' : '#232732',
+                        color: reps ? '#0b0d12' : '#5b6376',
+                        fontWeight: 600, fontSize: 14,
+                        cursor: reps ? 'pointer' : 'default',
+                      }}>Yaptım</button>
+                    </div>
+                  </>
+                )}
 
                 {flash && (
                   <div style={{ fontSize: 12, color: '#5DCAA5', marginTop: 7 }}>

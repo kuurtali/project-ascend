@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml/badge.svg)](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![Tests](https://img.shields.io/badge/tests-209-brightgreen)
+![Tests](https://img.shields.io/badge/tests-213-brightgreen)
 ![Movements](https://img.shields.io/badge/movements-197-orange)
 ![No backend](https://img.shields.io/badge/backend-none-lightgrey)
 
@@ -22,6 +22,21 @@ offline.
 <p align="center">
   <img src="docs/img/hareketler.gif" width="440" alt="Movement figures — angle-based skeletal animation">
 </p>
+
+<div align="center">
+
+**[▶ Open the app](https://kuurtali.github.io/project-ascend)** ·
+[Skill tree](#the-skill-tree) ·
+[Adaptation rule](#the-adaptation-rule) ·
+[Promotion gate](#the-promotion-gate--volume-then-consent) ·
+[Consistency](#consistency-tracked-separately-from-capability) ·
+[Architecture](#architecture) ·
+[Decisions](docs/SECOND_BRAIN.md) ·
+[Changelog](CHANGELOG.md) ·
+[Roadmap](docs/YOL_HARITASI.md) ·
+[Türkçe](README.tr.md)
+
+</div>
 
 ---
 
@@ -394,9 +409,9 @@ committed — if the generation chain breaks, the build fails.
 25 figure poses  ·  total earnable XP 525,335
 ```
 
-**209 tests** — 154 engine tests (unlocking, mastery, adaptation, planner,
+**213 tests** — 154 engine tests (unlocking, mastery, adaptation, planner,
 session resolution, deload, comeback, promotion gate, habits, outside load,
-game systems, program structure) and 55 end-to-end flow tests (calibration
+game systems, program structure) and 59 end-to-end flow tests (calibration
 → session → celebration → every screen, running the real React components
 inside jsdom).
 
@@ -501,6 +516,24 @@ fixed. `docs/YOL_HARITASI.md` has the ordered plan.
   from four perspectives (athlete, developer, critic, foreign user), the
   arguments between them, and the ordered plan that came out of it.
 - **[CHANGELOG.md](CHANGELOG.md)** — what changed and why, in English.
+
+### Repository layout
+
+```
+src/engine/     rules — pure TypeScript, no DOM, no network      · 158 tests
+src/ui/         React screens                                    ·  59 tests
+src/data/       generated movement graph — imported by the app
+tools/          Python pipeline: definitions → validation → JSON
+tools/rig/      skeleton math → generated figure poses
+data/           committed copy of the generated graph; CI diffs both
+docs/           second brain, checkpoint, roadmap, images
+.github/        CI: regenerate data, typecheck, test, build, deploy
+```
+
+Everything at the repository root belongs in the repository. Anything
+personal — training log, private plan, local shortcuts — lives in a single
+gitignored `_yerel/` folder, so "does this file belong here?" never has to
+be answered twice.
 
 ---
 
