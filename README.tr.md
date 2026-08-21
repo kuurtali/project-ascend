@@ -35,7 +35,7 @@ hâli şu:
 | **Deterministik motor** | LLM yok, sunucu yok, ağ yok. `(hareketler, oyuncuDurumu)` alır, yeni durum ya da plan döner. Saf TypeScript, DOM'a hiç dokunmaz, 154 test. |
 | **Üretilmiş figürler** | 197 hareket 25 pozla çiziliyor, ileri kinematikle. Pozları Python rig üretiyor (`tools/rig/`) — önizleme aracıyla uygulama birbirinden ayrışmasın diye. Animasyon SMIL, JS döngüsü yok, pil harcamıyor. |
 | **Yerel-öncelikli** | `localStorage`, sürümlü şema, veri silmeyen tek yönlü göçler, tek tuşla dışa aktarma. Servis worker HTML'i bilerek önce ağdan alıyor — cache-first sürüm iki yayını sessizce gizlemişti. |
-| **Asıl çıktı kararlar** | Gerekçeleriyle 65 karar kaydı, yanlış dönüşler dâhil. `docs/SECOND_BRAIN.md`. |
+| **Asıl çıktı kararlar** | Gerekçeleriyle 67 karar kaydı, yanlış dönüşler dâhil. `docs/SECOND_BRAIN.md`. |
 
 ---
 
