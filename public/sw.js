@@ -12,7 +12,7 @@
 //
 // Kural: adı değişmeyen bir dosyayı cache-first servis etme.
 
-const CACHE = 'ascend-v6';
+const CACHE = 'ascend-v7';
 
 /**
  * Kurulumda yalnızca kabuk değil, index.html'in İŞARET ETTİĞİ varlıklar

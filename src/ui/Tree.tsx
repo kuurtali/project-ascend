@@ -87,7 +87,50 @@ export function Tree({ state, onState }: {
     setTimeout(() => setFlash(null), 2600);
   }
 
-  const [view, setView] = useState({ x: 8, y: 8, k: 0.35 });
+  const focus = state.focus ?? [];
+
+  /**
+   * Açılış görünümü.
+   *
+   * Eskiden ağaç her seferinde 0.35 ölçekte, sol üstten açılıyordu —
+   * telefonda 197 minik kutudan oluşan bir duvar. Oysa kullanıcının
+   * ilgilendiği yer belli: çalıştığı hareketler. Varsa oraya odaklı
+   * açılır, yoksa eski davranış sürer.
+   */
+  const [view, setView] = useState(() => {
+    const first = (state.focus ?? [])[0];
+    const p = first ? L.pos[first] : null;
+    if (!p) return { x: 8, y: 8, k: 0.35 };
+    const k = 0.8;
+    return {
+      k,
+      x: (typeof window === 'undefined' ? 380 : window.innerWidth) / 2 - p[0] * k,
+      y: (typeof window === 'undefined' ? 640 : window.innerHeight) / 2 - p[1] * k - 90,
+    };
+  });
+
+  /** Bir düğümü ekranın ortasına getir ve seç */
+  function jumpTo(id: string) {
+    const p = L.pos[id];
+    if (!p) return;
+    const k = Math.max(view.k, 0.7);
+    setView({
+      k,
+      x: window.innerWidth / 2 - p[0] * k,
+      y: window.innerHeight / 2 - p[1] * k - 90,
+    });
+    setSel(id);
+    setReps('');
+  }
+
+  function toggleFocus(id: string) {
+    if (!onState) return;
+    const cur = state.focus ?? [];
+    onState({
+      ...state,
+      focus: cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id],
+    });
+  }
   const drag = useRef<{ x: number; y: number; vx: number; vy: number } | null>(null);
   const pinch = useRef<{ d: number; k: number } | null>(null);
 
@@ -199,6 +242,48 @@ export function Tree({ state, onState }: {
             </button>
           )}
         </div>
+
+        {/* ÇALIŞTIKLARIM — 197 düğümde asıl sorun gezinmek değil,
+            her seferinde aynı beşini bulmak. Dokun, oraya uçar. */}
+        {focus.length > 0 && (
+          <div style={{
+            display: 'flex', gap: 6, marginTop: 8, overflowX: 'auto',
+            paddingBottom: 2,
+          }}>
+            {focus.map((id) => {
+              const mv = IDX.get(id);
+              if (!mv) return null;
+              const vol = volumes.get(id) ?? 0;
+              const gate = volumeGate(mv);
+              const full = vol >= gate;
+              return (
+                <button key={id} onClick={() => jumpTo(id)} style={{
+                  flexShrink: 0, background: '#12151c', cursor: 'pointer',
+                  border: `1px solid ${full ? '#1D9E75' : 'var(--line)'}`,
+                  borderRadius: 9, padding: '5px 9px', textAlign: 'left',
+                  color: 'inherit', minWidth: 108,
+                }}>
+                  <div style={{
+                    fontSize: 11.5, color: '#e6e8ee', whiteSpace: 'nowrap',
+                    overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 130,
+                  }}>{mv.name}</div>
+                  <div style={{
+                    height: 3, background: '#20252f', borderRadius: 99, marginTop: 4,
+                  }}>
+                    <div style={{
+                      height: '100%', borderRadius: 99,
+                      width: `${Math.min(100, (vol / gate) * 100)}%`,
+                      background: full ? '#1D9E75' : '#22d3ee',
+                    }} />
+                  </div>
+                  <div style={{ fontSize: 9.5, color: 'var(--dim2)', marginTop: 3 }}>
+                    {full ? 'eşik doldu' : `${vol} / ${gate}`}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* tuval */}
@@ -362,6 +447,16 @@ export function Tree({ state, onState }: {
                 {DB.categories[selMv.category]?.label} · Tier {selMv.tier}
               </div>
             </div>
+            {onState && (
+              <button onClick={() => toggleFocus(selMv.id)} title="çalıştıklarıma ekle"
+                style={{
+                  ...chip, padding: '6px 10px',
+                  borderColor: focus.includes(selMv.id) ? '#f5c542' : 'var(--line)',
+                  color: focus.includes(selMv.id) ? '#f5c542' : 'var(--dim)',
+                }}>
+                {focus.includes(selMv.id) ? '★' : '☆'}
+              </button>
+            )}
             <button onClick={() => setSel(null)} style={chip}>kapat</button>
           </div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', margin: '8px 0' }}>

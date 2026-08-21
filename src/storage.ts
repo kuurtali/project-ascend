@@ -25,7 +25,7 @@ const KEY = 'ascend.state.v1';
  * gördüğünde fark eder, o da genelde çok geçtir. Sürüm alanı,
  * "ne zaman ne yapılacağını" belirsizlikten çıkarır.
  */
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 5;
 
 export const DEFAULT_STATE: PlayerState = {
   xp: 0,
@@ -79,6 +79,12 @@ export function migrate(raw: Partial<PlayerState>): PlayerState {
   // hiçbir şey kaybetmez ve ilk terfi önerisinde konumu oluşur.
   if (from < 4) {
     s = { ...s, trackAt: s.trackAt ?? {}, habitLog: s.habitLog ?? [] };
+  }
+
+  // v4 → v5: ağaçta "çalıştıklarım" kısayol listesi. Boş başlar;
+  // sistem buraya asla kendiliğinden ekleme yapmaz.
+  if (from < 5) {
+    s = { ...s, focus: s.focus ?? [] };
   }
 
   return {

@@ -17,7 +17,7 @@ import { useState } from 'react';
 
 import dbJson from '../data/movements.json';
 import type { MovementDatabase, PlayerState } from '../engine/types';
-import { DEFAULT_STATE } from '../storage';
+import { DEFAULT_STATE, migrate, SCHEMA_VERSION } from '../storage';
 import { Calibrate } from './Calibrate';
 import { Today } from './Today';
 import { Tree } from './Tree';
@@ -478,5 +478,51 @@ describe('ağaç çalışılabilir bir yüzey', () => {
     const node = nodes.find((n) => n.textContent?.includes('Standard Push-up'));
     fireEvent.click(node!);
     expect(screen.getByText(/Eşik doldu/)).toBeTruthy();
+  });
+});
+
+describe('çalıştıklarım listesi', () => {
+  function TreeHost({ initial }: { initial: PlayerState }) {
+    const [state, setState] = useState(initial);
+    return <Tree state={state} onState={setState} />;
+  }
+
+  it('yıldızlanan hareket şeride düşer', () => {
+    const { container } = render(<TreeHost initial={fresh()} />);
+    fireEvent.click(container.querySelectorAll('g[style*="cursor"]')[0]!);
+    expect(screen.getByTitle('çalıştıklarıma ekle')).toBeTruthy();
+    fireEvent.click(screen.getByTitle('çalıştıklarıma ekle'));
+    // Şeritte hareketin adı ve eşik sayacı görünür
+    expect(screen.getAllByText(/\d+ \/ \d+/).length).toBeGreaterThan(0);
+  });
+
+  it('yıldız geri alınabilir', () => {
+    const { container } = render(<TreeHost initial={fresh()} />);
+    fireEvent.click(container.querySelectorAll('g[style*="cursor"]')[0]!);
+    const star = screen.getByTitle('çalıştıklarıma ekle');
+    fireEvent.click(star);
+    expect(screen.getByText('★')).toBeTruthy();
+    fireEvent.click(screen.getByTitle('çalıştıklarıma ekle'));
+    expect(screen.getByText('☆')).toBeTruthy();
+  });
+
+  it('liste boşken şerit hiç çizilmez', () => {
+    render(<TreeHost initial={fresh()} />);
+    expect(screen.queryByText(/eşik doldu/)).toBeNull();
+  });
+
+  it('salt okunur ağaçta yıldız yok', () => {
+    const { container } = render(<Tree state={fresh()} />);
+    fireEvent.click(container.querySelectorAll('g[style*="cursor"]')[0]!);
+    expect(screen.queryByTitle('çalıştıklarıma ekle')).toBeNull();
+  });
+
+  it('şu ana kadarki tüm şema sürümleri v5e taşınır', () => {
+    for (const v of [1, 2, 3, 4]) {
+      const m = migrate({ schemaVersion: v, xp: 10 } as never);
+      expect(m.schemaVersion).toBe(SCHEMA_VERSION);
+      expect(m.focus).toEqual([]);
+      expect(m.xp).toBe(10);
+    }
   });
 });

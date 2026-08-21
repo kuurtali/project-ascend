@@ -4000,6 +4000,42 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-066 · 2026-08-20 · Ağaç salt okunur haritadan çalışma yüzeyine döndü**
+
+Kullanıcının cümlesi şuydu: *"ağaç üzerinden x tane y yaptım, sıradakine
+geçebilirsin gibi bir şey istedim — ağaç kısmına odaklan, daha interaktif
+olsun."* Haklıydı ve eksiklik yapısaldı: sistemin ana mantığı ağaç ama
+ağaç ekranında hiçbir şey **yapılamıyordu.** Bakıyordun, kapatıyordun,
+iş Bugün ekranında oluyordu.
+
+**Her düğüm artık çalışılabilir.** Detay panelinde tekrar girip "Yaptım"
+diyorsun; kayıt normal seans kaydıyla aynı yere gidiyor, aynı kademeyi
+besliyor. Program şablonu tek giriş yolu olmaktan çıktı.
+
+**Her düğüm ne kadar biriktiğini gösteriyor.** Düğümün içinde ince bir
+hacim çubuğu var — detay panelini açmadan, uzaktan bakınca da okunuyor.
+Eşik dolunca çubuk yeşile dönüyor ve panel o hareketin **açtığı**
+düğümleri tek tuşla öneriyor. Ağaç üzerinden ilerleme tam olarak bu.
+
+Hacim tek geçişte hesaplanıyor (`useMemo`, kayıt listesi üzerinde). Düğüm
+başına hesaplansaydı 197 × kayıt sayısı olurdu ve her kaydırmada yeniden
+koşardı.
+
+**Çalıştıklarım listesi (`state.focus`).** 197 düğümlük bir ağaçta asıl
+sorun gezinmek değil, **her seferinde aynı beşini bulmak.** Yıldızlanan
+hareketler üstte bir şeritte duruyor, hacim çubuklarıyla; dokununca ağaç
+o düğüme uçuyor. Sistem bu listeye asla kendiliğinden ekleme yapmıyor.
+
+**Açılış görünümü de değişti.** Ağaç eskiden her seferinde 0.35 ölçekte
+sol üstten açılıyordu — telefonda 197 minik kutudan oluşan bir duvar.
+Artık çalışılan ilk harekete odaklı açılıyor.
+
+`Tree` salt okunur da kullanılabiliyor: `onState` verilmezse ne çalışma
+bloğu ne yıldız çiziliyor. İki test bunu koruyor — bir ekranın "sadece
+göster" hâli, yanlışlıkla yazan bir hâle dönüşmesin.
+
+Şema v5. 206 test.
+
 **D-065 · 2026-08-20 · Kapı tek sayıya indi; depo sunuma hazırlandı**
 
 D-064'te kurulan kapı üç koşulluydu: doğrulanmış altın kademe + hacim

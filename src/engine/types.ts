@@ -170,6 +170,12 @@ export interface PlayerState {
   /** Temel hareket alışkanlıkları — tanım ve işaretler */
   habits?: HabitDef[];
   habitLog?: { date: string; habitId: string }[];
+  /**
+   * Şu an çalışılan hareketler. 197 düğümlük bir ağaçta asıl sorun
+   * gezinmek değil, **her seferinde aynı beşini bulmak.** Bu liste
+   * kullanıcının kendi kısayolu; sistem buraya bir şey eklemez. (D-066)
+   */
+  focus?: string[];
 }
 
 // ─────────────────────────────────────────────── ÇIKTILAR

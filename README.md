@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml/badge.svg)](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![Tests](https://img.shields.io/badge/tests-196-brightgreen)
+![Tests](https://img.shields.io/badge/tests-206-brightgreen)
 ![Movements](https://img.shields.io/badge/movements-197-orange)
 ![No backend](https://img.shields.io/badge/backend-none-lightgrey)
 
@@ -68,6 +68,20 @@ are bosses — the targets at the end of each path.
 The tree isn't hand-drawn. It's generated from definitions in
 `tools/movements_data.py`, validated by `build_db.py`, and laid out by
 `make_layout.py`.
+
+**And it's the working surface, not a picture.** Every node accepts reps
+directly — enter a number, tap done, and it lands in the same log the
+prescribed sessions write to. Every node also carries a thin bar showing
+how much volume has accumulated on it, readable without opening anything.
+When the bar fills, the node offers what it unlocks.
+
+That last part is the whole progression model in one gesture: *do X of
+this, then the next one is available.* The prescribed weekly session is
+one way in; the tree is the other.
+
+Starred movements sit in a strip above the canvas with their own progress
+bars — in a 197-node graph the hard part isn't panning around, it's
+finding the same five nodes every time. Tapping one flies the view to it.
 
 ---
 
@@ -380,9 +394,9 @@ committed — if the generation chain breaks, the build fails.
 25 figure poses  ·  total earnable XP 525,335
 ```
 
-**196 tests** — 154 engine tests (unlocking, mastery, adaptation, planner,
+**206 tests** — 154 engine tests (unlocking, mastery, adaptation, planner,
 session resolution, deload, comeback, promotion gate, habits, outside load,
-game systems, program structure) and 42 end-to-end flow tests (calibration
+game systems, program structure) and 52 end-to-end flow tests (calibration
 → session → celebration → every screen, running the real React components
 inside jsdom).
 
