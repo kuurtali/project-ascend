@@ -511,17 +511,48 @@ export function Tree({ state, onState }: {
               return n && equipmentOk(state, n) && !isExcluded(state, u);
             });
 
+            const unit = selMv.measure.unit;
+            const nextName = ready.length > 0 ? IDX.get(ready[0]!)?.name : null;
+            const iso = new Date().toISOString().slice(0, 10);
+            const bugun = state.logs
+              .filter((l) => l.movementId === selMv.id && l.date === iso
+                          && l.kind !== 'calibration')
+              .reduce((n, l) => n + l.values.reduce((a, b) => a + b, 0), 0);
+
             return (
               <div style={{
                 border: `1px solid ${full ? '#1D9E75' : 'var(--line)'}`,
                 background: full ? '#0d2019' : '#12151c',
                 borderRadius: 10, padding: '9px 11px', margin: '4px 0 10px',
               }}>
+                {/* GÖREV — kullanıcının açıkça istediği satır.
+                    "Şu hareketten şu kadar yap, sonra şu açılır."
+                    Hacim çubuğu mesafeyi gösteriyordu ama HEDEFİ
+                    söylemiyordu; sayı ile anlam arasındaki bağı bu
+                    cümle kuruyor. */}
+                <div style={{
+                  fontSize: 10, letterSpacing: '.09em', color: 'var(--dim2)',
+                }}>GÖREV</div>
+                <div style={{ fontSize: 13.5, lineHeight: 1.55, margin: '3px 0 9px' }}>
+                  <b style={{ color: full ? '#5DCAA5' : '#f5c542' }}>
+                    {gate} {unit}
+                  </b>{' '}
+                  {selMv.name} yap
+                  {nextName && (
+                    <> → <b style={{ color: '#a89ff5' }}>{nextName}</b> açılır</>
+                  )}
+                </div>
+
                 <div style={{
                   display: 'flex', justifyContent: 'space-between',
                   fontSize: 11.5, color: 'var(--dim)',
                 }}>
-                  <span>BİRİKEN {selMv.measure.unit.toUpperCase()}</span>
+                  <span>
+                    BİRİKEN {unit.toUpperCase()}
+                    {bugun > 0 && (
+                      <span style={{ color: '#5DCAA5' }}> · bugün +{bugun}</span>
+                    )}
+                  </span>
                   <span style={{ color: full ? '#5DCAA5' : '#22d3ee' }}>
                     <b>{vol}</b> / {gate}
                   </span>
@@ -581,9 +612,9 @@ export function Tree({ state, onState }: {
                   </div>
                 ) : (
                   <div style={{ fontSize: 11.5, color: 'var(--dim2)', marginTop: 8, lineHeight: 1.5 }}>
-                    {gate - vol} {selMv.measure.unit} daha birikince sıradaki
-                    hareketi öneriyorum. Eşik hareketin kendi zorluğundan
-                    çıkıyor — altın hedef × set × 8 seans.
+                    <b style={{ color: '#c2c8d4' }}>{gate - vol} {unit} kaldı.</b>{' '}
+                    Her gün girdiğin üstüne eklenir; arada gün atlaman
+                    önemli değil, toplam düşmez.
                   </div>
                 )}
               </div>

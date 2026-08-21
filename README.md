@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml/badge.svg)](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![Tests](https://img.shields.io/badge/tests-206-brightgreen)
+![Tests](https://img.shields.io/badge/tests-209-brightgreen)
 ![Movements](https://img.shields.io/badge/movements-197-orange)
 ![No backend](https://img.shields.io/badge/backend-none-lightgrey)
 
@@ -394,9 +394,9 @@ committed — if the generation chain breaks, the build fails.
 25 figure poses  ·  total earnable XP 525,335
 ```
 
-**206 tests** — 154 engine tests (unlocking, mastery, adaptation, planner,
+**209 tests** — 154 engine tests (unlocking, mastery, adaptation, planner,
 session resolution, deload, comeback, promotion gate, habits, outside load,
-game systems, program structure) and 52 end-to-end flow tests (calibration
+game systems, program structure) and 55 end-to-end flow tests (calibration
 → session → celebration → every screen, running the real React components
 inside jsdom).
 

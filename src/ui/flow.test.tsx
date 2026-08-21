@@ -526,3 +526,46 @@ describe('çalıştıklarım listesi', () => {
     }
   });
 });
+
+describe('görev satırı', () => {
+  function TreeHost({ initial }: { initial: PlayerState }) {
+    const [state, setState] = useState(initial);
+    return <Tree state={state} onState={setState} />;
+  }
+
+  it('düğümde ne kadar yapılacağı ve neyin açılacağı yazar', () => {
+    const { container } = render(<TreeHost initial={fresh()} />);
+    const nodes = Array.from(container.querySelectorAll(String.raw`g[style*="cursor"]`));
+    const node = nodes.find((n) => n.textContent?.includes('Standard Push-up'));
+    fireEvent.click(node!);
+    expect(screen.getByText('GÖREV')).toBeTruthy();
+    // "360 tekrar Standard Push-up yap → Incline Push-up açılır"
+    expect(screen.getByText(/yap/)).toBeTruthy();
+    expect(screen.getAllByText(/kaldı/).length).toBeGreaterThan(0);
+  });
+
+  it('araya gün girmesi toplamı düşürmez', () => {
+    const s = fresh();
+    // 1. gün 30, çok sonra 20 — arada boşluk var
+    s.logs = [
+      { movementId: 'pushup', date: '2026-07-01', values: [30] },
+      { movementId: 'pushup', date: '2026-08-14', values: [20] },
+    ];
+    const { container } = render(<TreeHost initial={s} />);
+    const nodes = Array.from(container.querySelectorAll(String.raw`g[style*="cursor"]`));
+    fireEvent.click(nodes.find((n) => n.textContent?.includes('Standard Push-up'))!);
+    // 30 + 20 = 50, eşik 15×3×8 = 360
+    expect(screen.getByText('50')).toBeTruthy();
+    expect(screen.getByText(/310 tekrar kaldı/)).toBeTruthy();
+  });
+
+  it('bugün girilen ayrıca gösterilir', () => {
+    const s = fresh();
+    const iso = new Date().toISOString().slice(0, 10);
+    s.logs = [{ movementId: 'pushup', date: iso, values: [25] }];
+    const { container } = render(<TreeHost initial={s} />);
+    const nodes = Array.from(container.querySelectorAll(String.raw`g[style*="cursor"]`));
+    fireEvent.click(nodes.find((n) => n.textContent?.includes('Standard Push-up'))!);
+    expect(screen.getByText(/bugün \+25/)).toBeTruthy();
+  });
+});
