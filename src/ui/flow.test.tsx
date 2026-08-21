@@ -66,8 +66,10 @@ describe('kalibrasyon', () => {
     fireEvent.change(screen.getByPlaceholderText('0'), { target: { value: '30' } });
     fireEvent.click(screen.getByText('Sonraki'));
 
-    // Kalan adımları atla
+    // Kalan adımları atla — ölçüm bitince ÖZET ekranı gelir
     fireEvent.click(screen.getByText(/atla/));
+    expect(screen.getByText('ÖLÇÜM TAMAM')).toBeTruthy();
+    fireEvent.click(screen.getByText('Başlayalım'));
 
     expect(out).not.toBeNull();
     const s = out as unknown as PlayerState;
@@ -622,5 +624,63 @@ describe('sıra atlanamaz — ön koşul kilidi', () => {
     openLocked(s);
     expect(screen.queryByText(/Önce bir önceki hedefi bitir/)).toBeNull();
     expect(screen.getByText('Yaptım')).toBeTruthy();
+  });
+});
+
+
+describe('kalibrasyon özeti', () => {
+  it('ölçüm bitince ne değiştiğini gösterir', () => {
+    render(<Calibrate state={fresh()} onDone={() => {}} />);
+    fireEvent.change(screen.getByPlaceholderText('0'), { target: { value: '30' } });
+    fireEvent.click(screen.getByText(/atla/));
+
+    expect(screen.getByText('ÖLÇÜM TAMAM')).toBeTruthy();
+    expect(screen.getByText('AÇIK DÜĞÜM')).toBeTruthy();
+    expect(screen.getByText('RÜTBE')).toBeTruthy();
+    expect(screen.getByText('İLK SEANSININ HEDEFLERİ')).toBeTruthy();
+  });
+
+  it('açılan düğüm sayısı sıfırdan büyük — ağaç gerçekten açıldı', () => {
+    render(<Calibrate state={fresh()} onDone={() => {}} />);
+    fireEvent.change(screen.getByPlaceholderText('0'), { target: { value: '30' } });
+    fireEvent.click(screen.getByText(/atla/));
+    const kutu = screen.getByText('AÇIK DÜĞÜM').previousSibling as HTMLElement;
+    expect(Number(kutu.textContent)).toBeGreaterThan(0);
+  });
+
+  it('özet onaylanmadan uygulamaya geçilmez', () => {
+    let out: PlayerState | null = null;
+    render(<Calibrate state={fresh()} onDone={(s) => { out = s; }} />);
+    fireEvent.change(screen.getByPlaceholderText('0'), { target: { value: '30' } });
+    fireEvent.click(screen.getByText(/atla/));
+    expect(out).toBeNull();
+    fireEvent.click(screen.getByText('Başlayalım'));
+    expect(out).not.toBeNull();
+  });
+
+  it('hiç sayı girilmezse özet gösterilmez, doğrudan geçilir', () => {
+    let out: PlayerState | null = null;
+    render(<Calibrate state={fresh()} onDone={(s) => { out = s; }} />);
+    fireEvent.click(screen.getByText(/atla/));
+    expect(screen.queryByText('ÖLÇÜM TAMAM')).toBeNull();
+    expect(out).not.toBeNull();
+  });
+});
+
+describe('hedef elle değiştirilebilir', () => {
+  it('hedefe dokununca düzenleme açılır ve kaydedilir', () => {
+    render(<TodayHost initial={fresh()} />);
+    const hedefler = screen.getAllByTitle('hedefi değiştir');
+    expect(hedefler.length).toBeGreaterThan(0);
+    fireEvent.click(hedefler[0]!);
+    expect(screen.getByText('kaydet')).toBeTruthy();
+    expect(screen.getByText(/senin sayın kalıcı olur/)).toBeTruthy();
+  });
+
+  it('kayıtlı hedef türetmenin önüne geçer', () => {
+    const s = fresh();
+    s.targets = { 'pike-pushup': 42 };
+    render(<TodayHost initial={s} />);
+    expect(screen.getByText('42')).toBeTruthy();
   });
 });

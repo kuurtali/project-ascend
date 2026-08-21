@@ -16,6 +16,7 @@ import { balanceScore, indexMovements, isOpen, levelOf, proximity } from '../eng
 import { pathTo } from '../engine/planner';
 import { promotionsOf, weeksToDeload, weekNumber } from '../engine/session';
 import { PromotionProgress } from './Promote';
+import { Gecmis } from './Gecmis';
 import { ascensionOf, bossStates, rankOf, streakOf, titlesOf } from '../engine/game';
 import { WEEK } from '../program';
 import { Avatar } from './Avatar';
@@ -130,6 +131,10 @@ export function Progress({ state }: { state: PlayerState }) {
           Seri haftalık sayılır — dinlenme günü seriyi kırmaz.
         </div>
       </div>
+
+      {/* GELİŞİM — "gelişiyor muyum" sorusunun tek gerçek cevabı.
+          Yakınlık göstergesi mesafeyi söylüyordu, eğriyi değil. */}
+      <Gecmis state={state} />
 
       {/* KAPIYA KALAN — hazır olmayan terfiler burada mesafe gösterir */}
       <PromotionProgress state={state} />

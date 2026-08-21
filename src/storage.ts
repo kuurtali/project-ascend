@@ -25,7 +25,7 @@ const KEY = 'ascend.state.v1';
  * gördüğünde fark eder, o da genelde çok geçtir. Sürüm alanı,
  * "ne zaman ne yapılacağını" belirsizlikten çıkarır.
  */
-export const SCHEMA_VERSION = 5;
+export const SCHEMA_VERSION = 6;
 
 export const DEFAULT_STATE: PlayerState = {
   xp: 0,
@@ -85,6 +85,13 @@ export function migrate(raw: Partial<PlayerState>): PlayerState {
   // sistem buraya asla kendiliğinden ekleme yapmaz.
   if (from < 5) {
     s = { ...s, focus: s.focus ?? [] };
+  }
+
+  // v5 → v6: hedefler artık türetilmiyor, saklanıyor. Boş başlar;
+  // boşken eski türetme yolu geçerli olur, yani hiçbir kullanıcı
+  // hedefini kaybetmez ve ilk seanstan sonra alan kendiliğinden dolar.
+  if (from < 6) {
+    s = { ...s, targets: s.targets ?? {} };
   }
 
   return {

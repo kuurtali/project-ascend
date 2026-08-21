@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml/badge.svg)](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![Tests](https://img.shields.io/badge/tests-213-brightgreen)
+![Tests](https://img.shields.io/badge/tests-219-brightgreen)
 ![Movements](https://img.shields.io/badge/movements-197-orange)
 ![No backend](https://img.shields.io/badge/backend-none-lightgrey)
 
@@ -285,6 +285,35 @@ what it shows is **days**, not check marks:
   the tree shouldn't lie. Same principle as the outside-training log:
   context, not progress.
 
+### Seeing progress, not just distance
+
+The second reason people quit, from the list at the top, is *not seeing
+progress* — and for a long time the app only half-solved it. It showed how
+far the next tier was; it never showed the curve that got you there. The
+user's own words: *"I can't tell whether I'm improving."*
+
+The Progress screen now draws two series per tracked movement, and they
+measure different things on purpose:
+
+| | |
+|---|---|
+| **Capacity** | best single set per week. Fluctuates — illness, fatigue, measurement noise. What matters is the slope |
+| **Effort** | accumulated volume. Never goes down, and doubles as the promotion gate's own indicator |
+
+Someone who had a bad week should be looking at the second one. The app
+says so, because a chart doesn't say it by itself.
+
+### Targets are editable
+
+The working target used to be re-derived from the logs on every render —
+visible, but untouchable. It's now stored state: the adaptation rule
+writes to it after each session, and the user can overwrite it.
+
+That doesn't disable the rule; it changes the *status* of what the rule
+produces from a verdict to a proposal. Same principle as the promotion
+gate and the position in the tree: **the system proposes, the person
+decides.**
+
 ---
 
 ## Game layer
@@ -371,6 +400,7 @@ src/engine/            pure TypeScript, never touches the DOM, needs no LLM
   adaptation.ts        the adaptation rule
   planner.ts           slot templates, pathfinding
   session.ts           resolves the week's template into today's session
+  history.ts           weekly capacity and accumulated volume series
   promotion.ts         volume gate, user-owned position in the tree
   habits.ts            consistency — days shown up, not reps done
   outside.ts           training done outside the program — context, not progress
@@ -409,9 +439,9 @@ committed — if the generation chain breaks, the build fails.
 25 figure poses  ·  total earnable XP 525,335
 ```
 
-**213 tests** — 154 engine tests (unlocking, mastery, adaptation, planner,
+**219 tests** — 154 engine tests (unlocking, mastery, adaptation, planner,
 session resolution, deload, comeback, promotion gate, habits, outside load,
-game systems, program structure) and 59 end-to-end flow tests (calibration
+game systems, program structure) and 65 end-to-end flow tests (calibration
 → session → celebration → every screen, running the real React components
 inside jsdom).
 
@@ -523,7 +553,7 @@ fixed. `docs/YOL_HARITASI.md` has the ordered plan.
 
 ```
 src/engine/     rules — pure TypeScript, no DOM, no network      · 158 tests
-src/ui/         React screens                                    ·  59 tests
+src/ui/         React screens                                    ·  65 tests
 src/data/       generated movement graph — imported by the app
 tools/          Python pipeline: definitions → validation → JSON
 tools/rig/      skeleton math → generated figure poses

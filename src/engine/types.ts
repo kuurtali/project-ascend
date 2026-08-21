@@ -167,6 +167,16 @@ export interface PlayerState {
    * buraya yazan kullanıcıdır. Geri almak da serbest. (D-064)
    */
   trackAt?: Record<string, string>;
+  /**
+   * Hareket başına GEÇERLİ ÇALIŞMA HEDEFİ.
+   *
+   * Hedef eskiden her açılışta kayıtlardan yeniden türetiliyordu; yani
+   * görünür ama dokunulamaz bir sayıydı. Artık açık bir durum: uyarlama
+   * kuralı seans sonunda buraya yazıyor, kullanıcı da istediğinde
+   * üstüne yazabiliyor. Kural iptal olmadı — önerinin statüsü değişti.
+   * (D-067)
+   */
+  targets?: Record<string, number>;
   /** Temel hareket alışkanlıkları — tanım ve işaretler */
   habits?: HabitDef[];
   habitLog?: { date: string; habitId: string }[];

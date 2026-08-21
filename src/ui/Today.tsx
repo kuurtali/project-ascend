@@ -61,6 +61,18 @@ export function Today({ state, onState }: Props) {
   const toDeload = weeksToDeload(state, today);
 
   const [entries, setEntries] = useState<Record<string, Entry>>({});
+  /** Hedefi düzenlenen hareket */
+  const [editing, setEditing] = useState<string | null>(null);
+
+  function setTarget(id: string, raw: string) {
+    const n = Math.round(Number(raw));
+    if (!Number.isFinite(n) || n <= 0) return;
+    const next = { ...state, targets: { ...(state.targets ?? {}), [id]: n } };
+    save(next);
+    onState(next);
+    setEditing(null);
+    try { navigator.vibrate?.(15); } catch { /* geç */ }
+  }
   const [extras, setExtras] = useState<ResolvedExercise[]>([]);
   const [done, setDone] = useState<null | {
     gainedXp: number;
@@ -89,6 +101,12 @@ export function Today({ state, onState }: Props) {
    * RIR 0'dır, reçete ise birkaç sette RIR 2-4 — ikisi aynı sayı olamaz.
    */
   function targetFor(ex: ProgramExercise): number {
+    // Kayıtlı hedef her şeyin önünde: uyarlama kuralı oraya yazıyor,
+    // kullanıcı da üstüne yazabiliyor. Türetme yalnızca henüz hiç
+    // hedef oluşmamışken devreye girer. (D-067)
+    const kayitli = state.targets?.[ex.movementId];
+    if (kayitli != null && kayitli > 0) return kayitli;
+
     const real = realLogs(ex.movementId);
     if (real.length === 0) {
       const cal = state.logs.find(
@@ -145,7 +163,24 @@ export function Today({ state, onState }: Props) {
 
     const levelBefore = levelOf(DB, state.xp);
     const res = recordSession(DB, IDX as never, state, payload, today);
-    onState(res.state);
+
+    // Uyarlama kuralının sonucu artık DURUMA YAZILIYOR. Eskiden hedef
+    // her açılışta yeniden türetiliyordu; görünür ama dokunulamaz bir
+    // sayıydı. Yazılı olunca kullanıcı da değiştirebiliyor.
+    const yeniHedefler = { ...(res.state.targets ?? {}) };
+    for (const p of payload) {
+      const ex = all.find((x) => x.movementId === p.movementId);
+      if (!ex) continue;
+      yeniHedefler[p.movementId] = nextTarget({
+        targetReps: targetFor(ex),
+        achieved: p.values,
+        effort: p.effort,
+        fatigued: heavyBefore(state.outside, today.toISOString().slice(0, 10)) != null,
+      });
+    }
+    const sonrasi = { ...res.state, targets: yeniHedefler };
+    save(sonrasi);
+    onState(sonrasi);
     const levelAfter = levelOf(DB, res.state.xp);
 
     if (res.tierUps.length > 0) {
@@ -370,10 +405,60 @@ export function Today({ state, onState }: Props) {
                   </div>
                 )}
                 <div style={{ fontSize: 12.5, color: 'var(--dim)' }}>
-                  hedef {ex.sets} × {target} {ex.unit}
+                  hedef {ex.sets} ×{' '}
+                  {/* Hedef artık dokunulabilir. Sistem önerir, kullanıcı
+                      üstüne yazar, kural oradan devam eder. (D-067) */}
+                  <button
+                    title="hedefi değiştir"
+                    onClick={() => setEditing(
+                      editing === ex.movementId ? null : ex.movementId,
+                    )}
+                    style={{
+                      background: 'transparent', border: 'none', padding: 0,
+                      font: 'inherit', cursor: 'pointer', color: '#f5c542',
+                      borderBottom: '1px dashed #6b5a1a',
+                    }}
+                  >{target}</button>{' '}
+                  {ex.unit}
                   {ex.rir > 0 && ` · ${ex.rir} tekrar rezerv`}
                   {resolved.isTestDay && ex.role === 'main' && ' · bugün bir seti sonuna götürebilirsin'}
                 </div>
+
+                {editing === ex.movementId && (
+                  <div style={{
+                    display: 'flex', gap: 6, marginTop: 7, alignItems: 'center',
+                  }}>
+                    <input
+                      type="number" inputMode="numeric" autoFocus
+                      defaultValue={target}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setTarget(ex.movementId, (e.target as HTMLInputElement).value);
+                        }
+                      }}
+                      id={`hedef-${ex.movementId}`}
+                      style={{
+                        width: 78, height: 36, borderRadius: 8, textAlign: 'center',
+                        fontSize: 15, background: '#0d1016', color: 'var(--txt)',
+                        border: '1px solid var(--line)',
+                      }}
+                    />
+                    <button
+                      onClick={() => setTarget(
+                        ex.movementId,
+                        (document.getElementById(`hedef-${ex.movementId}`) as
+                          HTMLInputElement | null)?.value ?? '',
+                      )}
+                      style={{
+                        ...chip, borderColor: '#f5c542', color: '#f5c542',
+                        padding: '7px 12px',
+                      }}
+                    >kaydet</button>
+                    <span style={{ fontSize: 10.5, color: 'var(--dim2)', lineHeight: 1.4 }}>
+                      senin sayın kalıcı olur, kural buradan devam eder
+                    </span>
+                  </div>
+                )}
                 {ex.why && (
                   <div style={{
                     fontSize: 11.5, color: 'var(--dim2)', marginTop: 4,

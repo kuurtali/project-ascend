@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml/badge.svg)](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml)
 [![Lisans: MIT](https://img.shields.io/badge/lisans-MIT-blue.svg)](LICENSE)
-![Test](https://img.shields.io/badge/test-213-brightgreen)
+![Test](https://img.shields.io/badge/test-219-brightgreen)
 ![Hareket](https://img.shields.io/badge/hareket-197-orange)
 ![Sunucu](https://img.shields.io/badge/sunucu-yok-lightgrey)
 
@@ -234,6 +234,35 @@ gösterdiği şey **gün**, işaret sayısı değil:
 - **Kademeye ve XP'ye girmez.** İşaretlemek tekrar üretmez, ağaç yalan
   söylemesin. Program dışı yük kaydıyla aynı ilke: bağlam, ilerleme değil.
 
+### Mesafeyi değil, gelişimi görmek
+
+En baştaki listede insanların bırakma sebeplerinden ikincisi
+**ilerlediğini görememek**ti — ve uygulama bunu uzun süre yarım çözdü.
+Bir sonraki kademeye ne kadar kaldığını gösteriyordu; seni oraya getiren
+eğriyi hiç göstermedi. Kullanıcının kendi cümlesi: *"gelişiyor mu
+anlamadım."*
+
+İlerleme ekranı artık izlenen her hareket için iki seri çiziyor ve
+ikisi bilerek farklı şey ölçüyor:
+
+| | |
+|---|---|
+| **Kapasite** | haftalık en iyi tek set. Dalgalanır — hastalık, yorgunluk, ölçüm gürültüsü. Önemli olan eğimi |
+| **Emek** | biriken hacim. Asla düşmez, ve terfi kapısının da göstergesi |
+
+Kötü bir hafta geçirenin bakması gereken ikincisi. Bunu ekranda da
+yazıyoruz, çünkü grafiğin kendisi söylemiyor.
+
+### Hedef artık dokunulabilir
+
+Çalışma hedefi her açılışta kayıtlardan yeniden türetiliyordu — görünür
+ama dokunulamaz bir sayı. Artık kayıtlı bir durum: uyarlama kuralı her
+seanstan sonra oraya yazıyor, kullanıcı da üstüne yazabiliyor.
+
+Bu kuralı iptal etmiyor; kuralın ürettiği şeyin **statüsünü** hükümden
+öneriye çeviriyor. Terfi kapısıyla ve ağaçtaki konumla aynı ilke:
+**sistem önerir, kişi karar verir.**
+
 ---
 
 ## Oyun katmanı
@@ -313,9 +342,9 @@ zinciri bozulursa derleme kırılır.
 25 figür pozu ·   toplam kazanılabilir XP 525.335
 ```
 
-**213 test** — 154 motor testi (kilit, mastery, uyarlama, planner, seans
+**219 test** — 154 motor testi (kilit, mastery, uyarlama, planner, seans
 çözümleme, deload, geri dönüş, dış yük, oyun sistemleri, program yapısı)
-ve 59 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
+ve 65 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
 ekranlar; gerçek React bileşenleri jsdom içinde çalışıyor).
 
 Program testleri yapıyı koruyor: iki sert gün arka arkaya gelemez, hafif

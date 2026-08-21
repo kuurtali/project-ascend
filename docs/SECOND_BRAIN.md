@@ -4000,6 +4000,38 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-067 · 2026-08-21 · Son plan uygulandı: görünürlük, kilit, dokunulabilir hedef**
+
+`docs/SON_PLAN.md`'deki A, B ve C maddeleri yapıldı. Üçü de aynı boşluğu
+kapatıyor: sistem doğru şeyi yapıyordu ama **kullanıcı bunu göremiyordu.**
+
+**A · İlerleme grafiği.** İzlenen her hareket için iki seri: haftalık en
+iyi tek set (KAPASİTE) ve biriken hacim (EMEK). Bilerek ayrı eksenlerde
+ve yan yana — farklı birimler, farklı davranışlar. Kapasite dalgalanır;
+hacim asla düşmez. Kötü bir hafta geçirenin bakması gereken ikincisi ve
+bunu ekranda da yazıyoruz, çünkü grafik kendi başına söylemiyor.
+
+Kütüphane eklenmedi. Ağaç zaten elde yazılmış SVG; grafik için 40 KB'lık
+bir bağımlılık, çevrimdışı açılışı uzatmaktan başka işe yaramazdı.
+
+**B · Kalibrasyon özeti.** "Değerleri girince de bir şey olmamış"
+şikâyetinin kalan yarısı. D-064 ölçümün **etkisini** düzeltmişti;
+görünürlüğü hâlâ yoktu, çünkü kullanıcı sessizce Bugün ekranına
+atılıyordu. Artık ölçüm bitince: kaç düğüm açıldı, rütbe nereye oturdu,
+ilk seansın hedefleri ne oldu. Bir de neden hedeflerin ölçümün ALTINDA
+olduğu yazıyor — ölçüm tek sette RIR 0, reçete birkaç sette rezervli.
+
+**C · Hedef dokunulabilir oldu.** Çalışma hedefi her açılışta kayıtlardan
+yeniden türetiliyordu: görünür ama dokunulamaz bir sayı. Artık kayıtlı
+bir durum (`state.targets`) — uyarlama kuralı her seanstan sonra oraya
+yazıyor, kullanıcı da üstüne yazabiliyor.
+
+Bu kuralı iptal etmiyor, kuralın ürettiği şeyin **statüsünü** değiştiriyor:
+hükümden öneriye. `trackAt` (D-064) ve terfi kapısıyla aynı ilke, ve artık
+üçü de tutarlı: **sistem önerir, kişi karar verir.**
+
+Şema v6. 219 test.
+
 **D-066 · 2026-08-20 · Ağaç salt okunur haritadan çalışma yüzeyine döndü**
 
 Kullanıcının cümlesi şuydu: *"ağaç üzerinden x tane y yaptım, sıradakine

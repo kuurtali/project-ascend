@@ -17,7 +17,10 @@
 import { useEffect, useRef, useState } from 'react';
 import dbJson from '../data/movements.json';
 import type { MovementDatabase, PlayerState } from '../engine/types';
-import { indexMovements } from '../engine/mastery';
+import { indexMovements, isOpen } from '../engine/mastery';
+import { rankOf } from '../engine/game';
+import { resolveDay } from '../engine/session';
+import { WEEK } from '../program';
 import { recordSession } from '../storage';
 import { Figure } from './figure/Figure';
 
@@ -57,6 +60,8 @@ export function Calibrate({ state, onDone }: {
 }) {
   const [vals, setVals] = useState<Record<string, string>>({});
   const [i, setI] = useState(0);
+  /** Ölçüm bitti, özet gösteriliyor */
+  const [sonuc, setSonuc] = useState<PlayerState | null>(null);
 
   const probes = PROBES.filter((p) => {
     const mv = IDX.get(p.id);
@@ -81,17 +86,29 @@ export function Calibrate({ state, onDone }: {
 
     if (entries.length === 0) { onDone({ ...state, calibrated: true }); return; }
 
+
     // 'calibration' işareti şart: bu tek setlik bir MAKSİMUM, tamamlanmış
     // bir seans değil. İşaretlenmezse uyarlama kuralı "hedefi tuttu, +1"
     // diyor ve ertesi günün hedefi maksimumun üstüne çıkıyor.
     const res = recordSession(DB, IDX as never, state, entries, new Date(), 'calibration');
-    onDone({ ...res.state, calibrated: true });
+    setSonuc({ ...res.state, calibrated: true });
   }
 
   // Ölçülecek hareket kalmadıysa çık. Render sırasında değil, EFFECT'te —
   // render içinde üst bileşenin state'ini güncellemek React'te hatadır.
   const empty = !mv || !cur;
-  useEffect(() => { if (empty) finish(); });
+  useEffect(() => { if (empty && !sonuc) finish(); });
+
+  /**
+   * ÖZET EKRANI
+   *
+   * Kullanıcının şikâyeti şuydu: "değerleri girince de bir şey olmamış."
+   * Ölçüm gerçekte çok şey değiştiriyordu — ağaç açılıyor, rütbe
+   * oturuyor, hedefler ölçümden türüyor — ama kullanıcı sessizce Bugün
+   * ekranına atıldığı için hiçbiri görünmüyordu. Etkiyi düzeltmek
+   * yetmedi; GÖRÜNÜRLÜĞÜ de düzeltmek gerekti. (D-067)
+   */
+  if (sonuc) return <Ozet state={sonuc} onDone={onDone} />;
 
   if (empty) return null;
 
@@ -168,6 +185,102 @@ export function Calibrate({ state, onDone }: {
       }}>
         atla — sıfırdan başlayayım
       </button>
+    </div>
+  );
+}
+
+function Ozet({ state, onDone }: {
+  state: PlayerState;
+  onDone: (s: PlayerState) => void;
+}) {
+  const acilan = DB.movements.filter((m) => isOpen(state, m)).length;
+  const rank = rankOf(DB, state);
+  const olculen = Object.values(state.mastery).filter((m) => m.tier);
+
+  const heavy = WEEK.find((d) => d.kind === 'heavy')!;
+  const gun = resolveDay(DB, IDX, state, heavy, state.equipment.includes('pullup-bar'));
+
+  return (
+    <div style={{
+      maxWidth: 440, margin: '0 auto', padding: '22px 18px 40px',
+      minHeight: '100dvh', display: 'flex', flexDirection: 'column',
+    }}>
+      <div style={{ fontSize: 10.5, letterSpacing: '.14em', color: '#5b6376' }}>
+        ÖLÇÜM TAMAM
+      </div>
+      <h2 style={{ fontSize: 24, fontWeight: 500, margin: '6px 0 16px' }}>
+        Ağaç sana göre açıldı
+      </h2>
+
+      <div style={{ display: 'flex', gap: 8 }}>
+        <Kutu buyuk={String(acilan)} kucuk="AÇIK DÜĞÜM" renk="#22d3ee" />
+        <Kutu buyuk={String(olculen.length)} kucuk="KADEME" renk="#f5c542" />
+      </div>
+
+      <div style={{
+        background: 'var(--panel)', border: '1px solid var(--line)',
+        borderRadius: 12, padding: '11px 13px', marginTop: 10,
+      }}>
+        <div style={{ fontSize: 10, letterSpacing: '.09em', color: '#5b6376' }}>
+          RÜTBE
+        </div>
+        <div style={{ fontSize: 17, fontWeight: 500, marginTop: 3 }}>
+          {rank.label}
+        </div>
+        <div style={{ fontSize: 11.5, color: 'var(--dim)', marginTop: 3 }}>
+          Beginner I değil — girdiğin sayılar seni gerçek yerine oturttu.
+        </div>
+      </div>
+
+      <div style={{
+        background: 'var(--panel)', border: '1px solid var(--line)',
+        borderRadius: 12, padding: '11px 13px', marginTop: 10,
+      }}>
+        <div style={{ fontSize: 10, letterSpacing: '.09em', color: '#5b6376' }}>
+          İLK SEANSININ HEDEFLERİ
+        </div>
+        <div style={{
+          fontSize: 11.5, color: 'var(--dim)', margin: '4px 0 8px', lineHeight: 1.5,
+        }}>
+          Ölçüm tek sette, maksimuma yakın. Reçete birkaç sette ve rezervli,
+          o yüzden bu sayılar ölçümünün altında — öyle olmalı.
+        </div>
+        {gun.exercises.slice(0, 6).map((ex) => (
+          <div key={ex.movementId} style={{
+            display: 'flex', justifyContent: 'space-between',
+            fontSize: 13, padding: '4px 0',
+            borderBottom: '1px solid var(--line)',
+          }}>
+            <span>{ex.label}</span>
+            <span style={{ color: '#f5c542' }}>
+              {ex.sets} × {ex.startTarget} {ex.unit}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ flex: 1, minHeight: 14 }} />
+
+      <button onClick={() => onDone(state)} style={{
+        height: 52, borderRadius: 12, border: 'none', cursor: 'pointer',
+        background: '#f5c542', color: '#0b0d12', fontSize: 15.5, fontWeight: 600,
+      }}>Başlayalım</button>
+    </div>
+  );
+}
+
+function Kutu({ buyuk, kucuk, renk }: {
+  buyuk: string; kucuk: string; renk: string;
+}) {
+  return (
+    <div style={{
+      flex: 1, background: 'var(--panel)', border: '1px solid var(--line)',
+      borderRadius: 12, padding: '13px 12px', textAlign: 'center',
+    }}>
+      <div style={{ fontSize: 27, fontWeight: 600, color: renk }}>{buyuk}</div>
+      <div style={{ fontSize: 9.5, letterSpacing: '.08em', color: '#5b6376' }}>
+        {kucuk}
+      </div>
     </div>
   );
 }
