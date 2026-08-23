@@ -4037,7 +4037,10 @@ iz yok. Tam veri şekli dört ekranda çökmeden render edildi. Dolayısıyla ve
 bozukluğu kanıtlanmadı; en olası sınıf güncelleme anındaki eski istemci/SW
 uyuşmazlığıdır. Hata ekranı teknik ayrıntıyı kopyalar ve veri/önbellek silmeden
 SW güncellemesini yoklayıp yeniden başlatır. Göç son sınırda eksik koleksiyon
-alanlarını normalize eder. Şema v7. 224 test.
+alanlarını normalize eder. Hata ekranının indirdiği ham state ile normal
+`{ state }` zarfı aynı içe aktarma yolunda kabul edilir; kurtarma dosyasının
+yalnız indirilebilir ama geri yüklenemez olması böylece kapandı. Şema v7.
+225 test.
 
 **Bedeli:** İkinci program modu test ve belge yükünü büyütür; 3 yeni düğüm
 mastery eşiklerinin ileride alan verisiyle yeniden doğrulanmasını gerektirir.

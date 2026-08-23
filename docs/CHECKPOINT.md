@@ -55,7 +55,10 @@ OKUMA SIRASI:
   guncelleme anindaki eski sekme/service-worker render uyusmazligi. Bir daha
   olursa teknik ayrinti artik tek dokunusla korunuyor.
 
-  DOGRULAMA: 200 hareket / 22 boss / 0 hata / 0 uyari; 224/224 test;
+  KURTARMA TAMAMLAMA: ErrorBoundary ham state indiriyordu, Ayarlar yalniz
+  zarflanmis normal yedegi kabul ediyordu. importJson iki formati da aliyor.
+
+  DOGRULAMA: 200 hareket / 22 boss / 0 hata / 0 uyari; 225/225 test;
   tsc temiz; vite build temiz; 390px telefon gorunumu gozle incelendi.
 
 KOD DURUMU:

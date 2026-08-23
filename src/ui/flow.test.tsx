@@ -17,7 +17,7 @@ import { useState } from 'react';
 
 import dbJson from '../data/movements.json';
 import type { MovementDatabase, PlayerState } from '../engine/types';
-import { DEFAULT_STATE, migrate, SCHEMA_VERSION } from '../storage';
+import { DEFAULT_STATE, importJson, migrate, SCHEMA_VERSION } from '../storage';
 import { Calibrate } from './Calibrate';
 import { Today } from './Today';
 import { Tree } from './Tree';
@@ -707,5 +707,17 @@ describe('ev rutini ve hareket göstergesi', () => {
     expect(screen.getAllByText('BAŞLA ↔ BİTİR')).toHaveLength(7);
     expect(container.querySelectorAll('[aria-label="çalışan bölgeler"]')).toHaveLength(7);
     expect(screen.queryByText('TEMEL HAREKETLER')).toBeNull();
+  });
+});
+
+describe('kurtarma dosyası', () => {
+  it('hata ekranının indirdiği ham state Ayarlardan geri yüklenebilir', () => {
+    const s = fresh();
+    s.xp = 45;
+    s.calibrated = true;
+    const restored = importJson(JSON.stringify(s));
+    expect(restored?.xp).toBe(45);
+    expect(restored?.calibrated).toBe(true);
+    expect(restored?.schemaVersion).toBe(SCHEMA_VERSION);
   });
 });

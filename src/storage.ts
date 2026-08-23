@@ -228,10 +228,17 @@ export function markExported(state: PlayerState, today = new Date()): PlayerStat
 
 export function importJson(text: string): PlayerState | null {
   try {
-    const o = JSON.parse(text) as { state?: Partial<PlayerState> };
-    if (!o.state) return null;
+    const o = JSON.parse(text) as { state?: Partial<PlayerState> } & Partial<PlayerState>;
+    // Normal yedek `{ v, exportedAt, state }` zarfındadır. ErrorBoundary
+    // ise parse etmeden HAM state indirir; asıl kurtarma dosyasının da
+    // Ayarlar → Yedek yükle ile geri alınabilmesi gerekir.
+    const candidate = o.state ?? o;
+    if (!candidate || typeof candidate !== 'object'
+        || !Array.isArray(candidate.logs)
+        || typeof candidate.mastery !== 'object'
+        || !Array.isArray(candidate.equipment)) return null;
     // İçe aktarılan kayıt eski sürüm olabilir — aynı göç yolundan geçir
-    return migrate(o.state);
+    return migrate(candidate);
   } catch {
     return null;
   }

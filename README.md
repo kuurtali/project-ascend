@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml/badge.svg)](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![Tests](https://img.shields.io/badge/tests-224-brightgreen)
+![Tests](https://img.shields.io/badge/tests-225-brightgreen)
 ![Movements](https://img.shields.io/badge/movements-200-orange)
 ![No backend](https://img.shields.io/badge/backend-none-lightgrey)
 
@@ -450,9 +450,9 @@ committed — if the generation chain breaks, the build fails.
 28 figure poses  ·  total earnable XP 526,460
 ```
 
-**224 tests** — 157 engine tests (unlocking, mastery, adaptation, planner,
+**225 tests** — 157 engine tests (unlocking, mastery, adaptation, planner,
 session resolution, deload, comeback, promotion gate, habits, outside load,
-game systems, program structure) and 67 end-to-end flow tests (calibration
+game systems, program structure) and 68 end-to-end flow tests (calibration
 → session → celebration → every screen, running the real React components
 inside jsdom).
 
@@ -564,7 +564,7 @@ fixed. `docs/YOL_HARITASI.md` has the ordered plan.
 
 ```
 src/engine/     rules — pure TypeScript, no DOM, no network      · 157 tests
-src/ui/         React screens                                    ·  67 tests
+src/ui/         React screens                                    ·  68 tests
 src/data/       generated movement graph — imported by the app
 tools/          Python pipeline: definitions → validation → JSON
 tools/rig/      skeleton math → generated figure poses

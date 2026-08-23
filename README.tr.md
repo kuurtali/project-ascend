@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml/badge.svg)](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml)
 [![Lisans: MIT](https://img.shields.io/badge/lisans-MIT-blue.svg)](LICENSE)
-![Test](https://img.shields.io/badge/test-224-brightgreen)
+![Test](https://img.shields.io/badge/test-225-brightgreen)
 ![Hareket](https://img.shields.io/badge/hareket-200-orange)
 ![Sunucu](https://img.shields.io/badge/sunucu-yok-lightgrey)
 
@@ -350,9 +350,9 @@ zinciri bozulursa derleme kırılır.
 28 figür pozu ·   toplam kazanılabilir XP 526.460
 ```
 
-**224 test** — 157 motor testi (kilit, mastery, uyarlama, planner, seans
+**225 test** — 157 motor testi (kilit, mastery, uyarlama, planner, seans
 çözümleme, deload, geri dönüş, dış yük, oyun sistemleri, program yapısı)
-ve 67 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
+ve 68 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
 ekranlar; gerçek React bileşenleri jsdom içinde çalışıyor).
 
 Program testleri yapıyı koruyor: iki sert gün arka arkaya gelemez, hafif

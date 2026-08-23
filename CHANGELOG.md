@@ -25,7 +25,10 @@ The crash recovery screen can copy its technical details and check the service
 worker for an update before reloading. Migration now normalizes optional
 collections even when a file claims a current schema version but omits fields.
 
-Schema v7. 200 movements. 224 tests.
+Raw recovery files downloaded by the error boundary can now be restored through
+Settings; previously only the normal wrapped export format was accepted.
+
+Schema v7. 200 movements. 225 tests.
 
 ---
 
