@@ -8,7 +8,7 @@
 import { describe, expect, it } from 'vitest';
 import db from '../data/movements.json';
 import type { MovementDatabase, PlayerState, SetLog } from './types';
-import { MENU, WEEK } from '../program';
+import { dayForState, HOME_EOD, MENU, WEEK } from '../program';
 import {
   balanceScore, equipmentOk, indexMovements, isOpen, isTrainable,
   levelOf, proximity, tierForValue, verifiedTierOf,
@@ -371,6 +371,37 @@ describe('haftalık program — yük dağılımı', () => {
         if (ex.needsBar) expect(ex.altMovementId).toBeTruthy();
       }
     }
+  });
+});
+
+describe('2 günde bir ev rutini', () => {
+  const start = new Date('2026-08-23T09:00:00');
+  const state = emptyState({
+    programMode: 'home-eod', homeRoutineStartedAt: '2026-08-23',
+    equipment: ['floor', 'box', 'band'],
+  });
+
+  it('çalışma ve toparlanma günleri sırayla gelir', () => {
+    expect(dayForState(state, start).kind).toBe('heavy');
+    expect(dayForState(state, new Date('2026-08-24T09:00:00')).kind).toBe('rest');
+    expect(dayForState(state, new Date('2026-08-25T09:00:00')).kind).toBe('heavy');
+  });
+
+  it('posterdeki yedi hareket gerçek veri düğümleridir', () => {
+    const ids = new Set(DB.movements.map((m) => m.id));
+    expect(HOME_EOD.exercises).toHaveLength(7);
+    for (const ex of HOME_EOD.exercises) expect(ids.has(ex.movementId)).toBe(true);
+  });
+
+  it('setler başarısızlığa gitmez ve itiş/çekiş/bacak/gövde dengesi vardır', () => {
+    expect(HOME_EOD.exercises.every((e) => e.rir >= 2)).toBe(true);
+    const cats = new Set(HOME_EOD.exercises.map(
+      (e) => DB.movements.find((m) => m.id === e.movementId)?.category,
+    ));
+    expect([...cats].some((c) => ['push', 'dips'].includes(c ?? ''))).toBe(true);
+    expect(cats.has('pull')).toBe(true);
+    expect(cats.has('legs')).toBe(true);
+    expect(cats.has('core')).toBe(true);
   });
 });
 

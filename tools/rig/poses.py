@@ -80,12 +80,24 @@ P['ROW'] = dict(props=['lowbar'], dur=2.8, frames=[
     solve((40,64), 16, 12, 10, 192, pin=(34,PB-1), flip=-1),
     solve((40,57), 16, 12, 10, 192, pin=(34,PB-1), flip=-1),
 ])
+P['BAND_ROW'] = dict(props=['ground','band'], dur=2.8, frames=[
+    solve((56,30), 90, 0, 0, 270, arm=(180,180), footPin=(56,G), footFlip=-1),
+    solve((56,30), 90, 0, 0, 270, arm=(160,20), footPin=(56,G), footFlip=-1),
+])
+P['FACE_PULL'] = dict(props=['ground','band'], dur=2.8, frames=[
+    solve((56,30), 90, 0, 0, 270, arm=(180,180), footPin=(56,G), footFlip=-1),
+    solve((56,30), 90, 0, 0, 270, arm=(205,335), footPin=(56,G), footFlip=-1),
+])
 
 # ── BACAK ───────────────────────────────────────────────────────────
 P['SQUAT'] = dict(props=['ground'], dur=2.8, frames=[
     solve((46,50), 74, 0,0, 258, arm=(6,352), footPin=(48,G), footFlip=-1),
     solve((48,41), 84, 0,0, 264, arm=(30,10),  footPin=(49,G), footFlip=-1),
     solve((50,30), 90, 0,0, 270, arm=(100,95), footPin=(50,G), footFlip=-1),
+])
+P['HINGE'] = dict(props=['ground','band-floor'], dur=3.0, frames=[
+    solve((50,30), 90, 0,0, 270, arm=(100,95), footPin=(50,G), footFlip=-1),
+    solve((35,49), 44, 76,88, 224, arm=(91,88), footPin=(50,G), footFlip=-1),
 ])
 P['PISTOL'] = dict(props=['ground'], dur=3.2, frames=[
     solve((46,50), 74, 0,0, 258, arm=(4,350), footPin=(48,G), footFlip=-1,

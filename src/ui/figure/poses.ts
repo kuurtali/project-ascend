@@ -20,7 +20,7 @@
  */
 
 export type Prop = 'ground' | 'bar' | 'lowbar' | 'parallettes' | 'wall'
-  | 'rope' | 'rings';
+  | 'rope' | 'rings' | 'band' | 'band-floor';
 
 /** Kemik boyları — tüm pozlarda aynı, asla değişmez. */
 export const BONE = {
@@ -176,12 +176,36 @@ const ROW: PoseSet = {
   ],
 };
 
+const BAND_ROW: PoseSet = {
+  props: ['ground', 'band'], dur: 2.8,
+  frames: [
+    { x: 56, y: 30, head: 270, spine: 90, armU: 180, armL: 180, legU: 90, legL: 90 },
+    { x: 56, y: 30, head: 270, spine: 90, armU: 160, armL: 20, legU: 90, legL: 90 },
+  ],
+};
+
+const FACE_PULL: PoseSet = {
+  props: ['ground', 'band'], dur: 2.8,
+  frames: [
+    { x: 56, y: 30, head: 270, spine: 90, armU: 180, armL: 180, legU: 90, legL: 90 },
+    { x: 56, y: 30, head: 270, spine: 90, armU: 205, armL: 335, legU: 90, legL: 90 },
+  ],
+};
+
 const SQUAT: PoseSet = {
   props: ['ground'], dur: 2.8,
   frames: [
     { x: 46, y: 50, head: 258, spine: 74, armU: 6, armL: 352, legU: 46.8, legL: 171.2 },
     { x: 48, y: 41, head: 264, spine: 84, armU: 30, armL: 10, legU: 47.3, legL: 141.2 },
     { x: 50, y: 30, head: 270, spine: 90, armU: 100, armL: 95, legU: 90, legL: 90 },
+  ],
+};
+
+const HINGE: PoseSet = {
+  props: ['ground', 'band-floor'], dur: 3,
+  frames: [
+    { x: 50, y: 30, head: 270, spine: 90, armU: 100, armL: 95, legU: 90, legL: 90 },
+    { x: 35, y: 49, head: 224, spine: 44, armU: 91, armL: 88, legU: 52.3, legL: 146.1 },
   ],
 };
 
@@ -271,6 +295,7 @@ const BY_FAMILY: Record<string, PoseSet> = {
   hang: HANG,
   grip: HANG,
   row: ROW,
+  band_pull: BAND_ROW,
   muscleup: MUSCLEUP,
   dip: DIP,
   front_lever: FRONT_LEVER,
@@ -280,6 +305,7 @@ const BY_FAMILY: Record<string, PoseSet> = {
   core_hold: PLANK,
   squat: SQUAT,
   single_leg: PISTOL,
+  hinge: HINGE,
   balance_arm: BEAR,
   jump_rope: JUMPROPE,
   run: RUN,
@@ -302,6 +328,7 @@ const BY_ID: Record<string, PoseSet> = {
   'knuckle-pushup': PUSHUP,
   'finger-pushup': PUSHUP,
   'bodyweight-squat': SQUAT,
+  'band-face-pull': FACE_PULL,
   'sleep-hygiene': REST,
 };
 

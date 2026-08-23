@@ -44,7 +44,7 @@
  * Sonraki hedefler `engine/adaptation.ts` tarafından kayıttan hesaplanır.
  */
 
-import type { SlotRole } from './engine/types';
+import type { PlayerState, SlotRole } from './engine/types';
 
 export type DayKind = 'heavy' | 'light' | 'rest';
 
@@ -267,6 +267,70 @@ export const WEEK: ProgramDay[] = [
     ropeMinutes: 0, exercises: [],
   },
 ];
+
+/**
+ * 2 GÜNDE BİR TAM VÜCUT EV RUTİNİ
+ *
+ * Kişisel varsayılan değil, seçilebilir genel bir şablon. Bir seansın
+ * ardından bir tam gün boşluk bırakır. Full-body ve split rutinlerin
+ * haftalık hacim eşitlendiğinde benzer sonuç vermesi nedeniyle burada
+ * tercih sürdürülebilirlik lehine yapıldı; bütün setler RIR 2-3'te biter.
+ */
+export const HOME_EOD: ProgramDay = {
+  index: 1,
+  name: 'Ev rutini',
+  kind: 'heavy',
+  focusNote: 'Tam vücut · bir gün çalış, bir gün toparlan. Her sette form bozulmadan 2-3 tekrar rezerv bırak.',
+  ropeMinutes: 0,
+  exercises: [
+    { movementId: 'bodyweight-squat', label: 'Squat', role: 'main',
+      sets: 3, startTarget: 15, rir: 3, unit: 'tekrar',
+      why: 'Diz baskın bacak işi; kalça ve ön bacağı birlikte çalıştırır.' },
+    { movementId: 'pushup', label: 'Şınav', role: 'main',
+      sets: 3, startTarget: 10, rir: 3, unit: 'tekrar',
+      why: 'Yatay itiş; göğüs, omuz ve triceps için temel.' },
+    { movementId: 'band-row', label: 'Band row', role: 'main',
+      sets: 3, startTarget: 12, rir: 3, unit: 'tekrar',
+      why: 'Şınavın yatay çekiş dengesi; sırt ve kürek kontrolü.' },
+    { movementId: 'bench-dip', label: 'Bench dip', role: 'secondary',
+      sets: 2, startTarget: 8, rir: 3, unit: 'tekrar',
+      why: 'İkinci itiş dozu; omuz rahatsızsa atlanır veya menüden çıkarılır.' },
+    { movementId: 'band-face-pull', label: 'Band face pull', role: 'technique',
+      sets: 2, startTarget: 15, rir: 3, unit: 'tekrar',
+      why: 'Arka omuz ve üst sırt; öndeki itiş hacmini dengeler.' },
+    { movementId: 'plank', label: 'Plank', role: 'finisher',
+      sets: 3, startTarget: 35, rir: 2, unit: 'saniye',
+      why: 'Gövdeyi tek parça tutma kapasitesi.' },
+    { movementId: 'band-rdl', label: 'Band Romanian deadlift', role: 'secondary',
+      sets: 3, startTarget: 12, rir: 3, unit: 'tekrar',
+      why: 'Kalça menteşesi; hamstring ve kalçayı squatın eksik bıraktığı açıdan çalıştırır.' },
+  ],
+};
+
+function utcDay(iso: string): number {
+  return Math.floor(new Date(`${iso.slice(0, 10)}T00:00:00Z`).getTime() / 86_400_000);
+}
+
+function localIso(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+/** Seçili programa göre bugünün şablonu. */
+export function dayForState(state: PlayerState, date: Date): ProgramDay {
+  if (state.programMode !== 'home-eod') return dayFor(date);
+  const todayIso = localIso(date);
+  const anchor = state.homeRoutineStartedAt ?? todayIso;
+  const due = Math.max(0, utcDay(todayIso) - utcDay(anchor)) % 2 === 0;
+  if (due) return HOME_EOD;
+  return {
+    index: 2, name: 'Toparlanma günü', kind: 'rest', ropeMinutes: 0,
+    focusNote: 'Ev rutini yarın. Bugün aynı kaslara ek hacim sıkıştırma.',
+    exercises: [],
+  };
+}
 
 /** Menü — canı çekerse ekleyeceği hareketler */
 export const MENU: ProgramExercise[] = [

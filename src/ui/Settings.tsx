@@ -8,7 +8,7 @@
 
 import { useRef, useState } from 'react';
 import dbJson from '../data/movements.json';
-import type { MovementDatabase, PlayerState } from '../engine/types';
+import type { MovementDatabase, PlayerState, ProgramMode } from '../engine/types';
 import { daysSinceExport, exportJson, importJson, markExported, save } from '../storage';
 import { coachReport } from '../engine/report';
 
@@ -34,6 +34,25 @@ export function Settings({ state, onState }: {
       : [...state.equipment, id];
     const next = { ...state, equipment };
     save(next); onState(next);
+  }
+
+  function chooseProgram(mode: ProgramMode) {
+    const next: PlayerState = {
+      ...state,
+      programMode: mode,
+      ...(mode === 'home-eod'
+        ? {
+            homeRoutineStartedAt: state.homeRoutineStartedAt
+              ?? localIso(new Date()),
+            equipment: state.equipment.includes('band')
+              ? state.equipment : [...state.equipment, 'band'],
+          }
+        : {}),
+    };
+    save(next); onState(next);
+    setMsg(mode === 'home-eod'
+      ? '2 günde bir ev rutini seçildi. Bugün ilk gün; direnç bandı ekipmana eklendi.'
+      : 'Beceri haftası seçildi.');
   }
 
   function doExport() {
@@ -126,6 +145,31 @@ export function Settings({ state, onState }: {
           onChange={(e) => e.target.files?.[0] && doImport(e.target.files[0])} />
       </div>
 
+      {/* program seçimi — kişisel planı public depoya varsayılan gömmek
+          yerine kullanıcı açıkça seçer. */}
+      <div style={{ ...card, marginTop: 10 }}>
+        <div style={label}>PROGRAM</div>
+        <p style={{ fontSize: 12, color: 'var(--dim)', margin: '4px 0 8px', lineHeight: 1.5 }}>
+          Beceri haftası ağaca odaklanır. Ev rutini direnç bandıyla tam
+          vücut çalışır ve her seansın ardından bir tam gün boş bırakır.
+        </p>
+        <div style={{ display: 'flex', gap: 7 }}>
+          {([
+            ['skill-week', 'Beceri haftası'],
+            ['home-eod', '2 günde bir ev'],
+          ] as [ProgramMode, string][]).map(([mode, text]) => {
+            const on = (state.programMode ?? 'skill-week') === mode;
+            return (
+              <button key={mode} onClick={() => chooseProgram(mode)} style={{
+                ...btn, borderColor: on ? '#f5c542' : 'var(--line)',
+                color: on ? '#f5c542' : 'var(--dim)',
+                background: on ? '#2a220c' : 'transparent',
+              }}>{on ? '✓ ' : ''}{text}</button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* ekipman */}
       <div style={{ ...card, marginTop: 10 }}>
         <div style={label}>EKİPMANIM</div>
@@ -200,6 +244,13 @@ export function Settings({ state, onState }: {
       )}
     </div>
   );
+}
+
+function localIso(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 function Row({ k, v }: { k: string; v: string }) {

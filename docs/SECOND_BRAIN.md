@@ -4000,6 +4000,50 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-068 · 2026-08-23 · Seçilebilir 2-günde-bir ev rutini; kişisel varsayılan değil**
+
+Kullanıcı evde iki günde bir yedi hareketlik tam vücut rutini uygulayacağını
+söyledi. İçerik kısmen sistemdeydi: şınav, dips ve squat alışkanlık katmanında
+iki günde birdi; fakat row, face pull, plank ve band RDL ile birlikte gerçek
+bir seans nesnesi yoktu. İşaretlemek de tekrar üretmediği için alışkanlık
+şeridini yedi harekete genişletmek ağacı beslemeyecekti.
+
+Karar: Ayarlar'dan açıkça seçilen `home-eod` program modu. Seçildiği gün ilk
+seans başlar; sonra bir gün çalışma, bir gün toparlanma. Eski kullanıcı
+`skill-week` programında kalır. Bu ayrım D-058'i koruyor: public depoda genel
+bir şablon bulunur, belirli kişinin programı varsayılan duruma gömülmez.
+Bu moddayken temel alışkanlık şeridi gizlenir; aynı squat/şınav/dips'i hem
+işaretleyip hem seans olarak kaydetmek iki ayrı doğruluk üretirdi.
+
+Poster doğrudan kopyalanmadı. Tüm vücut iki günde bir yapıldığı için çoğu
+hareket 3 set, aynı seansta ikinci itiş olan dips ve teknik çekiş face pull
+2 set; bütün dinamik setler RIR 2-3. Gerekçe: sürdürülebilir haftalık hacim,
+başarısızlığa gitmeden kalite ve tam toparlanma günü (FP-2, M-3, M-4).
+
+Üç eksik hareket gerçek düğüm olarak eklendi: `band-row`, `band-face-pull`,
+`band-rdl`. Var olan Australian Row veya Single Leg RDL adlarıyla kaydetmek
+yanlış mastery üretirdi. Yeni dallar dar ekipmanı genel ağacın kapısı yapmıyor;
+bandı olmayan kullanıcı başka boss veya ana zincir kaybetmiyor. Veri 200
+hareket / 239 kenar / 22 boss / 0 hata / 0 uyarı oldu.
+
+Hareket göstergesi artık yalnız animasyon değil: kartta “BAŞLA ↔ BİTİR”,
+çalışan kas rozetleri ve form ipuçları birlikte. Band çizgisi ele bağlı
+animasyon; RDL için ayrı kalça menteşesi pozu var. 390 px telefon görünümü
+gerçek üretim build'iyle gözle incelendi.
+
+Aynı oturumdaki çöküş incelemesi: kurtarma dosyası uygulamanın hata ekranındaki
+indirme düğmesinin çıktısıdır; başka bir GPT'nin proje dosyası olduğuna dair
+iz yok. Tam veri şekli dört ekranda çökmeden render edildi. Dolayısıyla veri
+bozukluğu kanıtlanmadı; en olası sınıf güncelleme anındaki eski istemci/SW
+uyuşmazlığıdır. Hata ekranı teknik ayrıntıyı kopyalar ve veri/önbellek silmeden
+SW güncellemesini yoklayıp yeniden başlatır. Göç son sınırda eksik koleksiyon
+alanlarını normalize eder. Şema v7. 224 test.
+
+**Bedeli:** İkinci program modu test ve belge yükünü büyütür; 3 yeni düğüm
+mastery eşiklerinin ileride alan verisiyle yeniden doğrulanmasını gerektirir.
+**Kaynak ilkeler:** Beginner First · Visible Progress · Consistency Wins ·
+Quality Before Quantity · Science Before Ego · D-058.
+
 **D-067 · 2026-08-21 · Son plan uygulandı: görünürlük, kilit, dokunulabilir hedef**
 
 `docs/SON_PLAN.md`'deki A, B ve C maddeleri yapıldı. Üçü de aynı boşluğu
@@ -4837,4 +4881,4 @@ Bunlar değişirse proje başka bir proje olur, gelişmiş bir versiyonu olmaz.
 değerini kaybeder. Her oturum `_CHECKPOINT.txt` güncellemesiyle biter;
 her kalıcı karar `29_DecisionHistory`'ye girer.*
 
-**Son güncelleme: 2026-08-15**
+**Son güncelleme: 2026-08-23**

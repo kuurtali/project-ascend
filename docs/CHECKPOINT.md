@@ -31,6 +31,33 @@ OKUMA SIRASI:
 --------------------------------------------------------------------------------
 !!! EN SON DURUM — 2026-07-26: UYGULAMA KODU BASLADI !!!
 --------------------------------------------------------------------------------
+!!! 2 GUNDE BIR EV RUTINI + KURTARMA SAGLAMLASTIRMA - 2026-08-23 (D-068)
+
+  KULLANICI ISTEGI: Evde iki gunde bir squat, sinav, band row, dips,
+  face pull, plank ve band RDL yapacak. Uygulamada bunlar tek seans olarak
+  yoktu; hareket gostergesi de yeterince acik degildi.
+
+  UYGULANAN:
+    program.ts          HOME_EOD + dayForState(): bir gun calis / bir gun dinlen
+    Settings.tsx        PROGRAM secimi; eski kullanici skill-week'te kalir
+    movements_data.py   band-row, band-face-pull, band-rdl (toplam 200 node)
+    figure/             band cekisi + hinge pozlari, banda bagli animasyon
+    Today.tsx           BASLA/BITIR etiketi + calisan kas rozetleri
+    ErrorBoundary.tsx   teknik ayrintiyi kopyala + SW guncelle/yukle
+    storage.ts          sema v7; eksik opsiyonel alanlari son sinirda normalize et
+
+  NEDEN KISISEL VARSAYILAN DEGIL: Depo public ve D-058 siniri gecerli.
+  Genel secilebilir program depoda; kimin kullandigi ve yerel kayit depoda degil.
+
+  COKUS TESHISI: Kurtarma JSON'u GPT'nin olusturdugu proje dosyasi degil,
+  ErrorBoundary'deki indirme dugmesinin tarayici ciktisi. Tam veri sekli dort
+  ekranda tekrar test edildi ve cokmedi; veri bozuk degil. En olasi sinif,
+  guncelleme anindaki eski sekme/service-worker render uyusmazligi. Bir daha
+  olursa teknik ayrinti artik tek dokunusla korunuyor.
+
+  DOGRULAMA: 200 hareket / 22 boss / 0 hata / 0 uyari; 224/224 test;
+  tsc temiz; vite build temiz; 390px telefon gorunumu gozle incelendi.
+
 KOD DURUMU:
   src/engine/        MOTOR KATMANI — bitti, 35/35 test geciyor
     types.ts         tipler, slot rolleri, kisit modeli

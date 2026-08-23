@@ -25,7 +25,7 @@ const KEY = 'ascend.state.v1';
  * gördüğünde fark eder, o da genelde çok geçtir. Sürüm alanı,
  * "ne zaman ne yapılacağını" belirsizlikten çıkarır.
  */
-export const SCHEMA_VERSION = 6;
+export const SCHEMA_VERSION = 7;
 
 export const DEFAULT_STATE: PlayerState = {
   xp: 0,
@@ -94,9 +94,25 @@ export function migrate(raw: Partial<PlayerState>): PlayerState {
     s = { ...s, targets: s.targets ?? {} };
   }
 
+  // v6 → v7: program seçimi eklendi. Eski kullanıcı sessizce aynı
+  // beceri haftasında kalır; ev rutini yalnızca açık seçimle etkinleşir.
+  if (from < 7) {
+    s = { ...s, programMode: s.programMode ?? 'skill-week' };
+  }
+
   return {
     ...structuredClone(DEFAULT_STATE),
     ...s,
+    // Sürüm numarası güncel göründüğü hâlde alanı eksik/bozuk bir yedek
+    // gelebilir. Şema sürümüne körü körüne güvenmek render çökmesine yol
+    // açar; koleksiyon alanlarını son sınırda normalize et.
+    bodyweight: s.bodyweight ?? [],
+    outside: s.outside ?? [],
+    trackAt: s.trackAt ?? {},
+    habitLog: s.habitLog ?? [],
+    focus: s.focus ?? [],
+    targets: s.targets ?? {},
+    programMode: s.programMode ?? 'skill-week',
     schemaVersion: SCHEMA_VERSION,
   };
 }

@@ -14,7 +14,7 @@ import dbJson from '../data/movements.json';
 import type { MovementDatabase, PlayerState, SetLog } from '../engine/types';
 import { indexMovements, levelOf, proximity } from '../engine/mastery';
 import { buildInput, nextTarget, targetFromMax } from '../engine/adaptation';
-import { dayFor, MENU, type ProgramExercise } from '../program';
+import { dayForState, MENU, type ProgramExercise } from '../program';
 import { resolveDay, weeksToDeload, type ResolvedExercise } from '../engine/session';
 import { heavyBefore } from '../engine/outside';
 import { hasBar, recordSession, save } from '../storage';
@@ -47,7 +47,7 @@ type Entry = { values: (number | '')[]; effort?: 'easy' | 'ok' | 'hard' };
 
 export function Today({ state, onState }: Props) {
   const today = new Date();
-  const day = dayFor(today);
+  const day = dayForState(state, today);
   const bar = hasBar(state);
 
   // Şablon "hangi nitelik" der, motor "hangi hareket" der. Terfi ve
@@ -235,10 +235,10 @@ export function Today({ state, onState }: Props) {
         </p>
         {/* Temel hareketler dinlenme gününde de işaretlenir: "2 günde
             bir" aralığı programın sert/hafif ritminden bağımsız. */}
-        <div style={{ marginTop: 14 }}>
+        {state.programMode !== 'home-eod' && <div style={{ marginTop: 14 }}>
           <Habits state={state} onState={(s) => { save(s); onState(s); }}
             today={today} />
-        </div>
+        </div>}
         {/* Dinlenme gününde de lazım — hatta en çok burada. Salon,
             aile seansı ve maç genelde program dışı günlere düşer. */}
         <OutsideCard state={state} onState={(s) => { save(s); onState(s); }}
@@ -318,7 +318,9 @@ export function Today({ state, onState }: Props) {
           yapacağını bilmen lazım, ortasında değil. */}
       <Promote state={state} onState={(s) => { save(s); onState(s); }} today={today} />
 
-      <Habits state={state} onState={(s) => { save(s); onState(s); }} today={today} />
+      {state.programMode !== 'home-eod' && (
+        <Habits state={state} onState={(s) => { save(s); onState(s); }} today={today} />
+      )}
 
       <WeighIn state={state} onState={(s) => { save(s); onState(s); }} today={today} />
 
@@ -363,7 +365,7 @@ export function Today({ state, onState }: Props) {
           <span style={{ color: '#5DCAA5' }}> · Gelecek hafta deload.</span>
         )}
       </p>
-      {!bar && (
+      {state.programMode !== 'home-eod' && !bar && (
         <div style={{ ...card, borderColor: '#4a3d10', background: '#2a220c', fontSize: 12.5 }}>
           Bar henüz yok — çekiş hareketleri alternatifine düştü.
           Ayarlardan barfiksi ekleyince Pull ağacı açılır.
@@ -381,12 +383,17 @@ export function Today({ state, onState }: Props) {
             <div style={{ display: 'flex', gap: 10 }}>
               {mv && (
                 <div style={{
-                  flexShrink: 0, width: 74, height: 74, borderRadius: 10,
+                  flexShrink: 0, width: 82, minHeight: 92, borderRadius: 10,
                   background: '#0d1016', border: '1px solid var(--line)',
-                  display: 'grid', placeItems: 'center', overflow: 'hidden',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center',
+                  justifyContent: 'center', overflow: 'hidden', padding: '3px 0',
                 }}>
-                  <Figure movementId={mv.id} family={mv.family} size={66}
+                  <Figure movementId={mv.id} family={mv.family} size={68}
                           color={ex.role === 'main' ? '#f5c542' : '#c2c8d4'} />
+                  <div style={{
+                    fontSize: 8.5, letterSpacing: '.04em', color: 'var(--dim2)',
+                    marginTop: -2,
+                  }}>BAŞLA ↔ BİTİR</div>
                 </div>
               )}
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -464,6 +471,19 @@ export function Today({ state, onState }: Props) {
                     fontSize: 11.5, color: 'var(--dim2)', marginTop: 4,
                     borderLeft: '2px solid #2b323f', paddingLeft: 7, lineHeight: 1.45,
                   }}>{ex.why}</div>
+                )}
+                {mv && (
+                  <div aria-label="çalışan bölgeler" style={{
+                    display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 6,
+                  }}>
+                    {mv.muscles.slice(0, 4).map((muscle) => (
+                      <span key={muscle} style={{
+                        fontSize: 9.5, padding: '2px 6px', borderRadius: 99,
+                        background: '#17212b', color: '#7dd3fc',
+                        border: '1px solid #223443',
+                      }}>{muscle}</span>
+                    ))}
+                  </div>
                 )}
 
                 {/* Form ipuçları BURADA olmalı — veride vardı ama sadece
@@ -555,7 +575,7 @@ export function Today({ state, onState }: Props) {
         );
       })}
 
-      <div style={{ ...card, marginTop: 8, borderColor: '#1e3a26', background: '#0f2016' }}>
+      {day.ropeMinutes > 0 && <div style={{ ...card, marginTop: 8, borderColor: '#1e3a26', background: '#0f2016' }}>
         <div style={{ ...label, color: '#86efac' }}>İP</div>
         <div style={{ fontSize: 15, marginTop: 2 }}>{day.ropeMinutes} dakika</div>
         <div style={{ fontSize: 12, color: 'var(--dim)', marginTop: 3 }}>
@@ -563,7 +583,7 @@ export function Today({ state, onState }: Props) {
             ? 'Ağır gün. Son 2 dakika double under denemesi.'
             : 'Hafif. Koştuğun sabahların akşamı 3-4 dakikaya indir.'}
         </div>
-      </div>
+      </div>}
 
       {extras.length < MENU.length && (
         <details style={{ ...card, marginTop: 8 }}>

@@ -4,8 +4,8 @@
 
 [![CI](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml/badge.svg)](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml)
 [![Lisans: MIT](https://img.shields.io/badge/lisans-MIT-blue.svg)](LICENSE)
-![Test](https://img.shields.io/badge/test-219-brightgreen)
-![Hareket](https://img.shields.io/badge/hareket-197-orange)
+![Test](https://img.shields.io/badge/test-224-brightgreen)
+![Hareket](https://img.shields.io/badge/hareket-200-orange)
 ![Sunucu](https://img.shields.io/badge/sunucu-yok-lightgrey)
 
 > Kalistenik öğrenmenin haritası — her hareketin bir beceri düğümü olduğu,
@@ -31,11 +31,11 @@ hâli şu:
 
 | | |
 |---|---|
-| **Doğrulanmış DAG** | 197 hareket, 237 ön koşul bağlantısı, maksimum derinlik 11. Python'da elle yazılıyor, 11 doğrulayıcıdan geçiyor (döngü, yetim düğüm, ulaşılamayan boss, artmayan eşik, ekipman şelalesi), JSON olarak üretiliyor. CI her push'ta yeniden üretip commit'lenmiş çıktıyla karşılaştırıyor. |
-| **Deterministik motor** | LLM yok, sunucu yok, ağ yok. `(hareketler, oyuncuDurumu)` alır, yeni durum ya da plan döner. Saf TypeScript, DOM'a hiç dokunmaz, 154 test. |
-| **Üretilmiş figürler** | 197 hareket 25 pozla çiziliyor, ileri kinematikle. Pozları Python rig üretiyor (`tools/rig/`) — önizleme aracıyla uygulama birbirinden ayrışmasın diye. Animasyon SMIL, JS döngüsü yok, pil harcamıyor. |
+| **Doğrulanmış DAG** | 200 hareket, 239 ön koşul bağlantısı, maksimum derinlik 11. Python'da elle yazılıyor, 11 doğrulayıcıdan geçiyor (döngü, yetim düğüm, ulaşılamayan boss, artmayan eşik, ekipman şelalesi), JSON olarak üretiliyor. CI her push'ta yeniden üretip commit'lenmiş çıktıyla karşılaştırıyor. |
+| **Deterministik motor** | LLM yok, sunucu yok, ağ yok. `(hareketler, oyuncuDurumu)` alır, yeni durum ya da plan döner. Saf TypeScript, DOM'a hiç dokunmaz, 157 test. |
+| **Üretilmiş figürler** | 200 hareket 28 pozla çiziliyor, ileri kinematikle. Pozları Python rig üretiyor (`tools/rig/`) — önizleme aracıyla uygulama birbirinden ayrışmasın diye. Animasyon SMIL, JS döngüsü yok, pil harcamıyor. |
 | **Yerel-öncelikli** | `localStorage`, sürümlü şema, veri silmeyen tek yönlü göçler, tek tuşla dışa aktarma. Servis worker HTML'i bilerek önce ağdan alıyor — cache-first sürüm iki yayını sessizce gizlemişti. |
-| **Asıl çıktı kararlar** | Gerekçeleriyle 67 karar kaydı, yanlış dönüşler dâhil. `docs/SECOND_BRAIN.md`. |
+| **Asıl çıktı kararlar** | Gerekçeleriyle 68 karar kaydı, yanlış dönüşler dâhil. `docs/SECOND_BRAIN.md`. |
 
 ---
 
@@ -55,11 +55,11 @@ değil. Üç şeyden biri:
 
 ## Hareket ağacı
 
-197 hareket, 237 ön koşul bağlantısı, 11 katman derinlik. Kırmızı çerçeveli
+200 hareket, 239 ön koşul bağlantısı, 11 katman derinlik. Kırmızı çerçeveli
 düğümler boss — yolun sonundaki hedefler.
 
 <p align="center">
-  <img src="docs/img/agac.png" width="820" alt="197 düğümlük hareket ağacı">
+  <img src="docs/img/agac.png" width="820" alt="200 düğümlük hareket ağacı">
 </p>
 
 Ağaç elle çizilmedi. `tools/movements_data.py` içindeki tanımlardan üretiliyor,
@@ -154,6 +154,14 @@ Bilerek dışarıda bırakılan: dış seanslar seriye, XP'ye ve kademelere
 girmiyor. Uygulama beceri ağacını takip ediyor; oraya squat girerse
 kademeler yanlış oynar ve sistem yanlış hedef verir. Dış yük
 **bağlamdır, ilerleme değil.**
+
+### 2 günde bir ev rutini
+
+Ayarlar'dan seçilebilen tam vücut şablonu squat, şınav, band row, bench dip,
+band face pull, plank ve band Romanian deadlift içerir. Seçildiği gün başlar;
+bir gün çalışma, bir gün toparlanma ritmiyle ilerler. Kişisel varsayılan
+değildir: eski kullanıcılar beceri haftasında kalır, seçim kullanıcıya aittir.
+Kartlarda başlangıç–bitiş figürü, çalışan kaslar ve RIR hedefi birlikte görünür.
 
 ### Skill Slot — hareketler rol değiştirir
 
@@ -277,9 +285,9 @@ Bu kuralı iptal etmiyor; kuralın ürettiği şeyin **statüsünü** hükümden
 
 ### Figürler
 
-Ekranda 197 hareketin hepsi bir insan siluetiyle çiziliyor ve hareketi
-gerçekten yapıyor. 197 çizim yok — **25 poz** var, hareket ailelerine bağlı
-(veride zaten 26 aile vardı). Yeni hareket eklendiğinde ailesi bir poza düşer,
+Ekranda 200 hareketin hepsi bir insan siluetiyle çiziliyor ve hareketi
+gerçekten yapıyor. 200 çizim yok — **28 poz** var, hareket ailelerine bağlı
+(veride 28 aile var). Yeni hareket eklendiğinde ailesi bir poza düşer,
 çizim borcu birikmez.
 
 İskelet **açı tabanlı** (ileri kinematik): poz = kök nokta + eklem açıları.
@@ -300,7 +308,7 @@ maliyeti sıfıra yakın; telefon antrenman boyunca açık duracak.
 
 ```
 tools/                 Python veri hattı
-  movements_data.py    197 hareketin elle yazılmış tanımı — TEK DOĞRULUK KAYNAĞI
+  movements_data.py    200 hareketin elle yazılmış tanımı — TEK DOĞRULUK KAYNAĞI
   build_db.py          11 doğrulama kontrolü → src/data/movements.json
   make_layout.py       ağaç yerleşimi → src/data/layout.json
   rig/                 figür pozları → src/ui/figure/poses.ts
@@ -337,14 +345,14 @@ zinciri bozulursa derleme kırılır.
 ## Rakamlar
 
 ```
-197 hareket   ·   22 boss   ·   23 başlangıç düğümü   ·   50 aksesuar
-237 bağlantı  ·   12 kategori   ·   26 aile   ·   maks derinlik 11
-25 figür pozu ·   toplam kazanılabilir XP 525.335
+200 hareket   ·   22 boss   ·   24 başlangıç düğümü   ·   52 aksesuar
+239 bağlantı  ·   12 kategori   ·   28 aile   ·   maks derinlik 11
+28 figür pozu ·   toplam kazanılabilir XP 526.460
 ```
 
-**219 test** — 154 motor testi (kilit, mastery, uyarlama, planner, seans
+**224 test** — 157 motor testi (kilit, mastery, uyarlama, planner, seans
 çözümleme, deload, geri dönüş, dış yük, oyun sistemleri, program yapısı)
-ve 65 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
+ve 67 uçtan uca akış testi (kalibrasyon → seans → kutlama → tüm
 ekranlar; gerçek React bileşenleri jsdom içinde çalışıyor).
 
 Program testleri yapıyı koruyor: iki sert gün arka arkaya gelemez, hafif
@@ -380,11 +388,11 @@ python3 render.py strip PUSHUP,PULLUP,DIP && convert -density 120 strip.svg stri
 
 ## Tasarım kararları
 
-Tam liste ve gerekçeler: [`docs/SECOND_BRAIN.md`](docs/SECOND_BRAIN.md) — 65 karar
+Tam liste ve gerekçeler: [`docs/SECOND_BRAIN.md`](docs/SECOND_BRAIN.md) — 68 karar
 kaydı. Öne çıkanlar:
 
 - **Veri elle düzenlenmez.** `movements.json` script tarafından üretilir;
-  197 düğüm elle tutarlı tutulamaz.
+  200 düğüm elle tutarlı tutulamaz.
 - **Ön koşullar VE mantığıyla çalışır.** Basit kural, akıllı kuraldan iyidir.
 - **Kilit açmak için bronz kademe yeterli.** Master şartı ağacı tıkar.
 - **Liderlik tablosu yok.** Kalistenikte acele = sakatlık; karşılaştırma aceleyi

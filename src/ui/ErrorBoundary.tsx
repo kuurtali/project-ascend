@@ -50,6 +50,28 @@ export class ErrorBoundary extends Component<Props, State> {
     }
   };
 
+  /** Hata metni kaybolmasın; destek isteyen kullanıcı tek dokunuşla iletsin. */
+  private copyTechnical = async () => {
+    const text = String(this.state.error?.stack ?? this.state.error ?? 'Bilinmeyen hata');
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('Teknik ayrıntı kopyalandı. Yardım isterken bunu da gönder.');
+    } catch {
+      alert('Kopyalanamadı. Aşağıdaki teknik ayrıntıyı açıp elle seç.');
+    }
+  };
+
+  /** Service worker güncellemesini yokla; veri ve önbellek silmeden yenile. */
+  private restartFresh = async () => {
+    try {
+      const regs = 'serviceWorker' in navigator
+        ? await navigator.serviceWorker.getRegistrations() : [];
+      await Promise.all(regs.map((r) => r.update().catch(() => undefined)));
+    } finally {
+      window.location.reload();
+    }
+  };
+
   render() {
     if (!this.state.error) return this.props.children;
 
@@ -84,12 +106,20 @@ export class ErrorBoundary extends Component<Props, State> {
           Geri dön
         </button>
 
-        <button onClick={() => window.location.reload()} style={{
+        <button onClick={this.restartFresh} style={{
           marginTop: 8, height: 46, borderRadius: 12, cursor: 'pointer',
           border: '1px solid var(--line)', background: 'transparent',
           color: 'var(--dim)', fontSize: 14,
         }}>
-          Uygulamayı yeniden başlat
+          Güncellemeyi kontrol et ve yeniden başlat
+        </button>
+
+        <button onClick={this.copyTechnical} style={{
+          marginTop: 8, height: 40, borderRadius: 10, cursor: 'pointer',
+          border: '1px dashed var(--line)', background: 'transparent',
+          color: '#8b93a5', fontSize: 12.5,
+        }}>
+          Teknik ayrıntıyı kopyala
         </button>
 
         <p style={{

@@ -160,7 +160,8 @@ export function Figure({
   return (
     <svg viewBox="0 0 100 100" width={size} height={size}
          style={{ overflow: 'visible', display: 'block' }}>
-      <Equipment props={ps.props} color={color} ghost={ghost} dur={ps.dur} />
+      <Equipment props={ps.props} color={color} ghost={ghost} dur={ps.dur}
+                 still={still} cyc={cyc} animate={on} />
 
       {/* uzak taraf — derinlik */}
       {seg('fa1', (j) => j.chest, (j) => j.elbow2, 4.6, true)}
@@ -195,8 +196,9 @@ export function Figure({
   );
 }
 
-function Equipment({ props, color, ghost, dur }: {
+function Equipment({ props, color, ghost, dur, still, cyc, animate }: {
   props: readonly Prop[]; color: string; ghost: boolean; dur: number;
+  still: Joints; cyc: Joints[]; animate: boolean;
 }) {
   const c = ghost ? color : '#5b6376';
   return (
@@ -223,7 +225,32 @@ function Equipment({ props, color, ghost, dur }: {
         <circle cx={34} cy={26} r={6} strokeWidth={2.2} />
         <circle cx={66} cy={26} r={6} strokeWidth={2.2} />
       </>}
+      {props.includes('band') && <BandLine from={[4, 50]} hand="hand"
+        still={still} cyc={cyc} animate={animate} dur={dur} />}
+      {props.includes('band-floor') && <>
+        <BandLine from={[43, 90]} hand="hand" still={still} cyc={cyc}
+          animate={animate} dur={dur} />
+        <BandLine from={[57, 90]} hand="hand2" still={still} cyc={cyc}
+          animate={animate} dur={dur} />
+      </>}
     </g>
+  );
+}
+
+function BandLine({ from, hand, still, cyc, animate, dur }: {
+  from: P; hand: 'hand' | 'hand2'; still: Joints; cyc: Joints[];
+  animate: boolean; dur: number;
+}) {
+  return (
+    <line x1={from[0]} y1={from[1]} x2={still[hand][0]} y2={still[hand][1]}
+          stroke="#22c55e" strokeWidth={2.1} strokeDasharray="3 2">
+      {animate && <>
+        <animate attributeName="x2" dur={`${dur}s`} repeatCount="indefinite"
+          values={cyc.map((j) => j[hand][0].toFixed(1)).join(';')} />
+        <animate attributeName="y2" dur={`${dur}s`} repeatCount="indefinite"
+          values={cyc.map((j) => j[hand][1].toFixed(1)).join(';')} />
+      </>}
+    </line>
   );
 }
 

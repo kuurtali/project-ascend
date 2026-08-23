@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import sys, math, os, subprocess
+import sys, math, os, subprocess, tempfile
 sys.path.insert(0,'/tmp/rig')
 from rig import joints, HEAD_R
 from poses import P
@@ -61,6 +61,8 @@ def cycle(name, n):
     return out, d['props']
 
 if __name__ == '__main__':
+    out_dir = os.path.join(tempfile.gettempdir(), 'ascend-rig')
+    os.makedirs(out_dir, exist_ok=True)
     mode = sys.argv[1] if len(sys.argv)>1 else 'sheet'
     if mode == 'sheet':
         names = list(P)
@@ -75,7 +77,9 @@ if __name__ == '__main__':
             out.append(f'<g transform="translate({cx+6},{cy+16})">{body(fs[0],props)}</g>')
             out.append(f'<rect x="{cx+4}" y="{cy+15}" width="104" height="104" fill="none" stroke="#20252f"/>')
         out.append('</svg>')
-        open('/tmp/rig/sheet.svg','w').write(''.join(out))
+        path = os.path.join(out_dir, 'sheet.svg')
+        open(path,'w',encoding='utf-8').write(''.join(out))
+        print(path)
     elif mode == 'strip':
         names = sys.argv[2].split(',')
         N=24; PICK=[0,3,6,9,12,15,18,21]; CELL=112
@@ -88,4 +92,6 @@ if __name__ == '__main__':
                 out.append(f'<g transform="translate({c*CELL+5},{r*(CELL+18)+16})">{body(fs[i],props)}</g>')
                 out.append(f'<rect x="{c*CELL+3}" y="{r*(CELL+18)+15}" width="104" height="104" fill="none" stroke="#20252f"/>')
         out.append('</svg>')
-        open('/tmp/rig/strip.svg','w').write(''.join(out))
+        path = os.path.join(out_dir, 'strip.svg')
+        open(path,'w',encoding='utf-8').write(''.join(out))
+        print(path)

@@ -6,9 +6,9 @@ FAMILY = {
  'pushup':'PUSHUP','explosive_push':'EXPLOSIVE','oa_push':'PUSHUP',
  'vertical_push':'PIKE','handstand':'HANDSTAND','planche':'PLANCHE',
  'pullup':'PULLUP','oa_pull':'PULLUP','hang':'HANG','grip':'HANG',
- 'row':'ROW','muscleup':'MUSCLEUP','dip':'DIP','front_lever':'FRONT_LEVER',
+ 'row':'ROW','band_pull':'BAND_ROW','muscleup':'MUSCLEUP','dip':'DIP','front_lever':'FRONT_LEVER',
  'back_lever':'BACK_LEVER','lsit':'LSIT','leg_raise':'LEG_RAISE',
- 'core_hold':'PLANK','squat':'SQUAT','single_leg':'PISTOL',
+ 'core_hold':'PLANK','squat':'SQUAT','single_leg':'PISTOL','hinge':'HINGE',
  'balance_arm':'BEAR','jump_rope':'JUMPROPE','run':'RUN',
  'mobility':'MOBILITY','recovery':'REST','rings_elite':'PLANCHE',
 }
@@ -17,7 +17,7 @@ BYID = {
  'one-arm-hspu':'HSPU','hollow-hold':'HOLLOW','hollow-rock':'HOLLOW',
  'dead-bug':'HOLLOW','plank':'PLANK','fingertip-pushup':'PUSHUP',
  'knuckle-pushup':'PUSHUP','finger-pushup':'PUSHUP',
- 'bodyweight-squat':'SQUAT','sleep-hygiene':'REST',
+ 'bodyweight-squat':'SQUAT','band-face-pull':'FACE_PULL','sleep-hygiene':'REST',
 }
 ORDER = ['x','y','head','spine','armU','armL','legU','legL',
          'armU2','armL2','legU2','legL2']
@@ -53,7 +53,7 @@ L.append('''/**
  */
 
 export type Prop = 'ground' | 'bar' | 'lowbar' | 'parallettes' | 'wall'
-  | 'rope' | 'rings';
+  | 'rope' | 'rings' | 'band' | 'band-floor';
 
 /** Kemik boyları — tüm pozlarda aynı, asla değişmez. */
 export const BONE = {

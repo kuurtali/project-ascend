@@ -519,11 +519,12 @@ describe('çalıştıklarım listesi', () => {
     expect(screen.queryByTitle('çalıştıklarıma ekle')).toBeNull();
   });
 
-  it('şu ana kadarki tüm şema sürümleri v5e taşınır', () => {
-    for (const v of [1, 2, 3, 4]) {
+  it('şu ana kadarki tüm şema sürümleri güncele taşınır', () => {
+    for (const v of [1, 2, 3, 4, 5, 6]) {
       const m = migrate({ schemaVersion: v, xp: 10 } as never);
       expect(m.schemaVersion).toBe(SCHEMA_VERSION);
       expect(m.focus).toEqual([]);
+      expect(m.programMode).toBe('skill-week');
       expect(m.xp).toBe(10);
     }
   });
@@ -682,5 +683,29 @@ describe('hedef elle değiştirilebilir', () => {
     s.targets = { 'pike-pushup': 42 };
     render(<TodayHost initial={s} />);
     expect(screen.getByText('42')).toBeTruthy();
+  });
+});
+
+describe('ev rutini ve hareket göstergesi', () => {
+  it('Ayarlar seçimi 2 günde bir modu ve bandı açar', () => {
+    let out: PlayerState | null = null;
+    render(<Settings state={fresh()} onState={(s) => { out = s; }} />);
+    fireEvent.click(screen.getByText('2 günde bir ev'));
+    expect((out as unknown as PlayerState).programMode).toBe('home-eod');
+    expect((out as unknown as PlayerState).equipment).toContain('band');
+  });
+
+  it('ev gününde yedi hareket, çalışan bölgeler ve başlangıç-bitiş göstergesi görünür', () => {
+    const s = fresh();
+    s.programMode = 'home-eod';
+    s.homeRoutineStartedAt = '2026-08-03';
+    s.equipment = [...s.equipment, 'band'];
+    const { container } = render(<TodayHost initial={s} />);
+    expect(screen.getByText('Band row')).toBeTruthy();
+    expect(screen.getByText('Band face pull')).toBeTruthy();
+    expect(screen.getByText('Band Romanian deadlift')).toBeTruthy();
+    expect(screen.getAllByText('BAŞLA ↔ BİTİR')).toHaveLength(7);
+    expect(container.querySelectorAll('[aria-label="çalışan bölgeler"]')).toHaveLength(7);
+    expect(screen.queryByText('TEMEL HAREKETLER')).toBeNull();
   });
 });

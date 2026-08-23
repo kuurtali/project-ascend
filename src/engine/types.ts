@@ -136,6 +136,9 @@ export interface HabitDef {
   everyDays: number;
 }
 
+/** Kullanıcının Bugün ekranında izleyeceği genel program şablonu. */
+export type ProgramMode = 'skill-week' | 'home-eod';
+
 export interface PlayerState {
   xp: number;
   equipment: string[];
@@ -186,6 +189,10 @@ export interface PlayerState {
    * kullanıcının kendi kısayolu; sistem buraya bir şey eklemez. (D-066)
    */
   focus?: string[];
+  /** Varsayılan beceri haftası veya seçilebilir 2-günde-bir ev rutini. */
+  programMode?: ProgramMode;
+  /** Ev rutini seçildiği gün; 2 günlük ritmin sabit başlangıç noktası. */
+  homeRoutineStartedAt?: string;
 }
 
 // ─────────────────────────────────────────────── ÇIKTILAR

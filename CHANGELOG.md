@@ -9,6 +9,26 @@ number. There are no releases; the app deploys on every push to `main`.
 
 ---
 
+## 2026-08-23 · Every-other-day home routine
+
+Added an optional seven-movement full-body template for users who prefer a
+simple home schedule: squat, push-up, band row, bench dip, band face pull,
+plank, and band Romanian deadlift. Selecting it in Settings starts a strict
+train/rest alternation; existing users remain on the skill-week program.
+
+Three missing band movements are now first-class graph nodes rather than
+aliases that would corrupt mastery history. Session cards now label the
+start/end motion and show working muscles. New band-pull and hip-hinge poses
+keep the forward-kinematics figure system intact.
+
+The crash recovery screen can copy its technical details and check the service
+worker for an update before reloading. Migration now normalizes optional
+collections even when a file claims a current schema version but omits fields.
+
+Schema v7. 200 movements. 224 tests.
+
+---
+
 ## 2026-08-20 · The user decides
 
 The system was making decisions on the user's behalf, and the reasoning
