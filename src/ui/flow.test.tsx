@@ -733,6 +733,21 @@ describe('ev rutini ve hareket göstergesi', () => {
   });
 });
 
+describe('ağaç sürükleme', () => {
+  it('pointer move güncellemesi bırakma sonrasına kalsa da drag ref null okunmaz', () => {
+    render(<Tree state={fresh()} />);
+    const canvas = screen.getByLabelText('hareket ağacı tuvali');
+
+    expect(() => {
+      act(() => {
+        fireEvent.pointerDown(canvas, { pointerId: 1, clientX: 100, clientY: 100 });
+        fireEvent.pointerMove(canvas, { pointerId: 1, clientX: 125, clientY: 130 });
+        fireEvent.pointerUp(canvas, { pointerId: 1 });
+      });
+    }).not.toThrow();
+  });
+});
+
 describe('kurtarma dosyası', () => {
   it('hata ekranının indirdiği ham state Ayarlardan geri yüklenebilir', () => {
     const s = fresh();

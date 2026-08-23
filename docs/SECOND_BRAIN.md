@@ -4000,6 +4000,26 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-070 · 2026-08-23 · Pointer updater değişebilir ref'i sonradan okuyamaz**
+
+Opera'daki üretim hata kaydı kesin kaynağı verdi: `Cannot read properties of
+null (reading 'vx')`. Ağaç sürüklenirken `pointermove`, React'e fonksiyonel bir
+konum güncellemesi bırakıyor; React bunu aynı olay döngüsünde hemen çalıştırmak
+zorunda değil. Kullanıcı parmağını/fareyi bırakınca `pointerup`, `drag.current`
+değerini `null` yapıyor. Bekleyen updater daha sonra `drag.current.vx` okuyunca
+uygulamanın tamamı hata sınırına düşüyordu.
+
+Karar: olay handler'i updater'ı sıraya koymadan önce drag başlangıcını ve farkı
+yerel sabitlere kopyalar. Updater yalnız bu değişmez snapshot'ı okur; ref'in
+sonradan temizlenmesi güvenlidir. `pointerdown -> pointermove -> pointerup`
+olaylarını tek React batch'inde çalıştıran regresyon testi eklendi. Ağaç tuvali
+ayrıca test ve erişilebilirlik için adlandırıldı. Service-worker önbelleği v13;
+227 test, TypeScript ve üretim derlemesi temiz.
+
+**Bedeli:** İhmal edilebilir iki sayı hesabı ve küçük snapshot; davranış ve veri
+şeması değişmez.
+**Kaynak ilkeler:** Beginner First · M-8 · FP-7.
+
 **D-069 · 2026-08-23 · Ağaç eski kayıt şekline güvenemez; iki sınırda normalize edilir**
 
 Kullanıcı güncellemeden sonra Ağaç'a dokunur dokunmaz kurtarma ekranına

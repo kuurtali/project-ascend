@@ -188,11 +188,16 @@ export function Tree({ state, onState }: {
     drag.current = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y };
   }
   function onPointerMove(e: React.PointerEvent) {
-    if (!drag.current || pinch.current) return;
+    const start = drag.current;
+    if (!start || pinch.current) return;
+    const dx = e.clientX - start.x;
+    const dy = e.clientY - start.y;
     setView((v) => ({
       ...v,
-      x: drag.current!.vx + (e.clientX - drag.current!.x),
-      y: drag.current!.vy + (e.clientY - drag.current!.y),
+      // React bu updater'i pointerup'tan sonra calistirabilir. Bu nedenle
+      // sifirlanabilen ref'i degil, olay anindaki degismez kopyayi kullan.
+      x: start.vx + dx,
+      y: start.vy + dy,
     }));
   }
   function onPointerUp() { drag.current = null; }
@@ -303,6 +308,7 @@ export function Tree({ state, onState }: {
 
       {/* tuval */}
       <div
+        aria-label="hareket ağacı tuvali"
         style={{ flex: 1, overflow: 'hidden', position: 'relative', touchAction: 'none' }}
         onPointerDown={onPointerDown} onPointerMove={onPointerMove}
         onPointerUp={onPointerUp} onPointerCancel={onPointerUp}

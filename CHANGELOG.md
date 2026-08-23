@@ -9,6 +9,16 @@ number. There are no releases; the app deploys on every push to `main`.
 
 ---
 
+## 2026-08-23 · Tree pointer race fixed
+
+Fixed the exact crash reported by the production stack trace: a deferred React
+state updater could read `drag.current.vx` after `pointerup` had cleared that
+ref. Pointer movement now captures an immutable drag snapshot before scheduling
+the update. A regression test batches down, move and up in the same update, and
+the service-worker cache is now v13. 227 tests.
+
+---
+
 ## 2026-08-23 · Tree crash hardening
 
 The tree no longer trusts collection shapes merely because local state claims

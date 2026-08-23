@@ -31,6 +31,22 @@ OKUMA SIRASI:
 --------------------------------------------------------------------------------
 !!! EN SON DURUM — 2026-07-26: UYGULAMA KODU BASLADI !!!
 --------------------------------------------------------------------------------
+!!! AGAC SURUKLEME YARISI KESIN OLARAK DUZELTILDI - 2026-08-23 (D-070)
+
+  KANIT: Opera teknik ayrintisi "Cannot read properties of null (reading 'vx')"
+  ve uretim bundle'indaki Tree pointer handler'ini dogrudan isaret etti.
+
+  KOK NEDEN: pointermove icindeki React state updater'i ertelenebiliyor;
+  pointerup bu sirada drag.current'i null yapiyor, updater daha sonra ref.vx
+  okumaya calisiyordu.
+
+  UYGULANAN:
+    Tree.tsx            updater'dan once degismez drag snapshot'i aliniyor
+    flow.test.tsx       down -> move -> up ayni batch regresyon testi
+    sw.js               cache v13
+
+  DOGRULAMA: 227/227 test; tsc temiz; vite build temiz.
+
 !!! AGAC GECIS COKUSU KAPATILDI - 2026-08-23 (D-069)
 
   BULGU: Canli sekmede Bugun -> Agac gecisi temiz calisti ve kurtarma
