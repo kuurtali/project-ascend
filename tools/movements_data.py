@@ -45,6 +45,13 @@ FAMILIES = {
                  "Ayakları yaklaştırmak hareketi kolaylaştırır."],
         "mistakes": ["Kalçanın sarkması", "Yarım çekiş", "Boynu öne uzatmak"],
     },
+    "band_pull": {
+        "cues": ["Bandı sabit ve kaymaz bir noktaya bağla.",
+                 "Çekişi dirsekle başlat, kürek kemiklerini kontrollü sıkıştır.",
+                 "Dönüşü yavaş yap; bandın seni öne fırlatmasına izin verme."],
+        "mistakes": ["Gövdeyi savurarak momentum almak", "Omuzları kulaklara çekmek",
+                     "Bandı güvensiz bir noktaya sabitlemek"],
+    },
     "pullup": {
         "cues": ["Ölü askıdan başla, önce kürekleri indir.",
                  "Dirsekleri cebe doğru çek, çene çubuğu geçsin.",
@@ -107,6 +114,13 @@ FAMILIES = {
                  "Yavaş iniş, dizi kontrol et.",
                  "İki taraf arası fark %20'yi geçmesin."],
         "mistakes": ["Dizin içe kaçması", "Kontrolsüz düşme", "Zayıf tarafı ihmal etmek"],
+    },
+    "hinge": {
+        "cues": ["Dizleri hafif kır, kalçayı geriye gönder.",
+                 "Sırtı nötr tut; hareket belden değil kalçadan gelsin.",
+                 "Hamstring gerilimini hissedince kalçayı sıkarak doğrul."],
+        "mistakes": ["Bel yuvarlamak", "Squat gibi dizi öne taşımak",
+                     "Bandın gerginliğini hareket boyunca kaybetmek"],
     },
     "handstand": {
         "cues": ["Parmaklarla zemini kavra, denge parmaklardan gelir.",
@@ -247,6 +261,8 @@ M += [
 
 # -------------------------------------------------------------------- PULL
 M += [
+ ("band-row","Resistance Band Row","pull",0,"reps",["band"],[],(8,12,18,25),["sırt","biceps","kürek"],"band_pull",0),
+ ("band-face-pull","Band Face Pull","pull",1,"reps",["band"],["band-row"],(10,15,20,30),["arka omuz","üst sırt","kürek"],"band_pull",0),
  ("passive-hang","Passive Hang","pull",0,"hold",["pullup-bar"],[],(20,40,60,90),["kavrama","omuz"],"hang",0),
  ("active-hang","Active Hang","pull",1,"hold",["pullup-bar"],["passive-hang"],(15,30,45,60),["kürek","sırt","kavrama"],"hang",0),
  ("scapular-pullup","Scapular Pull-up","pull",1,"reps",["pullup-bar"],["active-hang"],(5,10,15,20),["kürek","alt trapez"],"hang",0),
@@ -339,6 +355,7 @@ M += [
 # -------------------------------------------------------------------- LEGS
 M += [
  ("bodyweight-squat","Bodyweight Squat","legs",0,"reps",["floor"],[],(15,25,40,60),["quadriceps","kalça"],"squat",0),
+ ("band-rdl","Band Romanian Deadlift","legs",1,"reps",["band"],["bodyweight-squat"],(10,15,20,30),["hamstring","kalça","bel stabilizatör"],"hinge",0),
  ("calf-raise","Calf Raise","legs",0,"reps",["floor"],[],(15,25,40,60),["baldır"],"squat",0),
  ("sl-calf-raise","Single Leg Calf Raise","legs",1,"reps_side",["floor"],["calf-raise"],(10,15,25,35),["baldır"],"single_leg",0),
  ("split-squat","Split Squat","legs",1,"reps_side",["floor"],["bodyweight-squat"],(10,15,20,25),["quadriceps","kalça"],"single_leg",0),
@@ -440,6 +457,7 @@ ACCESSORY = {
  "elbow-lever","tiger-bend","front-lever-row","planche-pushup","impossible-dip",
  "fingertip-hang","one-arm-hang","ice-cream-maker","dragon-squat","nordic-curl",
  "behind-back-clap","aztec-pushup","tuck-planche-pushup","dragon-flag",
+ "band-face-pull","band-rdl",
 }
 
 CATEGORIES = {

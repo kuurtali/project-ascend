@@ -480,20 +480,20 @@
   }
  ],
  "stats": {
-  "movementCount": 197,
+  "movementCount": 200,
   "bossCount": 22,
-  "rootCount": 23,
+  "rootCount": 24,
   "maxDepth": 11,
   "maxTier": 9,
-  "totalObtainableXp": 525335,
+  "totalObtainableXp": 526460,
   "byCategory": {
    "push": 26,
    "vertical_push": 12,
    "explosive": 8,
    "dips": 10,
-   "pull": 43,
+   "pull": 45,
    "core": 25,
-   "legs": 20,
+   "legs": 21,
    "balance": 16,
    "mobility": 11,
    "conditioning": 11,
@@ -4486,6 +4486,144 @@
    },
    "lore": null,
    "depth": 2
+  },
+  {
+   "id": "band-row",
+   "name": "Resistance Band Row",
+   "category": "pull",
+   "tier": 0,
+   "isBoss": false,
+   "isAccessory": false,
+   "measure": {
+    "type": "reps",
+    "unit": "tekrar",
+    "sets": 3
+   },
+   "equipment": [
+    "band"
+   ],
+   "prerequisites": [],
+   "unlocks": [
+    "band-face-pull"
+   ],
+   "mastery": {
+    "bronze": {
+     "target": 8,
+     "sets": 3,
+     "xp": 30
+    },
+    "silver": {
+     "target": 12,
+     "sets": 3,
+     "xp": 50
+    },
+    "gold": {
+     "target": 18,
+     "sets": 3,
+     "xp": 80
+    },
+    "master": {
+     "target": 25,
+     "sets": 3,
+     "xp": 125
+    }
+   },
+   "xp": {
+    "base": 30,
+    "total": 285
+   },
+   "muscles": [
+    "sırt",
+    "biceps",
+    "kürek"
+   ],
+   "family": "band_pull",
+   "tips": [
+    "Bandı sabit ve kaymaz bir noktaya bağla.",
+    "Çekişi dirsekle başlat, kürek kemiklerini kontrollü sıkıştır.",
+    "Dönüşü yavaş yap; bandın seni öne fırlatmasına izin verme."
+   ],
+   "commonMistakes": [
+    "Gövdeyi savurarak momentum almak",
+    "Omuzları kulaklara çekmek",
+    "Bandı güvensiz bir noktaya sabitlemek"
+   ],
+   "media": {
+    "icon": null,
+    "video": null,
+    "animation": null
+   },
+   "lore": null,
+   "depth": 0
+  },
+  {
+   "id": "band-face-pull",
+   "name": "Band Face Pull",
+   "category": "pull",
+   "tier": 1,
+   "isBoss": false,
+   "isAccessory": true,
+   "measure": {
+    "type": "reps",
+    "unit": "tekrar",
+    "sets": 3
+   },
+   "equipment": [
+    "band"
+   ],
+   "prerequisites": [
+    "band-row"
+   ],
+   "unlocks": [],
+   "mastery": {
+    "bronze": {
+     "target": 10,
+     "sets": 3,
+     "xp": 45
+    },
+    "silver": {
+     "target": 15,
+     "sets": 3,
+     "xp": 70
+    },
+    "gold": {
+     "target": 20,
+     "sets": 3,
+     "xp": 115
+    },
+    "master": {
+     "target": 30,
+     "sets": 3,
+     "xp": 190
+    }
+   },
+   "xp": {
+    "base": 45,
+    "total": 420
+   },
+   "muscles": [
+    "arka omuz",
+    "üst sırt",
+    "kürek"
+   ],
+   "family": "band_pull",
+   "tips": [
+    "Bandı sabit ve kaymaz bir noktaya bağla.",
+    "Çekişi dirsekle başlat, kürek kemiklerini kontrollü sıkıştır.",
+    "Dönüşü yavaş yap; bandın seni öne fırlatmasına izin verme."
+   ],
+   "commonMistakes": [
+    "Gövdeyi savurarak momentum almak",
+    "Omuzları kulaklara çekmek",
+    "Bandı güvensiz bir noktaya sabitlemek"
+   ],
+   "media": {
+    "icon": null,
+    "video": null,
+    "animation": null
+   },
+   "lore": null,
+   "depth": 1
   },
   {
    "id": "passive-hang",
@@ -9809,6 +9947,7 @@
    ],
    "prerequisites": [],
    "unlocks": [
+    "band-rdl",
     "split-squat",
     "walking-lunge",
     "reverse-lunge",
@@ -9865,6 +10004,75 @@
    },
    "lore": null,
    "depth": 0
+  },
+  {
+   "id": "band-rdl",
+   "name": "Band Romanian Deadlift",
+   "category": "legs",
+   "tier": 1,
+   "isBoss": false,
+   "isAccessory": true,
+   "measure": {
+    "type": "reps",
+    "unit": "tekrar",
+    "sets": 3
+   },
+   "equipment": [
+    "band"
+   ],
+   "prerequisites": [
+    "bodyweight-squat"
+   ],
+   "unlocks": [],
+   "mastery": {
+    "bronze": {
+     "target": 10,
+     "sets": 3,
+     "xp": 45
+    },
+    "silver": {
+     "target": 15,
+     "sets": 3,
+     "xp": 70
+    },
+    "gold": {
+     "target": 20,
+     "sets": 3,
+     "xp": 115
+    },
+    "master": {
+     "target": 30,
+     "sets": 3,
+     "xp": 190
+    }
+   },
+   "xp": {
+    "base": 45,
+    "total": 420
+   },
+   "muscles": [
+    "hamstring",
+    "kalça",
+    "bel stabilizatör"
+   ],
+   "family": "hinge",
+   "tips": [
+    "Dizleri hafif kır, kalçayı geriye gönder.",
+    "Sırtı nötr tut; hareket belden değil kalçadan gelsin.",
+    "Hamstring gerilimini hissedince kalçayı sıkarak doğrul."
+   ],
+   "commonMistakes": [
+    "Bel yuvarlamak",
+    "Squat gibi dizi öne taşımak",
+    "Bandın gerginliğini hareket boyunca kaybetmek"
+   ],
+   "media": {
+    "icon": null,
+    "video": null,
+    "animation": null
+   },
+   "lore": null,
+   "depth": 1
   },
   {
    "id": "calf-raise",

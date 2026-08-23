@@ -1,19 +1,19 @@
 PROJECT ASCEND - VERI DOGRULAMA RAPORU
 ============================================================
-Hareket sayisi      : 197
+Hareket sayisi      : 200
 Boss sayisi         : 22
-Kok (baslangic) node: 23
+Kok (baslangic) node: 24
 Maks agac derinligi : 11
-Toplam kazanilabilir XP: 525,335
+Toplam kazanilabilir XP: 526,460
 
 KATEGORI DAGILIMI
   Push              26
   Vertical Push     12
   Explosive          8
   Dips              10
-  Pull              43
+  Pull              45
   Core              25
-  Legs              20
+  Legs              21
   Balance           16
   Mobility          11
   Conditioning      11
