@@ -4000,6 +4000,32 @@ Açık kalan: günlük görev üreteci (§18.7) ve sezon sistemi (§18.12) hâl�
 yalnız tasarımda. Bunlar bilinçli ertelendi — günlük görev, program
 şablonu yerine planlayıcı Bugün ekranına bağlandıktan sonra anlamlı olur.
 
+**D-069 · 2026-08-23 · Ağaç eski kayıt şekline güvenemez; iki sınırda normalize edilir**
+
+Kullanıcı güncellemeden sonra Ağaç'a dokunur dokunmaz kurtarma ekranına
+düştü. Canlı uygulamada aynı geçiş ve indirilen kurtarma verisinin tam şekli
+yeniden denendiğinde çökme oluşmadı; dolayısıyla tek bir bozuk alan veya sabit
+bir render hatası kanıtlanamadı. Ancak inceleme gerçek bir dayanıklılık açığı
+buldu: şema sürümü güncel görünse bile `logs`, `focus`, `mastery` ve
+`constraints` koleksiyonlarının iç şekline güveniliyordu. Ağaç tüm geçmişi
+tek render'da okuduğu için bu varsayımın ilk patladığı ekran oydu.
+
+Karar: kayıt sınırı yalnız eksik alan eklemez; koleksiyonların içini de güvenli
+şekle çevirir. Tek sayıya dönüşmüş eski bir set değeri kaybolmadan `[değer]`
+olur; kullanılamayan kayıt parçaları UI'ya geçirilmez. Ağaç da hot-update
+sırasında göçten geçmemiş eski state'in bir render daha yaşaması ihtimaline
+karşı ikinci bir emniyet katmanı taşır. Güncel şema numarasıyla bozuk
+koleksiyon veren regresyon testi doğrudan Ağaç'ı render eder.
+
+Bu, hatanın kesin kaynağı hakkında kanıtsız bir iddia değildir; kanıtlanan
+zayıf varsayımı kaldıran savunmadır. Service-worker önbelleği v12'ye çıkarıldı.
+226 test, TypeScript ve üretim derlemesi temiz.
+
+**Bedeli:** Göç kodu daha seçici; şekli tamamen tanınmayan kayıt parçası
+uygulamayı düşürmek yerine atlanır. Geçerli sayısal setler korunur.
+**Kaynak ilkeler:** Kullanıcının verisi kullanıcınındır · Beginner First ·
+M-8 · FP-7.
+
 **D-068 · 2026-08-23 · Seçilebilir 2-günde-bir ev rutini; kişisel varsayılan değil**
 
 Kullanıcı evde iki günde bir yedi hareketlik tam vücut rutini uygulayacağını

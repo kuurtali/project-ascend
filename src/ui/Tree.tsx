@@ -49,6 +49,18 @@ export function Tree({ state, onState }: {
   state: PlayerState;
   onState?: (s: PlayerState) => void;
 }) {
+  // Ağaç tüm kayıt geçmişini tek seferde okuyan en ağır ekran. Load sınırı
+  // zaten normalize eder; bu ikinci emniyet kemeri hot-update sırasında eski
+  // state nesnesi bir render daha yaşarsa bütün uygulamanın düşmesini önler.
+  const logs = Array.isArray(state.logs) ? state.logs : [];
+  const mastery = state.mastery && typeof state.mastery === 'object'
+    ? state.mastery : {};
+  const equipment = Array.isArray(state.equipment) ? state.equipment : [];
+  const constraints = Array.isArray(state.constraints)
+    ? state.constraints.filter((c) => Array.isArray(c?.excludedMovements)) : [];
+  const safeState = useMemo(() => ({
+    ...state, logs, mastery, equipment, constraints,
+  }), [state, logs, mastery, equipment, constraints]);
   const [sel, setSel] = useState<string | null>(null);
   const [gps, setGps] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>('all');
@@ -67,13 +79,14 @@ export function Tree({ state, onState }: {
    */
   const volumes = useMemo(() => {
     const m = new Map<string, number>();
-    for (const l of state.logs) {
+    for (const l of logs) {
       if (l.kind === 'calibration') continue;
+      if (!Array.isArray(l.values)) continue;
       m.set(l.movementId,
         (m.get(l.movementId) ?? 0) + l.values.reduce((a, b) => a + b, 0));
     }
     return m;
-  }, [state.logs]);
+  }, [logs]);
 
   /** Düğümden doğrudan kayıt — ağaçtan çalışmanın tek adımı */
   function logHere(id: string) {
@@ -156,18 +169,18 @@ export function Tree({ state, onState }: {
     const vis = new Set<string>();
     for (const mv of DB.movements) {
       let ok = true;
-      if (filter === 'open') ok = isOpen(state, mv);
+      if (filter === 'open') ok = isOpen(safeState, mv);
       else if (filter === 'boss') ok = mv.isBoss;
       else if (filter === 'next') {
-        const missing = mv.prerequisites.filter((p) => !state.mastery[p]?.tier);
-        ok = (isOpen(state, mv) && !state.mastery[mv.id]?.tier) || missing.length === 1;
+        const missing = mv.prerequisites.filter((p) => !mastery[p]?.tier);
+        ok = (isOpen(safeState, mv) && !mastery[mv.id]?.tier) || missing.length === 1;
       }
       if (ok && query) ok = mv.name.toLowerCase().includes(query);
       if (ok && ancestors) ok = ancestors.has(mv.id);
       if (ok) vis.add(mv.id);
     }
     return vis;
-  }, [state, filter, q, ancestors]);
+  }, [safeState, mastery, filter, q, ancestors]);
 
   // ── dokunma / fare
   function onPointerDown(e: React.PointerEvent) {
@@ -215,7 +228,7 @@ export function Tree({ state, onState }: {
   }
 
   const selMv = sel ? IDX.get(sel) : null;
-  const selProx = selMv ? proximity(state, selMv) : null;
+  const selProx = selMv ? proximity(safeState, selMv) : null;
 
   return (
     <div style={{ height: '100dvh', display: 'flex', flexDirection: 'column' }}>
@@ -336,7 +349,7 @@ export function Tree({ state, onState }: {
                 if (!a || !b) return null;
                 const dim = !visible.has(p) || !visible.has(mv.id);
                 const onPath = ancestors?.has(p) && ancestors?.has(mv.id);
-                const active = state.mastery[p]?.tier && isOpen(state, mv);
+                const active = mastery[p]?.tier && isOpen(safeState, mv);
                 return (
                   <path key={`${p}-${mv.id}`}
                     d={`M${a[0] + 85},${a[1]} C${(a[0] + b[0]) / 2},${a[1]} ${(a[0] + b[0]) / 2},${b[1]} ${b[0] - 85},${b[1]}`}
@@ -353,9 +366,9 @@ export function Tree({ state, onState }: {
             {DB.movements.map((mv) => {
               const p = L.pos[mv.id];
               if (!p) return null;
-              const tier = state.mastery[mv.id]?.tier ?? null;
-              const open = isOpen(state, mv);
-              const usable = equipmentOk(state, mv) && !isExcluded(state, mv.id);
+              const tier = mastery[mv.id]?.tier ?? null;
+              const open = isOpen(safeState, mv);
+              const usable = equipmentOk(safeState, mv) && !isExcluded(safeState, mv.id);
               const dim = !visible.has(mv.id);
               const stroke = tier ? TIER_COLOR[tier]!
                 : open ? (DB.categories[mv.category]?.color ?? '#888') : '#242a36';
@@ -437,8 +450,8 @@ export function Tree({ state, onState }: {
               display: 'grid', placeItems: 'center',
             }}>
               <Figure movementId={selMv.id} family={selMv.family} size={84}
-                      color={state.mastery[selMv.id]?.tier
-                        ? TIER_COLOR[state.mastery[selMv.id]!.tier!]
+                      color={mastery[selMv.id]?.tier
+                        ? TIER_COLOR[mastery[selMv.id]!.tier!]
                         : selMv.isBoss ? '#e24b4a' : '#c2c8d4'} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -467,7 +480,7 @@ export function Tree({ state, onState }: {
             </span>
             <span style={pill}>Tier {selMv.tier}</span>
             <span style={pill}>{selMv.measure.sets > 1 ? `${selMv.measure.sets}×` : ''}{selMv.measure.unit}</span>
-            {isExcluded(state, selMv.id) && (
+            {isExcluded(safeState, selMv.id) && (
               <span style={{ ...pill, borderColor: '#e24b4a', color: '#e24b4a' }}>kısıt: listede değil</span>
             )}
           </div>
@@ -510,15 +523,15 @@ export function Tree({ state, onState }: {
             const full = vol >= gate;
             const ready = selMv.unlocks.filter((u) => {
               const n = IDX.get(u);
-              return n && equipmentOk(state, n) && !isExcluded(state, u);
+              return n && equipmentOk(safeState, n) && !isExcluded(safeState, u);
             });
 
             const unit = selMv.measure.unit;
             const nextName = ready.length > 0 ? IDX.get(ready[0]!)?.name : null;
-            const blockers = volumeBlockers(IDX, state, selMv);
+            const blockers = volumeBlockers(IDX, safeState, selMv);
             const forced = force === selMv.id;
             const iso = new Date().toISOString().slice(0, 10);
-            const bugun = state.logs
+            const bugun = logs
               .filter((l) => l.movementId === selMv.id && l.date === iso
                           && l.kind !== 'calibration')
               .reduce((n, l) => n + l.values.reduce((a, b) => a + b, 0), 0);
@@ -697,7 +710,7 @@ export function Tree({ state, onState }: {
               ? <span style={{ color: 'var(--dim)' }}>Yok — başlangıç hareketi.</span>
               : selMv.prerequisites.map((p) => (
                   <a key={p} onClick={() => setSel(p)} style={link}>
-                    {state.mastery[p]?.tier ? '✓' : '○'} {IDX.get(p)?.name}
+                    {mastery[p]?.tier ? '✓' : '○'} {IDX.get(p)?.name}
                   </a>
                 ))}
           </Section>

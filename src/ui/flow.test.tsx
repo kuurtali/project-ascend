@@ -528,6 +528,29 @@ describe('çalıştıklarım listesi', () => {
       expect(m.xp).toBe(10);
     }
   });
+
+  it('güncel sürüm yazsa da şekli bozuk koleksiyonlar ağacı çökertmez', () => {
+    const s = migrate({
+      schemaVersion: SCHEMA_VERSION,
+      xp: 10,
+      logs: [
+        { movementId: 'pushup', date: '2026-08-23', values: 12 },
+        { movementId: 'plank', date: '2026-08-23', values: null },
+      ],
+      focus: 'pushup',
+      mastery: null,
+      constraints: [{ area: 'hand' }],
+    } as never);
+
+    expect(s.logs).toEqual([
+      { movementId: 'pushup', date: '2026-08-23', values: [12] },
+    ]);
+    expect(s.focus).toEqual([]);
+    expect(s.mastery).toEqual({});
+    expect(s.constraints).toEqual([]);
+    const { container } = render(<Tree state={s} />);
+    expect(container.querySelectorAll('svg g').length).toBeGreaterThan(50);
+  });
 });
 
 describe('görev satırı', () => {

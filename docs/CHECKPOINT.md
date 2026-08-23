@@ -31,6 +31,22 @@ OKUMA SIRASI:
 --------------------------------------------------------------------------------
 !!! EN SON DURUM — 2026-07-26: UYGULAMA KODU BASLADI !!!
 --------------------------------------------------------------------------------
+!!! AGAC GECIS COKUSU KAPATILDI - 2026-08-23 (D-069)
+
+  BULGU: Canli sekmede Bugun -> Agac gecisi temiz calisti ve kurtarma
+  dosyasinin yapisi saglamdi; yani tek bir veri bozuklugu yeniden
+  uretilemedi. Buna ragmen Tree eski/hot-update state'inin koleksiyon
+  sekillerine guveniyordu. Bir bozuk log, focus, mastery veya constraint
+  butun uygulamayi hata ekranina dusurebiliyordu.
+
+  UYGULANAN:
+    storage.ts          yalniz eksik alan degil, koleksiyon ICERIGI normalize
+    Tree.tsx            render sinirinda ikinci emniyet kemeri
+    flow.test.tsx       guncel surum numarali bozuk state regresyon testi
+    sw.js               cache v12; duzeltme eski kabuktan ayriliyor
+
+  DOGRULAMA: 226/226 test; tsc temiz; vite build temiz.
+
 !!! 2 GUNDE BIR EV RUTINI + KURTARMA SAGLAMLASTIRMA - 2026-08-23 (D-068)
 
   KULLANICI ISTEGI: Evde iki gunde bir squat, sinav, band row, dips,
@@ -58,7 +74,7 @@ OKUMA SIRASI:
   KURTARMA TAMAMLAMA: ErrorBoundary ham state indiriyordu, Ayarlar yalniz
   zarflanmis normal yedegi kabul ediyordu. importJson iki formati da aliyor.
 
-  DOGRULAMA: 200 hareket / 22 boss / 0 hata / 0 uyari; 225/225 test;
+  DOGRULAMA: 200 hareket / 22 boss / 0 hata / 0 uyari; 226/226 test;
   tsc temiz; vite build temiz; 390px telefon gorunumu gozle incelendi.
 
 KOD DURUMU:

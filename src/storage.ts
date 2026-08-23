@@ -50,6 +50,59 @@ export const DEFAULT_STATE: PlayerState = {
   testDayOfWeek: 1,   // Pazartesi
 };
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * localStorage TypeScript tiplerini bilmez. Özellikle eski/elle düzenlenmiş
+ * yedeklerde şema numarası güncel olsa bile bir koleksiyonun şekli bozuk
+ * olabilir. UI bu sınırdan sonra yalnızca güvenli koleksiyon görmeli.
+ */
+function normalizeLogs(value: unknown): PlayerState['logs'] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((raw) => {
+    if (!isRecord(raw) || typeof raw.movementId !== 'string'
+        || typeof raw.date !== 'string') return [];
+    const source = Array.isArray(raw.values) ? raw.values : [raw.values];
+    const values = source.filter(
+      (n): n is number => typeof n === 'number' && Number.isFinite(n) && n > 0,
+    );
+    if (values.length === 0) return [];
+    return [{
+      movementId: raw.movementId,
+      date: raw.date,
+      values,
+      ...(raw.effort === 'easy' || raw.effort === 'ok' || raw.effort === 'hard'
+        ? { effort: raw.effort } : {}),
+      ...(typeof raw.note === 'string' ? { note: raw.note } : {}),
+      ...(raw.kind === 'calibration' ? { kind: raw.kind } : {}),
+    }];
+  });
+}
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((x): x is string => typeof x === 'string') : [];
+}
+
+function normalizeConstraints(value: unknown): PlayerState['constraints'] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((raw) => {
+    if (!isRecord(raw)
+        || !['wrist', 'hand', 'shoulder', 'elbow', 'knee', 'lowBack'].includes(String(raw.area))
+        || !['left', 'right', 'both'].includes(String(raw.side))
+        || !['hardware', 'history', 'chronic'].includes(String(raw.type))) return [];
+    return [{
+      area: raw.area as PlayerState['constraints'][number]['area'],
+      side: raw.side as PlayerState['constraints'][number]['side'],
+      type: raw.type as PlayerState['constraints'][number]['type'],
+      excludedMovements: stringArray(raw.excludedMovements),
+      clearedByProfessional: raw.clearedByProfessional === true,
+    }];
+  });
+}
+
 /**
  * Eski kayıtları güncel şemaya taşır.
  *
@@ -106,12 +159,19 @@ export function migrate(raw: Partial<PlayerState>): PlayerState {
     // Sürüm numarası güncel göründüğü hâlde alanı eksik/bozuk bir yedek
     // gelebilir. Şema sürümüne körü körüne güvenmek render çökmesine yol
     // açar; koleksiyon alanlarını son sınırda normalize et.
-    bodyweight: s.bodyweight ?? [],
-    outside: s.outside ?? [],
-    trackAt: s.trackAt ?? {},
-    habitLog: s.habitLog ?? [],
-    focus: s.focus ?? [],
-    targets: s.targets ?? {},
+    equipment: stringArray(s.equipment ?? DEFAULT_STATE.equipment),
+    constraints: normalizeConstraints(s.constraints),
+    mastery: isRecord(s.mastery)
+      ? s.mastery as unknown as PlayerState['mastery'] : {},
+    logs: normalizeLogs(s.logs),
+    bodyweight: Array.isArray(s.bodyweight) ? s.bodyweight : [],
+    outside: Array.isArray(s.outside) ? s.outside : [],
+    trackAt: isRecord(s.trackAt)
+      ? s.trackAt as unknown as NonNullable<PlayerState['trackAt']> : {},
+    habitLog: Array.isArray(s.habitLog) ? s.habitLog : [],
+    focus: stringArray(s.focus),
+    targets: isRecord(s.targets)
+      ? s.targets as unknown as NonNullable<PlayerState['targets']> : {},
     programMode: s.programMode ?? 'skill-week',
     schemaVersion: SCHEMA_VERSION,
   };

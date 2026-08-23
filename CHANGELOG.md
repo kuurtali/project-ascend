@@ -9,6 +9,19 @@ number. There are no releases; the app deploys on every push to `main`.
 
 ---
 
+## 2026-08-23 · Tree crash hardening
+
+The tree no longer trusts collection shapes merely because local state claims
+the current schema version. Storage now normalizes log entries, focus,
+mastery, equipment, targets and constraints at the load boundary; the tree
+also keeps a render-time safety layer for state surviving a hot update.
+
+A regression test renders the full tree from malformed current-version state.
+The service-worker cache was bumped so this fix cannot be confused with the
+previous shell. 226 tests.
+
+---
+
 ## 2026-08-23 · Every-other-day home routine
 
 Added an optional seven-movement full-body template for users who prefer a
@@ -28,7 +41,7 @@ collections even when a file claims a current schema version but omits fields.
 Raw recovery files downloaded by the error boundary can now be restored through
 Settings; previously only the normal wrapped export format was accepted.
 
-Schema v7. 200 movements. 225 tests.
+Schema v7. 200 movements. 226 tests.
 
 ---
 
