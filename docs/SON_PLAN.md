@@ -1,5 +1,10 @@
 # SON PLAN — ağaç oturdu, geriye ne kaldı
 
+> **Tarihsel plan (21 Ağustos 2026).** Bu belge o tarihteki kapanış
+> listesini korur; maddelerin bir bölümü daha sonra tamamlandı. Güncel durum
+> için [`CHECKPOINT.md`](CHECKPOINT.md), ürün özeti için [`../README.tr.md`](../README.tr.md)
+> esas alınmalıdır.
+
 *21 Ağustos 2026. Ağaç sistemi tamamlandı ve kullanıcı onayladı. Bu
 belge, projeyi "çalışıyor"dan "bitti" noktasına taşıyan son listeyi
 sıraya koyuyor.*

@@ -31,6 +31,23 @@ OKUMA SIRASI:
 --------------------------------------------------------------------------------
 !!! EN SON DURUM — 2026-07-26: UYGULAMA KODU BASLADI !!!
 --------------------------------------------------------------------------------
+!!! GITHUB/README METADATA DENETIMI - 2026-09-12
+
+  BULGU: README.md ve README.tr.md guncel 200 hareket / 239 baglanti /
+  227 test sayilarini kullaniyordu; package.json aciklamasi ise tarihsel
+  197 hareket sayisinda kalmisti. SON_PLAN ve YOL_HARITASI da sonraki
+  tamamlamalardan once yazilmis olmalarina ragmen bunu acikca soylemiyordu.
+
+  UYGULANAN:
+    package.json          proje aciklamasi 200 hareket olarak guncellendi
+    docs/SON_PLAN.md      tarihsel plan etiketi ve guncel belge baglantilari
+    docs/YOL_HARITASI.md  tarihsel inceleme etiketi ve guncel belge baglantilari
+
+  KAPSAM: Davranis veya veri degismedi; yeni kalici urun karari alinmadi.
+  DOGRULAMA: README yerel baglantilari ve sayisal ozetleri denetlendi.
+  Yerel test/build girisimi sandbox'in alt surec kisiti (spawn EPERM) nedeniyle
+  baslamadi; davranis degismedi, push sonrasi GitHub Actions sonucu izlenmeli.
+
 !!! AGAC SURUKLEME YARISI KESIN OLARAK DUZELTILDI - 2026-08-23 (D-070)
 
   KANIT: Opera teknik ayrintisi "Cannot read properties of null (reading 'vx')"

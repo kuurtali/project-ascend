@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Graph-based calisthenics progression engine — 197-movement validated DAG with parametric XP/mastery modeling",
+  "description": "Graph-based calisthenics progression engine — 200-movement validated DAG with parametric XP/mastery modeling",
   "license": "MIT",
   "scripts": {
     "dev": "vite",

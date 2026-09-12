@@ -1,5 +1,10 @@
 # YOL HARİTASI — dört gözle inceleme
 
+> **Tarihsel inceleme (14 Ağustos 2026).** Bu belge o günkü açıkları ve
+> önerileri kaydeder; daha sonraki uygulama durumunu göstermez. Güncel durum
+> için [`CHECKPOINT.md`](CHECKPOINT.md), ürün özeti için [`../README.tr.md`](../README.tr.md)
+> esas alınmalıdır.
+
 > 2026-08-14. Proje dört ayrı bakış açısından incelendi: **sporcu**,
 > **geliştirici**, **eleştirici**, **yabancı kullanıcı**. Her biri kendi
 > önceliğini savundu; sonra kesişim noktalarına bakıldı.
