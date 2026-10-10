@@ -926,3 +926,15 @@ BITIS     : PROJECT_ASCEND_SECOND_BRAIN.md - 3029 satirlik tek referans
 URETILEN  : 1 ana dokuman + 1 checkpoint + 5 kod dosyasi + 1 prototip
             + 1 test paketi + arsiv duzeni
 ================================================================================
+
+## 11 Ekim 2026 — Depo sunumunun mevcut kodla eşleştirilmesi
+
+README.md ve README.tr.md içindeki iki eski durum bilgisi düzeltildi:
+ilerleme geçmişi Gecmis.tsx/history.ts içinde mevcut; Settings.tsx beceri haftası
+ve home-eod arasında seçim sunuyor. Test toplamıyla uyuşmayan eski alt kırılım
+kaldırıldı; 227 sayısı mevcut belgelerin raporladığı toplam olarak belirtildi.
+Uygulama kodu, hareket verisi ve kullanıcı kayıtları değiştirilmedi. Bu turda
+testler yeniden çalıştırılmadı; doğrulama ilgili kaynak dosyalarının okunmasıyla
+sınırlı. Yeni mekanik veya kalıcı tasarım kararı yok.
+Sıradaki teknik iş mevcut SON_PLAN/YOL_HARITASI üzerinden seçilmeli; bu belge
+bakımı önceki uygulama planını tamamlanmış saymaz.
