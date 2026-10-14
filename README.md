@@ -1,5 +1,8 @@
 # Project Ascend
 
+[Portfolio](https://github.com/kuurtali) · [All projects](https://github.com/kuurtali#projects) · [Report an issue](https://github.com/kuurtali/project-ascend/issues)
+
+
 ***English** · [Türkçe](README.tr.md)*
 
 [![CI](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml/badge.svg)](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml)
@@ -57,6 +60,9 @@ learn a handstand, this is the short version:
 
 ## Why it exists
 
+<details>
+<summary>Read the details</summary>
+
 People almost never quit calisthenics because they lack the talent. It's
 one of three things:
 
@@ -70,6 +76,8 @@ one of three things:
 All three are information and visibility problems, not training problems.
 
 ---
+
+</details>
 
 ## The skill tree
 
@@ -101,6 +109,9 @@ finding the same five nodes every time. Tapping one flies the view to it.
 ---
 
 ## Core systems
+
+<details>
+<summary>Read the details</summary>
 
 ### The adaptation rule
 
@@ -324,7 +335,12 @@ decides.**
 
 ---
 
+</details>
+
 ## Game layer
+
+<details>
+<summary>Read the details</summary>
 
 | | |
 |---|---|
@@ -358,7 +374,12 @@ whole session.
 
 ---
 
+</details>
+
 ## Architecture
+
+<details>
+<summary>Read the details</summary>
 
 ```mermaid
 flowchart LR
@@ -442,6 +463,8 @@ committed — if the generation chain breaks, the build fails.
 
 ---
 
+</details>
+
 ## Numbers
 
 ```
@@ -489,6 +512,9 @@ python3 render.py strip PUSHUP,PULLUP,DIP && convert -density 120 strip.svg stri
 
 ## Design decisions
 
+<details>
+<summary>Read the details</summary>
+
 Full list with reasoning: [`docs/SECOND_BRAIN.md`](docs/SECOND_BRAIN.md) —
 Decision records with their reasoning, written in Turkish. Highlights:
 
@@ -517,6 +543,8 @@ Decision records with their reasoning, written in Turkish. Highlights:
   wearing the same type.
 
 ---
+
+</details>
 
 ## Status
 

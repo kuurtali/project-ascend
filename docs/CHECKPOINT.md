@@ -1,6 +1,15 @@
 ================================================================================
 PROJECT ASCEND - CHECKPOINT / DEVAM DOSYASI
 ================================================================================
+15 Ekim 2026 — README gezinme ve okunabilirlik bakımı
+
+İngilizce ve Türkçe README'lere portföy, tüm projeler ve sorun bildir
+bağlantıları eklendi. Uzun açıklamalar silinmeden açılır bölümlere alındı.
+Uygulama kodu, hareket verisi, sonuç sayıları ve ürün kararları değişmedi.
+Bu belge bakımı önceki teknik iş listesini tamamlanmış saymaz.
+Doğrulama: Markdown yapısı, yerel dosya bağlantıları ve değişiklik kapsamı
+kontrol edilir; testlerin yeniden çalıştığı yalnız CI sonucuyla teyit edilir.
+
 Bu dosyanin amaci: proje uzerinde calisan herkes (kullanici veya baska bir AI
 ajani) sifirdan baglami kurup TAM OLARAK kalinan yerden devam edebilsin.
 

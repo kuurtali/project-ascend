@@ -1,5 +1,8 @@
 # Project Ascend
 
+[Portföy](https://github.com/kuurtali) · [Tüm projeler](https://github.com/kuurtali#projects) · [Sorun bildir](https://github.com/kuurtali/project-ascend/issues)
+
+
 *[English](README.md) · **Türkçe***
 
 [![CI](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml/badge.svg)](https://github.com/kuurtali/project-ascend/actions/workflows/deploy.yml)
@@ -41,6 +44,9 @@ hâli şu:
 
 ## Neden var
 
+<details>
+<summary>Ayrıntıları aç</summary>
+
 Kalistenikte insanların bıraktığı nokta neredeyse hiçbir zaman "yeteneğim yok"
 değil. Üç şeyden biri:
 
@@ -52,6 +58,8 @@ değil. Üç şeyden biri:
 Üçü de bilgi ve görünürlük problemi, antrenman problemi değil.
 
 ---
+
+</details>
 
 ## Hareket ağacı
 
@@ -68,6 +76,9 @@ Ağaç elle çizilmedi. `tools/movements_data.py` içindeki tanımlardan üretil
 ---
 
 ## Sistemin çekirdeği
+
+<details>
+<summary>Ayrıntıları aç</summary>
 
 ### Uyarlama kuralı
 
@@ -273,7 +284,12 @@ Bu kuralı iptal etmiyor; kuralın ürettiği şeyin **statüsünü** hükümden
 
 ---
 
+</details>
+
 ## Oyun katmanı
+
+<details>
+<summary>Ayrıntıları aç</summary>
 
 | | |
 |---|---|
@@ -304,7 +320,12 @@ maliyeti sıfıra yakın; telefon antrenman boyunca açık duracak.
 
 ---
 
+</details>
+
 ## Mimari
+
+<details>
+<summary>Ayrıntıları aç</summary>
 
 ```
 tools/                 Python veri hattı
@@ -341,6 +362,8 @@ CI her push'ta veriyi yeniden üretip commit edilenle karşılaştırır — ür
 zinciri bozulursa derleme kırılır.
 
 ---
+
+</details>
 
 ## Rakamlar
 
@@ -388,6 +411,9 @@ python3 render.py strip PUSHUP,PULLUP,DIP && convert -density 120 strip.svg stri
 
 ## Tasarım kararları
 
+<details>
+<summary>Ayrıntıları aç</summary>
+
 Tam liste ve gerekçeler: [`docs/SECOND_BRAIN.md`](docs/SECOND_BRAIN.md) — gerekçeli karar
 kayıtları. Öne çıkanlar:
 
@@ -404,6 +430,8 @@ kayıtları. Öne çıkanlar:
   kullanıcıya ulaşmadı. "Yayınladım" ile "kullanıcı görüyor" aynı şey değil.
 
 ---
+
+</details>
 
 ## Durum
 
